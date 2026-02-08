@@ -11,23 +11,25 @@ export function SignupPage({ onSwitchToLogin, onSignup }: SignupPageProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    setErrorMsg(null);
+
     if (password !== confirmPassword) {
-      alert('Passwords do not match!');
+      setErrorMsg('Passwords do not match!');
       return;
     }
 
     setIsLoading(true);
-    
+
     try {
       await onSignup(name, email, password);
       // If successful, the parent component will handle navigation
-    } catch (error) {
-      alert('Signup failed. Please try again.');
+    } catch (error: any) {
+      setErrorMsg(error.message || 'Signup failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -46,6 +48,12 @@ export function SignupPage({ onSwitchToLogin, onSignup }: SignupPageProps) {
             <h1 className="text-3xl mb-2">Create Account</h1>
             <p className="text-gray-600">Start planning your dream trips</p>
           </div>
+
+          {errorMsg && (
+            <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {errorMsg}
+            </div>
+          )}
 
           <form onSubmit={handleSignup} className="space-y-5">
             <div>
@@ -153,7 +161,7 @@ export function SignupPage({ onSwitchToLogin, onSignup }: SignupPageProps) {
 
         {/* Right side - Image and branding */}
         <div className="relative min-h-[320px] md:min-h-0">
-          <img 
+          <img
             src="https://images.unsplash.com/photo-1654693289021-3ff2c9df4092?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0cmF2ZWwlMjBkZXN0aW5hdGlvbiUyMGFlcmlhbHxlbnwxfHx8fDE3NjU4MjkzMzh8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
             alt="Travel destination"
             className="w-full h-full object-cover"

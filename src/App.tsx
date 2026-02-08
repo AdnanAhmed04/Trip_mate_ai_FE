@@ -1,301 +1,230 @@
-import { useState } from 'react';
-
-
-
+import React, { useState, useEffect } from 'react';
+import { LandingPage } from './components/LandingPage';
 import { LoginPage } from './components/LoginPage';
 import { SignupPage } from './components/SignupPage';
-import { Header } from './components/Header';
-import { SignInModal } from './components/SignInModal';
-import { PreferencesForm } from './components/PreferencesForm';
-import { MyTrips } from './components/MyTrips';
-import { RecommendedPlaces } from './components/RecommendedPlaces';
-import { PlaceDetails } from './components/PlaceDetails';
-import { LandingPage, type Vendor } from './components/LandingPage';
 import { VendorDetails } from './components/VendorDetails';
-import { VendorListing } from './components/VendorListing';
 import { VendorRegistrationForm } from './components/VendorRegistrationForm';
+import { VendorListing } from './components/VendorListing';
+import { TripPlanner } from './components/TripPlanner';
+import { PreferencesForm } from './components/PreferencesForm';
+import { api } from './services/api';
+import type { Vendor } from './types';
 
-export interface Place {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  location: string;
-  coordinates: { lat: number; lng: number };
-  image: string;
-  rating: number;
-  category: string;
-  bestTimeToVisit: string;
-  duration: string;
-}
-
-export interface Trip {
-  id: string;
-  destination: string;
-  days: number;
-  budget: 'cheap' | 'moderate' | 'luxury';
-  travelWith: 'just-me' | 'couple' | 'friends' | 'family';
-  createdAt: Date;
-  place: Place;
-}
-
-export interface TripRecommendation {
-  destination: string;
-  days: number;
-  budget: 'cheap' | 'moderate' | 'luxury';
-  travelWith: 'just-me' | 'couple' | 'friends' | 'family';
-  places: Place[];
-}
-
-type ViewType = 'landing' | 'create' | 'trips' | 'recommended' | 'place-details' | 'vendor-details' | 'vendor-listing' | 'vendor-registration' | 'login' | 'signup';
-
-export default function App() {
+function App() {
+  const [currentView, setCurrentView] = useState<'landing' | 'login' | 'signup' | 'vendor-details' | 'vendor-registration' | 'vendor-listing' | 'trip-planner' | 'trip-planner-form'>('landing');
   const [isSignedIn, setIsSignedIn] = useState(false);
-  const [showSignInModal, setShowSignInModal] = useState(false);
-  const [currentView, setCurrentView] = useState<ViewType>('landing');
-  const [trips, setTrips] = useState<Trip[]>([]);
-  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
-  const [currentRecommendation, setCurrentRecommendation] = useState<TripRecommendation | null>(null);
   const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
+  const [pendingView, setPendingView] = useState<string | null>(null);
+
+  // Login/Signup state moved to components
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const user = await api.auth.me();
+        if (user) {
+          setIsSignedIn(true);
+          localStorage.setItem('user', JSON.stringify(user));
+        }
+      } catch (error) {
+        console.log("Not signed in or session expired");
+        setIsSignedIn(false);
+        localStorage.removeItem('user');
+      }
+    };
+    checkAuth();
+  }, []);
 
   const handleLogin = async (email: string, password: string) => {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // For demo purposes, accept any email/password
-    // In a real app, this would validate against a backend
-    setIsSignedIn(true);
-    setCurrentView('landing');
+    if (!email || !password) {
+      alert("Please fill in all fields");
+      return;
+    }
+
+    console.log('Attempting login...');
+    const response = await api.auth.login({ email, password });
+    console.log('Login response:', response);
+    if (response.user) {
+      console.log('User found, redirecting...');
+      // Token is handled via HttpOnly cookie
+      localStorage.setItem('user', JSON.stringify(response.user));
+      setIsSignedIn(true);
+      if (pendingView) {
+        console.log('Redirecting to pending view:', pendingView);
+        setCurrentView(pendingView as any);
+        setPendingView(null);
+      } else {
+        console.log('Redirecting to landing');
+        setCurrentView('landing');
+      }
+    } else {
+      console.error('No user in response');
+      alert("Login failed: " + (response as any).message || "Unknown error");
+    }
   };
 
   const handleSignup = async (name: string, email: string, password: string) => {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // For demo purposes, accept any signup
-    // In a real app, this would create a user account
-    setIsSignedIn(true);
-    setCurrentView('landing');
-  };
+    const response = await api.auth.register({
+      name,
+      email,
+      password
+    });
 
-  const handleCreateTrip = () => {
-    if (!isSignedIn) {
-      setShowSignInModal(true);
-    } else {
-      setCurrentView('create');
-      setCurrentRecommendation(null);
+    if (response.user) {
+      // Token is handled via HttpOnly cookie
+      localStorage.setItem('user', JSON.stringify(response.user));
+      setIsSignedIn(true);
+      if (pendingView) {
+        setCurrentView(pendingView as any);
+        setPendingView(null);
+      } else {
+        setCurrentView('landing');
+      }
     }
   };
-    const handleShowLogin = () => {
-    setCurrentView('login');
-    setShowSignInModal(false);
-  };
 
-  const handleShowSignup = () => {
-    setCurrentView('signup');
-    setShowSignInModal(false);
-  };
-
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await api.auth.logout();
+    } catch (e) {
+      console.error('Logout failed', e);
+    }
+    localStorage.removeItem('user');
     setIsSignedIn(false);
-    setTrips([]);
-    setSelectedPlace(null);
-    setCurrentRecommendation(null);
-    setSelectedVendor(null);
     setCurrentView('landing');
-    setShowSignInModal(false);
-  };
-
-  const handleSignIn = async (email: string, password: string) => {
-    await handleLogin(email, password);
-    setShowSignInModal(false);
-  };
-
-
-  const generatePlaces = (destination: string, budget: 'cheap' | 'moderate' | 'luxury', days: number): Place[] => {
-    const placeImages = [
-      'https://images.unsplash.com/photo-1763469027887-9d7811150ff4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0cmF2ZWwlMjBkZXN0aW5hdGlvbiUyMGNpdHl8ZW58MXx8fHwxNzYzNTQ1NTc3fDA&ixlib=rb-4.1.0&q=80&w=1080',
-      'https://images.unsplash.com/photo-1760841940521-67b382e26ead?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYW1vdXMlMjBsYW5kbWFyayUyMHRvdXJpc218ZW58MXx8fHwxNzYzNTY2NDU3fDA&ixlib=rb-4.1.0&q=80&w=1080',
-      'https://images.unsplash.com/photo-1678687114989-ad452a24f289?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiZWFjaCUyMHJlc29ydCUyMHZhY2F0aW9ufGVufDF8fHx8MTc2MzU0MDAxOXww&ixlib=rb-4.1.0&q=80&w=1080',
-      'https://images.unsplash.com/photo-1669986480140-2c90b8edb443?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb3VudGFpbiUyMGFkdmVudHVyZSUyMHRyYXZlbHxlbnwxfHx8fDE3NjM1NDY0MzR8MA&ixlib=rb-4.1.0&q=80&w=1080',
-      'https://images.unsplash.com/photo-1597049341906-17c85039c488?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxoaXN0b3JpYyUyMGFyY2hpdGVjdHVyZSUyMG1vbnVtZW50fGVufDF8fHx8MTc2MzU2NjQ1OHww&ixlib=rb-4.1.0&q=80&w=1080',
-      'https://images.unsplash.com/photo-1691750427379-ee11dc33d697?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxuYXR1cmUlMjBwYXJrJTIwc2NlbmljfGVufDF8fHx8MTc2MzU2NjQ1OHww&ixlib=rb-4.1.0&q=80&w=1080',
-    ];
-
-    const categories = ['Historical', 'Nature', 'Adventure', 'Cultural', 'Beach', 'Mountain'];
-    const priceMultiplier = budget === 'cheap' ? 1 : budget === 'moderate' ? 2 : 3;
-    
-    return Array.from({ length: Math.min(days * 2, 6) }, (_, i) => ({
-      id: `place-${i + 1}`,
-      name: `${destination} Attraction ${i + 1}`,
-      description: `Experience the beauty and culture of this amazing ${categories[i % categories.length].toLowerCase()} destination. Perfect for travelers seeking memorable experiences.`,
-      price: Math.floor((50 + Math.random() * 150) * priceMultiplier),
-      location: `${destination}, District ${i + 1}`,
-      coordinates: { lat: 25.276987 + (Math.random() - 0.5) * 0.1, lng: 55.296249 + (Math.random() - 0.5) * 0.1 },
-      image: placeImages[i % placeImages.length],
-      rating: 4 + Math.random(),
-      category: categories[i % categories.length],
-      bestTimeToVisit: 'October to March',
-      duration: `${Math.floor(2 + Math.random() * 4)} hours`,
-    }));
-  };
-
-  const handleGenerateTrip = (tripData: Omit<Trip, 'id' | 'createdAt' | 'place'>) => {
-    const places = generatePlaces(tripData.destination, tripData.budget, tripData.days);
-    const recommendation: TripRecommendation = {
-      destination: tripData.destination,
-      days: tripData.days,
-      budget: tripData.budget,
-      travelWith: tripData.travelWith,
-      places,
-    };
-    setCurrentRecommendation(recommendation);
-    setCurrentView('recommended');
-  };
-
-  const handleSavePlace = (place: Place) => {
-    if (currentRecommendation) {
-      const newTrip: Trip = {
-        id: `trip-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        destination: currentRecommendation.destination,
-        days: currentRecommendation.days,
-        budget: currentRecommendation.budget,
-        travelWith: currentRecommendation.travelWith,
-        createdAt: new Date(),
-        place,
-      };
-      setTrips([...trips, newTrip]);
-    }
-  };
-
-  const handleViewTrip = (trip: Trip) => {
-    setSelectedPlace(trip.place);
-    setCurrentView('place-details');
-  };
-
-  const handleViewPlaceDetails = (place: Place) => {
-    setSelectedPlace(place);
-    setCurrentView('place-details');
-  };
-
-  const handleBackToRecommended = () => {
-    setCurrentView('recommended');
-    setSelectedPlace(null);
   };
 
   const handleVendorClick = (vendor: Vendor) => {
     setSelectedVendor(vendor);
     setCurrentView('vendor-details');
+    window.scrollTo(0, 0);
   };
 
-  const handleBackToLanding = () => {
-    setCurrentView('landing');
+  const handleBackToVendors = () => {
     setSelectedVendor(null);
+    setCurrentView('landing');
   };
-
-  const handleGetStarted = () => {
-    if (!isSignedIn) {
-      setCurrentView('login');
-    } else {
-      setCurrentView('create');
-    }
-  };
-
-  const showHeader = currentView !== 'landing' && currentView !== 'vendor-details' && currentView !== 'vendor-listing' && currentView !== 'vendor-registration' && currentView !== 'login' && currentView !== 'signup';
 
   return (
-    <div className="min-h-screen ">
-      {currentView === 'login' && (
-        <LoginPage onSwitchToSignup={handleShowSignup} onLogin={handleLogin} />
-      )}
-      {currentView === 'signup' && (
-        <SignupPage onSwitchToLogin={handleShowLogin} onSignup={handleSignup} />
-      )}
-      {showHeader && (
-        <Header
-          isSignedIn={isSignedIn}
-          onCreateTrip={handleCreateTrip}
-          onMyTrips={() => setCurrentView('trips')}
-          onProfileClick={() => setShowSignInModal(true)}
-          onLoginClick={handleShowLogin}
-          onSignupClick={handleShowSignup}
-          onLogoutClick={handleLogout}
-          currentView={currentView === 'create' ? 'create' : 'trips'}
-          onLogoClick={() => setCurrentView('landing')}
-        />
-      )}
+    <div className="min-h-screen bg-white">
+      {/* Navigation */}
+      <nav className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md z-50 border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div
+              className="flex items-center cursor-pointer"
+              onClick={() => setCurrentView('landing')}
+            >
+              <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
+                TripMate
+              </span>
+            </div>
 
-      <main className={showHeader ? "container mx-auto px-4 py-8" : ""}>
+            <div className="hidden md:flex items-center space-x-8">
+              <button onClick={() => setCurrentView('landing')} className="text-gray-600 hover:text-black transition-colors">Home</button>
+              <button onClick={() => setCurrentView('vendor-listing')} className="text-gray-600 hover:text-black transition-colors">Vendors</button>
+              <button onClick={() => setCurrentView('trip-planner')} className="text-gray-600 hover:text-black transition-colors">Trip Planner</button>
+              {isSignedIn ? (
+                <div className="flex items-center gap-4">
+                  <span className="text-sm font-medium text-gray-700">
+                    Welcome!
+                  </span>
+                  <button
+                    onClick={handleLogout}
+                    className="bg-gray-100 text-gray-800 px-4 py-2 rounded-full hover:bg-gray-200 transition-all font-medium text-sm"
+                  >
+                    log out
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={() => setCurrentView('login')}
+                    className="text-gray-600 hover:text-black transition-colors font-medium"
+                  >
+                    Log in
+                  </button>
+                  <button
+                    onClick={() => setCurrentView('signup')}
+                    className="bg-black text-white px-4 py-2 rounded-full hover:bg-gray-800 transition-all font-medium text-sm"
+                  >
+                    Sign up
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <main className="pt-16">
         {currentView === 'landing' && (
-          <LandingPage 
+          <LandingPage
             onVendorClick={handleVendorClick}
-            onGetStarted={handleGetStarted}
             onViewVendors={() => setCurrentView('vendor-listing')}
             onRegisterVendor={() => setCurrentView('vendor-registration')}
+            onGetStarted={() => {
+              if (isSignedIn) {
+                setCurrentView('trip-planner-form');
+              } else {
+                setPendingView('trip-planner-form');
+                setCurrentView('login');
+              }
+            }}
           />
         )}
 
-        {currentView === 'vendor-listing' && (
-          <VendorListing
-            onBack={handleBackToLanding}
-            onVendorClick={handleVendorClick}
+        {currentView === 'login' && (
+          <LoginPage
+            onLogin={handleLogin}
+            onSwitchToSignup={() => setCurrentView('signup')}
+          />
+        )}
+
+        {currentView === 'signup' && (
+          <SignupPage
+            onSignup={handleSignup}
+            onSwitchToLogin={() => setCurrentView('login')}
+          />
+        )}
+
+        {currentView === 'vendor-details' && selectedVendor && (
+          <VendorDetails
+            vendor={selectedVendor}
+            onBack={handleBackToVendors}
           />
         )}
 
         {currentView === 'vendor-registration' && (
           <VendorRegistrationForm
-            onBack={handleBackToLanding}
-            onSubmit={(data) => {
-              console.log('Vendor registration submitted:', data);
-              alert('Thank you for registering! Your application will be reviewed.');
-              setCurrentView('landing');
+            onBack={() => setCurrentView('landing')}
+          />
+        )}
+
+        {currentView === 'vendor-listing' && (
+          <VendorListing
+            onBack={() => setCurrentView('landing')}
+            onVendorClick={handleVendorClick}
+          />
+        )}
+
+        {currentView === 'trip-planner' && (
+          <TripPlanner
+            onStartPlanning={() => setCurrentView('trip-planner-form')}
+          />
+        )}
+
+        {currentView === 'trip-planner-form' && (
+          <PreferencesForm
+            onGenerateTrip={(trip) => {
+              console.log("Trip generated", trip);
+              setCurrentView('trip-planner');
             }}
           />
         )}
-
-        {currentView === 'vendor-details' && selectedVendor && (
-          <div className="container mx-auto px-4 py-8">
-            <VendorDetails 
-              vendor={selectedVendor}
-              onBack={handleBackToLanding}
-            />
-          </div>
-        )}
-
-        {currentView === 'create' && (
-          <PreferencesForm onGenerateTrip={handleGenerateTrip} />
-        )}
-        
-        {currentView === 'trips' && (
-          <MyTrips trips={trips} onViewTrip={handleViewTrip} />
-        )}
-        
-        {currentView === 'recommended' && currentRecommendation && (
-          <RecommendedPlaces
-            recommendation={currentRecommendation}
-            onPlaceClick={handleViewPlaceDetails}
-            onSavePlace={handleSavePlace}
-            savedTripIds={trips.map(t => t.place.id)}
-          />
-        )}
-        
-        {currentView === 'place-details' && selectedPlace && currentRecommendation && (
-          <PlaceDetails
-            place={selectedPlace}
-            onBack={handleBackToRecommended}
-            tripDestination={currentRecommendation.destination}
-            onSavePlace={handleSavePlace}
-            isAlreadySaved={trips.some(t => t.place.id === selectedPlace.id)}
-          />
-        )}
       </main>
-
-      {showSignInModal && (
-        <SignInModal
-          onClose={() => setShowSignInModal(false)}
-          onSignIn={handleSignIn}
-        />
-      )}
     </div>
   );
 }
+
+export default App;

@@ -1,6 +1,6 @@
 import { MapPin, Calendar, DollarSign, Users, Star } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
-import type { Trip } from '../App';
+import type { Trip } from '../types';
 
 interface MyTripsProps {
   trips: Trip[];
@@ -40,7 +40,7 @@ export function MyTrips({ trips, onViewTrip }: MyTripsProps) {
   return (
     <div className="max-w-6xl mx-auto">
       <h1 className="text-3xl mb-8">My Trips</h1>
-      
+
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {trips.map((trip) => (
           <div
@@ -61,7 +61,7 @@ export function MyTrips({ trips, onViewTrip }: MyTripsProps) {
                 {trip.place.category}
               </div>
             </div>
-            
+
             <div className="p-4">
               <div className="flex items-start gap-2 mb-3">
                 <MapPin className="w-5 h-5 text-red-500 mt-1 flex-shrink-0" />

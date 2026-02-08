@@ -1,46 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { ArrowRight, Building2, MapPin, Star } from "lucide-react";
-
-type ApiBranch = {
-  _id: string;
-  name: string;
-  location: string;
-  phone: string;
-};
-
-type ApiVendor = {
-  _id: string;
-  companyName: string;
-  services: string[];
-  customServices?: string[];
-  branches?: ApiBranch[];
-  vendorType: string;
-  email: string;
-  aboutUs: string;
-  specialOffer?: string;
-  budgetMin?: number;
-  budgetMax?: number;
-  city?: string;
-  status?: string;
-  createdAt?: string;
-  updatedAt?: string;
-};
-
-type VendorsApiResponse = {
-  total: number;
-  vendors: ApiVendor[];
-};
-
-export type UiVendor = {
-  id: string;
-  name: string;
-  image: string;
-  rating: number;
-  category: string;
-  description: string;
-  location: string;
-  raw: ApiVendor;
-};
+import { api } from "../services/api";
+import { Vendor } from "../types";
 
 function normalizeText(s: string, max = 120) {
   const t = (s || "").trim();
@@ -50,7 +11,6 @@ function normalizeText(s: string, max = 120) {
 
 // ✅ If you don't have vendor logo URLs yet, use a placeholder based on vendorType
 function getVendorPlaceholderImage(vendorType: string) {
-  // you can replace these with your own assets
   const t = (vendorType || "").toLowerCase();
   if (t.includes("resort")) return "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1200&q=60";
   if (t.includes("tour")) return "https://images.unsplash.com/photo-1526772662000-3f88f10405ff?auto=format&fit=crop&w=1200&q=60";
@@ -67,7 +27,7 @@ function stableRatingFromId(id: string) {
   return Math.min(5, Math.round(r * 10) / 10);
 }
 
-function mapApiVendorToUi(v: ApiVendor): UiVendor {
+function mapApiVendorToUi(v: Vendor): Vendor {
   const firstBranch = v.branches?.[0];
   const location =
     (firstBranch?.location?.trim() || "") ||
@@ -79,19 +39,19 @@ function mapApiVendorToUi(v: ApiVendor): UiVendor {
   const description = v.aboutUs?.trim()
     ? normalizeText(v.aboutUs, 110)
     : normalizeText(
-        [...(v.services || []), ...(v.customServices || [])].slice(0, 3).join(" • "),
-        110
-      ) || "Verified travel service provider";
+      (v.services || []).slice(0, 3).join(" • "),
+      110
+    ) || "Verified travel service provider";
 
   return {
+    ...v,
     id: v._id,
     name: v.companyName || "Unnamed Vendor",
-    image: getVendorPlaceholderImage(v.vendorType),
+    image: v.logoUrl || getVendorPlaceholderImage(v.vendorType),
     rating: stableRatingFromId(v._id),
     category,
     description,
     location,
-    raw: v,
   };
 }
 
@@ -128,15 +88,13 @@ export function TrustedVendorServices({
   onViewVendors,
   onRegisterVendor,
 }: {
-  onVendorClick: (vendor: UiVendor) => void;
+  onVendorClick: (vendor: Vendor) => void;
   onViewVendors: () => void;
   onRegisterVendor: () => void;
 }) {
-  const [vendors, setVendors] = useState<UiVendor[]>([]);
+  const [vendors, setVendors] = useState<Vendor[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
-
-  const API_URL = "http://localhost:5000/api/vendors"; // ✅ your endpoint
 
   useEffect(() => {
     let alive = true;
@@ -146,17 +104,12 @@ export function TrustedVendorServices({
         setLoading(true);
         setError("");
 
-        const res = await fetch(API_URL);
-        const data: VendorsApiResponse = await res.json();
-
-        if (!res.ok) {
-          throw new Error((data as any)?.message || "Failed to fetch vendors");
-        }
+        const data = await api.vendors.getAll();
 
         const ui = (data.vendors || []).map(mapApiVendorToUi);
         if (alive) setVendors(ui);
       } catch (e: any) {
-        if (alive) setError(e?.message || "Something went wrong");
+        if (alive) setError(e?.message || "Something went wrong. Check if backend is running.");
       } finally {
         if (alive) setLoading(false);
       }
@@ -170,7 +123,7 @@ export function TrustedVendorServices({
   const topVendors = useMemo(() => vendors.slice(0, 6), [vendors]);
 
   return (
-<div className="py-16 bg-[#96959550]">
+    <div className="py-16 bg-[#96959550]">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-12">
           <h2 className="text-4xl mb-4">Trusted Vendor Services</h2>
@@ -188,7 +141,7 @@ export function TrustedVendorServices({
           <div className="text-center py-10">
             <p className="text-red-600">{error}</p>
             <p className="text-sm text-gray-500 mt-2">
-              Check backend is running and CORS is allowed.
+              Make sure the backend is running on port 5000.
             </p>
           </div>
         )}
@@ -203,8 +156,8 @@ export function TrustedVendorServices({
               >
                 <div className="relative h-56 w-full overflow-hidden">
                   <ImageWithFallback
-                    src={vendor.image}
-                    alt={vendor.name}
+                    src={vendor.image || ""}
+                    alt={vendor.name || ""}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                     fallbackSrc="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=60"
                   />

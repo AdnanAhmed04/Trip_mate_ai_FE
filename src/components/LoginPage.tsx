@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Mail, Lock, MapPin, Plane } from "lucide-react";
 
+
 interface LoginPageProps {
   onSwitchToSignup: () => void;
   onLogin: (email: string, password: string) => Promise<void>;
@@ -19,8 +20,8 @@ export function LoginPage({ onSwitchToSignup, onLogin }: LoginPageProps) {
 
     try {
       await onLogin(email.trim(), password);
-    } catch {
-      setErrorMsg("Login failed. Please check your credentials.");
+    } catch (error: any) {
+      setErrorMsg(error.message || "Login failed. Please check your credentials.");
     } finally {
       setIsLoading(false);
     }
@@ -120,7 +121,7 @@ export function LoginPage({ onSwitchToSignup, onLogin }: LoginPageProps) {
               disabled={isLoading}
               className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? "Signing in..." : "Sign In"}
+              {isLoading ? "Logging in..." : "Login"}
             </button>
           </form>
 

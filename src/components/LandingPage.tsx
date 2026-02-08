@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { TrustedVendorServices, UiVendor } from "./TrustedVendorServices";
+import { TrustedVendorServices } from "./TrustedVendorServices";
 import {
   Hotel,
   Trees,
@@ -23,16 +23,7 @@ import { AnimatedCounter } from "./AnimatedCounter";
 import InteractiveGlobeSection from "./InteractiveGlobeSection";
 import CustomerReviewSlider from "./ReviewSlider";
 import { clsx } from 'clsx';
-
-interface Vendor {
-  id: string;
-  name: string;
-  category: string;
-  rating: number;
-  image: string;
-  location: string;
-  description: string;
-}
+import { Vendor } from "../types";
 
 interface GlobeMarker {
   id: string;
@@ -154,30 +145,28 @@ export function LandingPage({
     <div className="w-full">
       {/* Navigation Bar */}
       <nav
-  className="
+        className="
     fixed top-0 left-0 right-0 z-50
     backdrop-blur-sm h-20
     bg-white/70
     transition-all duration-300 p-0
   "
->
+      >
 
         <div className="max-w-8xl mx-auto px-6 py-4 ">
           <div className="flex items-center justify-between">
             {/* Logo */}
             <div className="flex items-center gap-2">
               <div
-                className={`text-2xl transition-colors ${
-                  scrolled ? "text-purple-600" : "text-white"
-                }`}
+                className={`text-2xl transition-colors ${scrolled ? "text-purple-600" : "text-white"
+                  }`}
               >
-              <img src="/src/navlogo.png" className={`w-15 h-32`} alt="" srcset="" />
+                <img src="/src/navlogo.png" className={`w-15 h-32`} alt="" />
 
               </div>
               <span
-                className={`text-xl transition-colors ${
-                  scrolled ? "text-gray-900" : "text-white"
-                }`}
+                className={`text-xl transition-colors ${scrolled ? "text-gray-900" : "text-white"
+                  }`}
               >
                 {/* TripPlanner */}
               </span>
@@ -186,18 +175,17 @@ export function LandingPage({
             {/* CTA Button */}
             <button
               onClick={onGetStarted}
-              className={`px-6 py-2 rounded-full transition-all ${
-                scrolled
-                  ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:shadow-lg"
-                  : "bg-white text-purple-600 hover:shadow-xl"
-              }`}
+              className={`px-6 py-2 rounded-full transition-all ${scrolled
+                ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:shadow-lg"
+                : "bg-white text-purple-600 hover:shadow-xl"
+                }`}
             >
               Get Started
             </button>
           </div>
         </div>
       </nav>
-      
+
 
       {/* Hero Section */}
       <div className="relative min-h-[700px] flex items-center pt-20">
@@ -294,15 +282,15 @@ export function LandingPage({
         </div>
 
         {/* Floating Ads - Bottom Right */}
-       <div className="absolute bottom-6 right-4 bg-gradient-to-r from-orange-500 to-red-500 text-white px-3 py-2 rounded-xl text-xs shadow-2xl backdrop-blur-sm z-20 border border-white/30 max-w-[180px] animate-bump">
-  <div className="flex items-center gap-2">
-    <span className="text-base">🎉</span>
-    <div className="text-xs leading-tight">
-      <div className="font-semibold">Special Offer</div>
-      <div>20% on Premium</div>
-    </div>
-  </div>
-</div>
+        <div className="absolute bottom-6 right-4 bg-gradient-to-r from-orange-500 to-red-500 text-white px-3 py-2 rounded-xl text-xs shadow-2xl backdrop-blur-sm z-20 border border-white/30 max-w-[180px] animate-bump">
+          <div className="flex items-center gap-2">
+            <span className="text-base">🎉</span>
+            <div className="text-xs leading-tight">
+              <div className="font-semibold">Special Offer</div>
+              <div>20% on Premium</div>
+            </div>
+          </div>
+        </div>
 
       </div>
 
@@ -415,12 +403,12 @@ export function LandingPage({
           </div>
         </div>
       </div>
-{/* <InteractiveGlobeSection/> */}
-     
+      {/* <InteractiveGlobeSection/> */}
+
 
       {/* Vendor Services Section */}
-     
-<TrustedVendorServices
+
+      <TrustedVendorServices
         onVendorClick={onVendorClick}
         onViewVendors={onViewVendors}
         onRegisterVendor={onRegisterVendor}
@@ -440,100 +428,100 @@ export function LandingPage({
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-  <div className="text-center mb-12 sm:mb-16">
-    <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-3 text-white">
-      Why Trust Us?
-    </h2>
-    <p className="text-base sm:text-lg md:text-xl text-gray-200 max-w-2xl mx-auto">
-      We're committed to providing the best travel planning experience
-    </p>
-  </div>
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-3 text-white">
+              Why Trust Us?
+            </h2>
+            <p className="text-base sm:text-lg md:text-xl text-gray-200 max-w-2xl mx-auto">
+              We're committed to providing the best travel planning experience
+            </p>
+          </div>
 
-  {/* Cards */}
-<div className=" ">
-  <div
-    className="flex justify-center gap-8"
-  >
-    {/* Card */}
-    <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 w-[200px] items-start flex-1">
-      <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center shrink-0">
-        <MessageSquare className="w-6 h-6 text-orange-600" />
-      </div>
-      <div>
-        <h3 className="font-semibold text-gray-900 mb-1">
-          Real User Reviews
-        </h3>
-        <p className="text-sm text-gray-600 leading-relaxed">
-          See what other travellers say about their experiences and get honest
-          feedback. Rated 4.8/5 by 200,000+ happy travellers.
-        </p>
-      </div>
-    </div>
-
-    <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 w-[200px]   items-start flex-1">
-      <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center shrink-0">
-        <DollarSign className="w-6 h-6 text-green-600" />
-      </div>
-      <div>
-        <h3 className="font-semibold text-gray-900 mb-1">
-          Transparent Pricing
-        </h3>
-        <p className="text-sm text-gray-600 leading-relaxed">
-          No hidden fees, just clear, straightforward service. Zero booking fees.
-        </p>
-      </div>
-    </div>
-
-    <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100  w-[200px]   items-start flex-1">
-      <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center shrink-0">
-        <Shield className="w-6 h-6 text-blue-600" />
-      </div>
-      <div>
-        <h3 className="font-semibold text-gray-900 mb-1">
-          Secure Booking
-        </h3>
-        <p className="text-sm text-gray-600 leading-relaxed">
-          Your data and payments are always protected with industry-leading security.
-        </p>
-      </div>
-    </div>
-
-    <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 fl w-[200px]   items-start flex-1">
-      <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center shrink-0">
-        <Clock className="w-6 h-6 text-purple-600" />
-      </div>
-      <div>
-        <h3 className="font-semibold text-gray-900 mb-1">
-          Exclusive Deals
-        </h3>
-        <p className="text-sm text-gray-600 leading-relaxed">
-          Enjoy special offers and discounts you won’t find elsewhere.
-        </p>
-      </div>
-    </div>
-
-    <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 w-[200px] items-start flex-1">
-      <div className="w-12 h-12 bg-fuchsia-100 rounded-xl flex items-center justify-center shrink-0">
-        <Sparkles className="w-6 h-6 text-fuchsia-600" />
-      </div>
-      <div>
-        <h3 className="font-semibold text-gray-900 mb-1">
-          AI-Powered Recommendations
-        </h3>
-        <p className="text-sm text-gray-600 leading-relaxed">
-          Get personalized travel suggestions based on your preferences and past trips.
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
-
-</div>
-     <div className='mt-12 h-[500px]'>
-                <CustomerReviewSlider />
+          {/* Cards */}
+          <div className=" ">
+            <div
+              className="flex justify-center gap-8"
+            >
+              {/* Card */}
+              <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 w-[200px] items-start flex-1">
+                <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center shrink-0">
+                  <MessageSquare className="w-6 h-6 text-orange-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">
+                    Real User Reviews
+                  </h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    See what other travellers say about their experiences and get honest
+                    feedback. Rated 4.8/5 by 200,000+ happy travellers.
+                  </p>
+                </div>
               </div>
+
+              <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 w-[200px]   items-start flex-1">
+                <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center shrink-0">
+                  <DollarSign className="w-6 h-6 text-green-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">
+                    Transparent Pricing
+                  </h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    No hidden fees, just clear, straightforward service. Zero booking fees.
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100  w-[200px]   items-start flex-1">
+                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center shrink-0">
+                  <Shield className="w-6 h-6 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">
+                    Secure Booking
+                  </h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    Your data and payments are always protected with industry-leading security.
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 fl w-[200px]   items-start flex-1">
+                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center shrink-0">
+                  <Clock className="w-6 h-6 text-purple-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">
+                    Exclusive Deals
+                  </h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    Enjoy special offers and discounts you won’t find elsewhere.
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 w-[200px] items-start flex-1">
+                <div className="w-12 h-12 bg-fuchsia-100 rounded-xl flex items-center justify-center shrink-0">
+                  <Sparkles className="w-6 h-6 text-fuchsia-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">
+                    AI-Powered Recommendations
+                  </h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    Get personalized travel suggestions based on your preferences and past trips.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div className='mt-12 h-[500px]'>
+          <CustomerReviewSlider />
+        </div>
       </div>
-         
+
 
       {/* CTA Section */}
       <div className="bg-gradient-to-r from-gray-600 to-gray-700 text-white py-16">
@@ -559,4 +547,3 @@ export function LandingPage({
   );
 }
 
-export type { Vendor };

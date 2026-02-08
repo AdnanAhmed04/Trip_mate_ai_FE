@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { X, Plus, Upload, Building2, Mail, MapPin, FileText, Tag, ArrowLeft } from "lucide-react";
+import { api } from "../services/api";
 
 interface Branch {
   id: string;
@@ -31,6 +32,11 @@ const serviceOptions = [
   "Beachfront Villa Rentals",
   "Sunset Cruises",
   "Island Hopping Tours",
+  "Travel & Tours",
+  "Event Management",
+  "Transportation",
+  "Hotel / Villa",
+  "Other"
 ];
 
 const vendorTypeOptions = [
@@ -42,12 +48,6 @@ const vendorTypeOptions = [
   "Hotel / Villa",
   "Other",
 ];
-
-const VENDOR_REGISTER_URL = "http://localhost:5000/api/vendors/register";
-
-// ✅ Put your token here for testing OR store it in localStorage after login/register
-const TEST_TOKEN =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJlYWRlclRlc3RAZXhhbXBsZS5jb20iLCJzdWIiOiI2OGIwYWU2MTk0ZjRjN2MzMzg1MjM2YmUiLCJyb2xlcyI6WyJSZWFkZXIiXSwiaWF0IjoxNzU2NDA5NTk4LCJleHAiOjE3NTY0MTMxOTh9.-gUm7z6yMVUzIc2cRVmzzhOssPk71r8tJ7I7ZuPs1VE";
 
 export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) {
   const [formData, setFormData] = useState<VendorFormData>({
@@ -154,9 +154,9 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
     return Object.keys(newErrors).length === 0;
   };
 
-  // ✅ API submit (token applied here)
+  // ✅ API submit (token handling is done in api.ts)
   const submitVendor = async (data: VendorFormData) => {
-    const token = localStorage.getItem("token") || TEST_TOKEN; // use stored token if you have it
+    // const token = localStorage.getItem("token"); // api.ts handles this
 
     const fd = new FormData();
     fd.append("companyName", data.companyName);
@@ -174,18 +174,8 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
     // IMPORTANT: multer field is uploadLogo.single("logo")
     if (data.companyLogo) fd.append("logo", data.companyLogo);
 
-    const res = await fetch(VENDOR_REGISTER_URL, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        // ❌ do not set Content-Type for FormData
-      },
-      body: fd,
-    });
-
-    const result = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(result?.message || "Vendor register failed");
-    return result;
+    // Use api service
+    return api.vendors.register(fd);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -199,10 +189,9 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
 
     try {
       setLoading(true);
-      const result = await submitVendor(filteredData);
-      alert(result?.message || "Vendor registered!");
-      // optional reset
-      // setFormData({...});
+      await submitVendor(filteredData);
+      alert("Vendor registered successfully!");
+      onBack(); // Go back after success
     } catch (err: any) {
       alert(err?.message || "Error submitting vendor");
     } finally {
@@ -250,11 +239,10 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
               {serviceOptions.map((service) => (
                 <label
                   key={service}
-                  className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                    formData.vendorServices.includes(service)
-                      ? "border-blue-500 bg-blue-50"
-                      : "border-gray-200 hover:border-blue-300"
-                  }`}
+                  className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${formData.vendorServices.includes(service)
+                    ? "border-blue-500 bg-blue-50"
+                    : "border-gray-200 hover:border-blue-300"
+                    }`}
                 >
                   <input
                     type="checkbox"

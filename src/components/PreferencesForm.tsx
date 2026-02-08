@@ -3,7 +3,7 @@ import { Search, MapPin, Calendar, Sparkles } from "lucide-react";
 import { BudgetCard } from "./BudgetCard";
 import { TravelCompanionCard } from "./TravelCompanionCard";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
-import type { Trip } from "../App";
+import type { Trip } from "../types";
 
 interface PreferencesFormProps {
   onGenerateTrip: (tripData: Omit<Trip, "id" | "createdAt" | "place">) => void;
@@ -29,15 +29,17 @@ const destinations = [
   "Machu Picchu, Peru",
 ];
 
+import { api } from "../services/api";
+
 type Budget = "cheap" | "moderate" | "luxury";
 type TravelWith = "just-me" | "couple" | "friends" | "family";
 
-const TRIPS_API = "http://localhost:5000/api/trips";
-
 export function PreferencesForm({ onGenerateTrip }: PreferencesFormProps) {
   const [destination, setDestination] = useState("");
+  const [origin, setOrigin] = useState("");
   const [showDestinations, setShowDestinations] = useState(false);
-  const [days, setDays] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [budget, setBudget] = useState<Budget | null>(null);
   const [travelWith, setTravelWith] = useState<TravelWith | null>(null);
 
@@ -48,63 +50,78 @@ export function PreferencesForm({ onGenerateTrip }: PreferencesFormProps) {
     d.toLowerCase().includes(destination.toLowerCase())
   );
 
-  const isDaysValid = days && parseInt(days) > 0 && parseInt(days) <= 365;
-  const isFormComplete = destination && isDaysValid && budget && travelWith;
-  const progress = [destination, days, budget, travelWith].filter(Boolean).length;
-  const progressPercent = (progress / 4) * 100;
+  const isFormComplete = destination && origin && startDate && endDate && budget && travelWith;
+  const progress = [destination, origin, startDate, endDate, budget, travelWith].filter(Boolean).length;
+  const progressPercent = (progress / 6) * 100;
 
   // ✅ CALL BACKEND API
-  const createTrip = async (payload: {
-    destination: string;
-    days: number;
-    budget: Budget;
-    travelWith: TravelWith;
-  }) => {
-    // If your /api/trips is protected later, this will work automatically
-    const token = localStorage.getItem("token");
-
-    const res = await fetch(TRIPS_API, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      body: JSON.stringify(payload),
-    });
-
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data?.message || "Failed to create trip");
-    return data;
+  const createTrip = async (payload: any) => {
+    return await api.trips.create(payload);
   };
 
   const handleGenerateTrip = async () => {
     setApiError("");
 
-    if (!destination || !days || !budget || !travelWith) return;
+    if (!destination || !origin || !startDate || !endDate || !budget || !travelWith) return;
 
-    const numDays = parseInt(days);
-    if (!(numDays > 0 && numDays <= 365)) return;
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diffTime = Math.abs(end.getTime() - start.getTime());
+    const numDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    const payload = {
-      destination,
-      days: numDays,
-      budget,
-      travelWith,
+    if (numDays <= 0) {
+      setApiError("End date must be later than start date");
+      return;
+    }
+
+    // Map budget enum to backend expected values
+    const budgetMap: Record<string, string> = {
+      cheap: "cheap",
+      moderate: "mid",
+      luxury: "luxury",
     };
+
+    const travelersMap: Record<string, number> = {
+      "just-me": 1,
+      couple: 2,
+      friends: 4,
+      family: 4,
+    };
+
+    // Construct the correct payload based on user provided schema
+    const apiPayload = {
+      title: `Trip to ${destination}`, // Required
+      destination: destination, // Required
+      startDate: start.toISOString(), // Required
+      endDate: end.toISOString(), // Required
+
+      travelers: travelersMap[travelWith!] || 1, // Optional
+      budgetLevel: budgetMap[budget!] || "cheap", // Optional
+      interests: [], // Optional, default empty array as not collected in form yet
+
+      // Keep original fields for UI state management in parent component if needed
+      origin: origin,
+      days: numDays,
+      travelWith: travelWith,
+      budget: budget
+    };
+
+    console.log("Sending payload:", apiPayload);
 
     try {
       setLoading(true);
 
       // ✅ send to backend
-      const created = await createTrip(payload);
+      // We ignore the response here as we just proceed to the next step, 
+      // but ideally we should use the created ID.
+      await createTrip(apiPayload);
 
       // ✅ keep your existing UI flow
-      // If backend returns the saved trip, you can use it if needed:
-      // console.log("Trip created:", created);
-
-      onGenerateTrip(payload);
+      onGenerateTrip(apiPayload as any);
     } catch (err: any) {
-      setApiError(err?.message || "Something went wrong");
+      console.error("Trip creation error:", err);
+      // Show full error message from backend if possible to help debugging
+      setApiError(err?.message || JSON.stringify(err) || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -139,7 +156,7 @@ export function PreferencesForm({ onGenerateTrip }: PreferencesFormProps) {
           <div className="max-w-md mx-auto mt-8">
             <div className="flex items-center justify-between text-sm text-gray-300 mb-2">
               <span>Complete your preferences</span>
-              <span className="text-purple-400">{progress}/4</span>
+              <span className="text-purple-400">{progress}/6</span>
             </div>
             <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
               <div
@@ -153,63 +170,96 @@ export function PreferencesForm({ onGenerateTrip }: PreferencesFormProps) {
         {/* Form */}
         <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 md:p-12 border border-gray-200">
           <div className="space-y-8">
-            {/* Destination */}
-            <div className="group">
-              <label className="flex items-center gap-2 mb-3 text-lg text-gray-900">
-                <MapPin className="w-5 h-5 text-purple-600" />
-                <span>Where would you like to go?</span>
-              </label>
-
-              <div className="relative">
+            {/* Origin and Destination */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Origin */}
+              <div className="group">
+                <label className="flex items-center gap-2 mb-3 text-lg text-gray-900">
+                  <MapPin className="w-5 h-5 text-purple-600" />
+                  <span>Starting Location</span>
+                </label>
                 <input
                   type="text"
-                  value={destination}
-                  onChange={(e) => {
-                    setDestination(e.target.value);
-                    setShowDestinations(true);
-                  }}
-                  onFocus={() => setShowDestinations(true)}
-                  placeholder="Search destinations... (e.g., Paris, Tokyo, Bali)"
-                  className="w-full border-2 border-gray-200 rounded-2xl px-5 py-4 pr-12 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all outline-none text-lg"
+                  value={origin}
+                  onChange={(e) => setOrigin(e.target.value)}
+                  placeholder="e.g., London, New York"
+                  className="w-full border-2 border-gray-200 rounded-2xl px-5 py-4 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all outline-none text-lg"
                 />
-                <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              </div>
 
-                {showDestinations && destination && filteredDestinations.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-gray-200 rounded-2xl shadow-2xl z-10 max-h-64 overflow-y-auto">
-                    {filteredDestinations.map((dest, index) => (
-                      <button
-                        key={index}
-                        onClick={() => {
-                          setDestination(dest);
-                          setShowDestinations(false);
-                        }}
-                        className="w-full text-left px-5 py-3 hover:bg-purple-50 transition-colors flex items-center gap-3 first:rounded-t-2xl last:rounded-b-2xl"
-                        type="button"
-                      >
-                        <MapPin className="w-4 h-4 text-purple-600" />
-                        <span>{dest}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
+              {/* Destination */}
+              <div className="group">
+                <label className="flex items-center gap-2 mb-3 text-lg text-gray-900">
+                  <MapPin className="w-5 h-5 text-purple-600" />
+                  <span>Where to?</span>
+                </label>
+
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={destination}
+                    onChange={(e) => {
+                      setDestination(e.target.value);
+                      setShowDestinations(true);
+                    }}
+                    onFocus={() => setShowDestinations(true)}
+                    placeholder="Search destinations... (e.g., Paris, Tokyo, Bali)"
+                    className="w-full border-2 border-gray-200 rounded-2xl px-5 py-4 pr-12 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all outline-none text-lg"
+                  />
+                  <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+
+                  {showDestinations && destination && filteredDestinations.length > 0 && (
+                    <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-gray-200 rounded-2xl shadow-2xl z-10 max-h-64 overflow-y-auto">
+                      {filteredDestinations.map((dest, index) => (
+                        <button
+                          key={index}
+                          onClick={() => {
+                            setDestination(dest);
+                            setShowDestinations(false);
+                          }}
+                          className="w-full text-left px-5 py-3 hover:bg-purple-50 transition-colors flex items-center gap-3 first:rounded-t-2xl last:rounded-b-2xl"
+                          type="button"
+                        >
+                          <MapPin className="w-4 h-4 text-purple-600" />
+                          <span>{dest}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
-            {/* Days */}
-            <div className="group">
-              <label className="flex items-center gap-2 mb-3 text-lg text-gray-900">
-                <Calendar className="w-5 h-5 text-purple-600" />
-                <span>How many days are you planning?</span>
-              </label>
 
-              <input
-                type="text"
-                value={days}
-                onChange={(e) => setDays(e.target.value.replace(/[^0-9]/g, ""))}
-                placeholder="e.g., 3, 7, 14"
-                className="w-full border-2 border-gray-200 rounded-2xl px-5 py-4 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all outline-none text-lg"
-              />
-              <p className="text-sm text-gray-500 mt-2 ml-1">Recommended: 3-14 days for best experience</p>
+            {/* Dates */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="group">
+                <label className="flex items-center gap-2 mb-3 text-lg text-gray-900">
+                  <Calendar className="w-5 h-5 text-purple-600" />
+                  <span>Start Date</span>
+                </label>
+                <input
+                  type="date"
+                  value={startDate}
+                  min={new Date().toISOString().split('T')[0]}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="w-full border-2 border-gray-200 rounded-2xl px-5 py-4 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all outline-none text-lg"
+                />
+              </div>
+
+              <div className="group">
+                <label className="flex items-center gap-2 mb-3 text-lg text-gray-900">
+                  <Calendar className="w-5 h-5 text-purple-600" />
+                  <span>End Date</span>
+                </label>
+                <input
+                  type="date"
+                  value={endDate}
+                  min={startDate || new Date().toISOString().split('T')[0]}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="w-full border-2 border-gray-200 rounded-2xl px-5 py-4 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all outline-none text-lg"
+                />
+              </div>
             </div>
 
             {/* Budget */}
@@ -302,11 +352,10 @@ export function PreferencesForm({ onGenerateTrip }: PreferencesFormProps) {
               <button
                 onClick={handleGenerateTrip}
                 disabled={!isFormComplete || loading}
-                className={`w-full py-5 rounded-2xl transition-all duration-300 flex items-center justify-center gap-3 text-lg shadow-lg ${
-                  isFormComplete && !loading
-                    ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98]"
-                    : "bg-blue-100 text-blue-600 cursor-not-allowed"
-                }`}
+                className={`w-full py-5 rounded-2xl transition-all duration-300 flex items-center justify-center gap-3 text-lg shadow-lg ${isFormComplete && !loading
+                  ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98]"
+                  : "bg-blue-100 text-blue-600 cursor-not-allowed"
+                  }`}
                 type="button"
               >
                 <Sparkles className="w-6 h-6" />
@@ -314,8 +363,8 @@ export function PreferencesForm({ onGenerateTrip }: PreferencesFormProps) {
                   {loading
                     ? "Creating trip..."
                     : isFormComplete
-                    ? "Generate My Perfect Trip"
-                    : `Complete ${4 - progress} more field${4 - progress > 1 ? "s" : ""}`}
+                      ? "Generate My Perfect Trip"
+                      : `Complete ${6 - progress} more field${6 - progress > 1 ? "s" : ""}`}
                 </span>
               </button>
 
