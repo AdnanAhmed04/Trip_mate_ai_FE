@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import { Mail, Lock, User, MapPin, Plane } from 'lucide-react';
+import { Mail, Lock, User, MapPin, Plane, ArrowLeft } from 'lucide-react';
 
 interface SignupPageProps {
   onSwitchToLogin: () => void;
   onSignup: (name: string, email: string, password: string) => Promise<void>;
+  onBack?: () => void;
 }
 
-export function SignupPage({ onSwitchToLogin, onSignup }: SignupPageProps) {
+export function SignupPage({ onSwitchToLogin, onSignup, onBack }: SignupPageProps) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -40,10 +41,19 @@ export function SignupPage({ onSwitchToLogin, onSignup }: SignupPageProps) {
       <div className="w-full max-w-6xl grid md:grid-cols-2 gap-0 bg-white rounded-2xl shadow-2xl overflow-hidden">
         {/* Left side - Signup form */}
         <div className="p-8 md:p-12 flex flex-col justify-center">
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="relative z-20 self-start flex items-center gap-2 text-gray-500 hover:text-gray-900 mb-6 transition-colors cursor-pointer"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              <span>Back</span>
+            </button>
+          )}
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-2 md:hidden">
               <Plane className="w-8 h-8 text-blue-600" />
-              <MapPin className="w-6 h-6 text-purple-600" />
+              <MapPin className="w-6 h-6 text-blue-600" />
             </div>
             <h1 className="text-3xl mb-2">Create Account</h1>
             <p className="text-gray-600">Start planning your dream trips</p>
@@ -140,7 +150,7 @@ export function SignupPage({ onSwitchToLogin, onSignup }: SignupPageProps) {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-600 text-white rounded-lg hover:from-blue-700 hover:to-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Creating Account...' : 'Create Account'}
             </button>
@@ -166,7 +176,7 @@ export function SignupPage({ onSwitchToLogin, onSignup }: SignupPageProps) {
             alt="Travel destination"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-600/90 to-blue-600/90 flex flex-col justify-center items-center text-white p-8">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-600/90 to-blue-600/90 flex flex-col justify-center items-center text-white p-8">
             <div className="flex items-center gap-2 mb-6">
               <MapPin className="w-12 h-12" />
               <Plane className="w-10 h-10" />

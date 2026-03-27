@@ -133,7 +133,7 @@ export function PlaceDetails({ place, onBack, tripDestination, onSavePlace, isAl
                 <div className="text-3xl mb-2">📸</div>
                 <div className="text-sm">Great photo opportunities</div>
               </div>
-              <div className="text-center p-4 bg-purple-50 rounded-lg">
+              <div className="text-center p-4 bg-blue-50 rounded-lg">
                 <div className="text-3xl mb-2">🗺️</div>
                 <div className="text-sm">Easy to navigate</div>
               </div>
@@ -144,11 +144,10 @@ export function PlaceDetails({ place, onBack, tripDestination, onSavePlace, isAl
               <button
                 onClick={() => onSavePlace(place)}
                 disabled={isAlreadySaved}
-                className={`px-12 py-4 rounded-lg flex items-center justify-center gap-3 transition-all text-lg ${
-                  isAlreadySaved
+                className={`px-12 py-4 rounded-lg flex items-center justify-center gap-3 transition-all text-lg ${isAlreadySaved
                     ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
                     : 'bg-black text-white hover:bg-gray-800 hover:scale-105'
-                }`}
+                  }`}
               >
                 <span>{isAlreadySaved ? 'Added to My Trips' : "Let's Go"}</span>
                 {!isAlreadySaved && <span>🚀</span>}

@@ -1,130 +1,286 @@
-import { useRef, useState } from 'react';
-import { Globe } from 'cobe'; // npm install cobe
+import "flag-icons/css/flag-icons.min.css";
+
+import React, { useEffect, useRef, useState, useMemo } from 'react';
+import createGlobe from 'cobe';
+import { api } from '../services/api';
+import { Vendor } from '../types';
+import spaceBg from '../space.png';
+
+const LOCATION_COORDINATES: Record<string, [number, number]> = {
+  "canada": [56.13, -106.34],
+  "united states": [37.09, -95.71],
+  "usa": [37.09, -95.71],
+  "uk": [55.37, -3.43],
+  "united kingdom": [55.37, -3.43],
+  "france": [46.22, 2.21],
+  "paris": [48.85, 2.35],
+  "japan": [36.20, 138.25],
+  "tokyo": [35.67, 139.65],
+  "germany": [51.16, 10.45],
+  "italy": [41.87, 12.56],
+  "rome": [41.90, 12.49],
+  "spain": [40.46, -3.74],
+  "australia": [-25.27, 133.77],
+  "sydney": [-33.86, 151.20],
+  "india": [20.59, 78.96],
+  "china": [35.86, 104.19],
+  "brazil": [-14.23, -51.92],
+  "mexico": [23.63, -102.55],
+  "south africa": [-30.55, 22.93],
+  "dubai": [25.20, 55.27],
+  "uae": [23.42, 53.84],
+  "europe": [54.52, 15.25],
+  "asia": [34.04, 100.61],
+  "north america": [54.52, -105.25],
+  "south america": [-8.78, -55.49],
+  "africa": [8.78, 34.50],
+  "new york": [40.71, -74.00],
+  "london": [51.50, -0.12],
+  "cape town": [-33.92, 18.42],
+  "bali": [-8.40, 115.18],
+  "peru": [-9.19, -75.01],
+  "sharjah": [25.34, 55.42],
+  "pakistan": [30.37, 69.34],
+  "karachi": [24.86, 67.00],
+  "delhi": [28.70, 77.10],
+  "toronto": [43.65, -79.38],
+  "oman": [21.51, 55.92],
+  "muscat": [23.58, 58.40],
+  "singapore": [1.35, 103.81]
+};
+
+const matchLocation = (location: string): [number, number] | null => {
+  const normalized = location.toLowerCase();
+  for (const [key, coords] of Object.entries(LOCATION_COORDINATES)) {
+    if (normalized.includes(key)) {
+      return coords;
+    }
+  }
+  return null;
+};
 
 const InteractiveGlobeSection = () => {
-  const [hoveredMarker, setHoveredMarker] = useState(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const pointerInteracting = useRef<number | null>(null);
+  const pointerInteractionMovement = useRef(0);
+  const phiRef = useRef(0);
 
-  // Example marker data - adjust positions in spherical coordinates (phi, theta)
-  const markers = [
-    { id: 1, label: 'Paris • Four Seasons Hotel George V', type: 'hotel', phi: 0.75, theta: 0.2 },
-    { id: 2, label: 'Tokyo • Aman Tokyo', type: 'hotel', phi: 1.05, theta: -0.4 },
-    { id: 3, label: 'Santorini • Canaves Oia Suites', type: 'hotel', phi: 0.9, theta: 0.45 },
-    { id: 4, label: 'Machu Picchu • Peru', type: 'attraction', phi: -0.3, theta: -1.1 },
-    { id: 5, label: 'Bora Bora • Four Seasons Resort', type: 'hotel', phi: -0.45, theta: -0.7 },
-    { id: 6, label: 'Cape Town • Table Mountain', type: 'attraction', phi: -0.8, theta: 0.6 },
-  ];
+  const [vendors, setVendors] = useState<Vendor[]>([]);
 
-  const globeRef = useRef();
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const data = await api.vendors.getAll();
+        if (alive && data.vendors) {
+          setVendors(data.vendors);
+        }
+      } catch (e) {
+        console.error("Failed to load vendors for globe", e);
+      }
+    })();
+    return () => { alive = false; };
+  }, []);
+
+  const markers = useMemo(() => {
+    const plotted: { location: [number, number], size: number }[] = [];
+    vendors.forEach(v => {
+      const locations = v.serviceLocations?.length
+        ? v.serviceLocations
+        : [v.branches?.[0]?.location || v.city || "global"];
+
+      locations.forEach(loc => {
+        const coords = matchLocation(loc);
+        if (coords) {
+          plotted.push({ location: coords, size: 0.05 });
+        }
+      });
+    });
+
+    // Always keep 30 static pins populated as requested
+    const staticPins: [number, number][] = [
+      [25.20, 55.27],   // Dubai
+      [25.34, 55.42],   // Sharjah
+      [24.86, 67.00],   // Karachi, Pakistan
+      [28.70, 77.10],   // Delhi, India
+      [43.65, -79.38],  // Toronto, Canada
+      [23.58, 58.40],   // Muscat, Oman
+      [-33.86, 151.20], // Sydney, Australia
+      [40.71, -74.00],  // New York, USA
+      [51.50, -0.12],   // London, UK
+      [1.35, 103.81],   // Singapore
+
+      // Additional 20
+      [35.67, 139.65],  // Tokyo, Japan
+      [48.85, 2.35],    // Paris, France
+      [41.90, 12.49],   // Rome, Italy
+      [40.41, -3.70],   // Madrid, Spain
+      [52.52, 13.40],   // Berlin, Germany
+      [-33.92, 18.42],  // Cape Town, SA
+      [30.04, 31.23],   // Cairo, Egypt
+      [-22.90, -43.17], // Rio de Janeiro, Brazil
+      [-34.60, -58.38], // Buenos Aires, Argentina
+      [19.43, -99.13],  // Mexico City, Mexico
+      [34.05, -118.24], // Los Angeles, USA
+      [49.28, -123.12], // Vancouver, Canada
+      [37.56, 126.97],  // Seoul, South Korea
+      [39.90, 116.40],  // Beijing, China
+      [13.75, 100.50],  // Bangkok, Thailand
+      [3.13, 101.68],   // Kuala Lumpur, Malaysia
+      [41.00, 28.97],   // Istanbul, Turkey
+      [24.71, 46.67],   // Riyadh, Saudi Arabia
+      [19.07, 72.87],   // Mumbai, India
+      [-36.84, 174.76], // Auckland, New Zealand
+
+      // Pakistan Northern Areas & Tourist Spots
+      [33.90, 73.39],   // Murree
+      [35.29, 75.63],   // Skardu
+      [36.31, 74.65],   // Hunza
+      [35.92, 74.30],   // Gilgit
+      [35.22, 72.42],   // Swat
+      [34.90, 73.65],   // Naran
+      [35.85, 71.78]    // Chitral
+    ];
+
+    staticPins.forEach(coords => {
+      plotted.push({ location: coords, size: 0.05 });
+    });
+
+    return plotted;
+  }, [vendors]);
+
+  useEffect(() => {
+    if (!canvasRef.current) return;
+
+    let width = 0;
+    let currentPhi = 0;
+
+    // Setup resize observer
+    const onResize = () => {
+      if (canvasRef.current) {
+        width = canvasRef.current.offsetWidth;
+      }
+    };
+    window.addEventListener('resize', onResize);
+    onResize();
+
+    const globe = createGlobe(canvasRef.current, {
+      devicePixelRatio: 2,
+      width: width * 2,
+      height: width * 1.75,
+      phi: 0,
+      theta: 0.15, // Realistic 3D tilt
+      dark: 0,
+      diffuse: 1.5, // Stronger spherical lighting
+      mapSamples: 24000, // Higher resolution landmasses
+      mapBrightness: 4, // Deep contrast
+      baseColor: [0.15, 0.4, 0.75], // Professional corporate blue land
+      markerColor: [1, 0.4, 0.1], // High contrast orange/red pins
+      glowColor: [0.85, 0.9, 1], // Subtle atmospheric edge glow
+      markers: markers,
+      onRender: (state) => {
+        if (!pointerInteracting.current) {
+          currentPhi += 0.003;
+        }
+        state.phi = currentPhi + pointerInteractionMovement.current;
+      }
+    });
+
+    return () => {
+      globe.destroy();
+      window.removeEventListener('resize', onResize);
+    };
+  }, [markers]);
 
   return (
-   {/* Interactive Globe Section - Refined & Fully Interactive */}
-<section className="py-24 bg-gradient-to-b from-gray-50 to-white">
-  <div className="max-w-7xl mx-auto px-6">
-    <div className="text-center mb-14">
-      <h2 className="text-5xl font-bold text-gray-900 mb-4">
-        Discover the World’s Finest Destinations
-      </h2>
-      <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-        Drag to rotate • Scroll to zoom • Hover markers for luxury hotels and iconic attractions
-      </p>
-    </div>
+    <section
+      style={{ backgroundImage: `url(${spaceBg})` }}
+      className="bg-cover bg-center bg-no-repeat py-12"
+    >
+      <div className="max-w-7xl h-screen mx-auto px-6">
+        <div className="text-center pt-8 mb-4">
+          <h2 className="text-5xl font-bold text-white mb-4">
+            Global Vendor Network
+          </h2>
+          <p className="text-xl text-white max-w-3xl mx-auto">
+            Discover active vendors offering services across different locations worldwide
+          </p>
+        </div>
 
-    {/* Globe Container */}
-    <div className="relative mx-auto max-w-4xl">
-      <div className="aspect-square bg-white rounded-3xl shadow-2xl overflow-hidden">
-        <div 
-          ref={globeRef}
-          className="w-full h-full cursor-grab active:cursor-grabbing select-none"
-          style={{ touchAction: 'none' }}
-        >
-          {/* Earth */}
-          <div 
-            className="absolute inset-0 rounded-full bg-cover bg-center"
-            style={{
-              backgroundImage: 'ur[](https://unpkg.com/world-globe-texture@0.1.0/earth-blue-marble.jpg)',
-              transform: `rotateY(${rotation}deg) scale(${zoom})`,
-              transition: isDragging ? 'none' : 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-            }}
-          />
-          
-          {/* Clouds Layer */}
-          <div 
-            className="absolute inset-0 rounded-full bg-cover bg-center opacity-70 mix-blend-screen pointer-events-none"
-            style={{
-              backgroundImage: 'ur[](https://unpkg.com/world-globe-texture@0.1.0/clouds.png)',
-              transform: `rotateY(${rotation * 0.95}deg) scale(${zoom})`,
-              transition: isDragging ? 'none' : 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-            }}
-          />
-
-          {/* Atmospheric Glow */}
-          <div className="absolute inset-0 rounded-full shadow-2xl shadow-cyan-500/30 pointer-events-none" />
-          <div className="absolute -inset-8 rounded-full bg-gradient-radial from-cyan-400/20 to-transparent blur-3xl pointer-events-none" />
-
-          {/* Interactive Markers */}
-          {globeMarkers.map((marker) => (
-            <div
-              key={marker.id}
-              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer z-10"
-              style={{
-                top: marker.position.top,
-                left: marker.position.left,
-                transform: `translate(-50%, -50%) scale(${zoom})`,
-              }}
-              onMouseEnter={() => setHoveredMarker(marker.id)}
-              onMouseLeave={() => setHoveredMarker(null)}
-            >
-              <div className="relative">
-                <div className="absolute inset-0 rounded-full bg-white/60 animate-ping" 
-                     style={{ animationDuration: '2.5s' }} />
-                <div className={`relative w-12 h-12 rounded-full flex items-center justify-center shadow-2xl border-4 border-white 
-                  ${marker.type === "hotel" 
-                    ? "bg-gradient-to-br from-rose-600 to-rose-800" 
-                    : "bg-gradient-to-br from-amber-500 to-orange-600"}`}>
-                  {marker.type === "hotel" ? 
-                    <Hotel className="w-7 h-7 text-white" /> : 
-                    <MapPin className="w-7 h-7 text-white" />
+        <div className="flex  lg:flex-row items-center justify-between  w-full">
+          {/* Globe Container - Left */}
+          <div className="relative w-full lg:w-3/5 flex justify-center h-[620px] lg:h-[700px]">
+            <div className="w-full h-full bg-transparent overflow-hidden flex items-center justify-center">
+              <canvas
+                ref={canvasRef}
+                className="w-full h-full cursor-grab active:cursor-grabbing"
+                style={{ width: '100%', height: '80%', aspectRatio: '1/1', touchAction: 'none' }}
+                onPointerDown={(e) => {
+                  pointerInteracting.current = e.clientX - pointerInteractionMovement.current;
+                  if (canvasRef.current) canvasRef.current.style.cursor = 'grabbing';
+                }}
+                onPointerUp={() => {
+                  pointerInteracting.current = null;
+                  if (canvasRef.current) canvasRef.current.style.cursor = 'grab';
+                }}
+                onPointerOut={() => {
+                  pointerInteracting.current = null;
+                  if (canvasRef.current) canvasRef.current.style.cursor = 'grab';
+                }}
+                onMouseMove={(e) => {
+                  if (pointerInteracting.current !== null) {
+                    const delta = e.clientX - pointerInteracting.current;
+                    pointerInteractionMovement.current = delta * 0.01;
                   }
-                </div>
+                }}
+                onTouchMove={(e) => {
+                  if (pointerInteracting.current !== null && e.touches[0]) {
+                    const delta = e.touches[0].clientX - pointerInteracting.current;
+                    pointerInteractionMovement.current = delta * 0.01;
+                  }
+                }}
+              />
+            </div>
+          </div>
 
-                {/* Elegant Tooltip */}
-                {hoveredMarker === marker.id && (
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-5 px-6 py-3 bg-gray-900 text-white rounded-2xl shadow-2xl whitespace-nowrap border border-gray-700">
-                    <p className="font-semibold text-base">{marker.label}</p>
-                    <p className="text-sm text-gray-300">{marker.subtitle}</p>
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1.5 border-8 border-transparent border-t-gray-900" />
-                  </div>
-                )}
+          {/* Legend / Country List - Right */}
+          <div className="w-full lg:w-2/5 h-[400px] lg:h-[600px] flex flex-col">
+            <div className=" h-full flex flex-col">
+              <h3 className="text-2xl font-bold text-white mb-2">Service Availability</h3>
+              <p className="text-white mb-6">Our trusted vendors currently operate across these major destinations.</p>
+
+
+              <div>
+                <div className="flex-1 overflow-y-auto ">
+                  <ul className="space-y-3 text-white">
+                    {[
+                      { name: "UAE", code: "ae" },
+                      { name: "Pakistan", code: "pk" },
+                      { name: "Thailand", code: "th" },
+                      { name: "UK", code: "gb" },
+                      { name: "France", code: "fr" },
+                      { name: "USA", code: "us" },
+                      { name: "Canada", code: "ca" },
+                      { name: "Australia", code: "au" },
+                      { name: "Singapore", code: "sg" },
+                      { name: "South Africa", code: "za" }
+                    ].map((loc, i) => (
+                      <li
+                        key={i}
+                        className="flex items-center gap-3 font-medium hover:text-blue-600 transition-colors "
+                      >
+                        <span className={`fi fi-${loc.code} w-5 h-4 rounded-sm shadow-sm`}></span>
+                        <span>{loc.name}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </div>
-          ))}
+          </div>
         </div>
       </div>
-    </div>
-
-    {/* Legend */}
-    <div className="flex justify-center gap-12 mt-12 text-gray-700">
-      <div className="flex items-center gap-4">
-        <div className="w-12 h-12 bg-gradient-to-br from-rose-600 to-rose-800 rounded-full flex items-center justify-center border-4 border-white shadow-xl">
-          <Hotel className="w-6 h-6 text-white" />
-        </div>
-        <div>
-          <p className="font-semibold">Luxury Hotels</p>
-          <p className="text-sm text-gray-500">Handpicked 5-star stays</p>
-        </div>
-      </div>
-      <div className="flex items-center gap-4">
-        <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-full flex items-center justify-center border-4 border-white shadow-xl">
-          <MapPin className="w-6 h-6 text-white" />
-        </div>
-        <div>
-          <p className="font-semibold">Iconic Attractions</p>
-          <p className="text-sm text-gray-500">Must-see experiences</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+    </section>
   );
 };
 

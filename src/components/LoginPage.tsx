@@ -1,13 +1,14 @@
 import { useState, type FormEvent } from "react";
-import { Mail, Lock, MapPin, Plane } from "lucide-react";
+import { Mail, Lock, MapPin, Plane, ArrowLeft } from "lucide-react";
 
 
 interface LoginPageProps {
   onSwitchToSignup: () => void;
   onLogin: (email: string, password: string) => Promise<void>;
+  onBack?: () => void;
 }
 
-export function LoginPage({ onSwitchToSignup, onLogin }: LoginPageProps) {
+export function LoginPage({ onSwitchToSignup, onLogin, onBack }: LoginPageProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +31,7 @@ export function LoginPage({ onSwitchToSignup, onLogin }: LoginPageProps) {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
       <div className="w-full max-w-6xl grid md:grid-cols-2 bg-white rounded-2xl shadow-2xl overflow-hidden">
-        {/* Left side - Image and branding */}
+        {/* Left side - Image and brandinsg */}
         <div className="relative min-h-[320px] md:min-h-0">
           <img
             src="https://images.unsplash.com/photo-1654693289021-3ff2c9df4092?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0cmF2ZWwlMjBkZXN0aW5hdGlvbiUyMGFlcmlhbHxlbnwxfHx8fDE3NjU4MjkzMzh8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
@@ -38,7 +39,7 @@ export function LoginPage({ onSwitchToSignup, onLogin }: LoginPageProps) {
             className="w-full h-full object-cover"
           />
 
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-600/90 to-purple-600/90 flex flex-col justify-center items-center text-white p-8">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-600/90 to-blue-600/90 flex flex-col justify-center items-center text-white p-8">
             <div className="flex items-center gap-2 mb-6">
               <Plane className="w-12 h-12" />
               <MapPin className="w-10 h-10" />
@@ -52,10 +53,19 @@ export function LoginPage({ onSwitchToSignup, onLogin }: LoginPageProps) {
 
         {/* Right side - Login form */}
         <div className="p-8 md:p-12 flex flex-col justify-center">
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="relative z-20 self-start flex items-center gap-2 text-gray-500 hover:text-gray-900 mb-6 transition-colors cursor-pointer"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              <span>Back</span>
+            </button>
+          )}
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-2 md:hidden">
               <Plane className="w-8 h-8 text-blue-600" />
-              <MapPin className="w-6 h-6 text-purple-600" />
+              <MapPin className="w-6 h-6 text-blue-600" />
             </div>
             <h1 className="text-3xl mb-2">Sign In</h1>
             <p className="text-gray-600">Access your trip planning dashboard</p>
@@ -119,7 +129,7 @@ export function LoginPage({ onSwitchToSignup, onLogin }: LoginPageProps) {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-600 text-white rounded-lg hover:from-blue-700 hover:to-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? "Logging in..." : "Login"}
             </button>

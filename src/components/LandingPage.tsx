@@ -37,9 +37,18 @@ interface LandingPageProps {
   onGetStarted: () => void;
   onViewVendors?: () => void;
   onRegisterVendor?: () => void;
+  onMyTrips?: () => void;
+  onLeaveFeedback?: () => void;
 }
 
 
+
+const LANGUAGES = [
+  { code: 'en', name: 'English', flag: 'gb' },
+  { code: 'ar', name: 'العربية', flag: 'sa' },
+  { code: 'es', name: 'Español', flag: 'es' },
+  { code: 'fr', name: 'Français', flag: 'fr' },
+];
 
 const globeMarkers: GlobeMarker[] = [
   {
@@ -109,7 +118,34 @@ export function LandingPage({
   onGetStarted,
   onViewVendors,
   onRegisterVendor,
+  onMyTrips,
+  onLeaveFeedback,
 }: LandingPageProps) {
+  const [currentLang, setCurrentLang] = useState('en');
+
+  useEffect(() => {
+    const match = document.cookie.match(/(^|;) ?googtrans=([^;]*)(;|$)/);
+    if (match && match[2]) {
+      const parts = match[2].split('/');
+      const code = parts[parts.length - 1];
+      if (code && LANGUAGES.some(l => l.code === code)) {
+        setCurrentLang(code);
+      }
+    }
+  }, []);
+
+  const handleLanguageChange = (langCode: string) => {
+    setCurrentLang(langCode);
+    if (langCode === 'en') {
+      document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=${window.location.hostname}; path=/;`;
+    } else {
+      document.cookie = `googtrans=/en/${langCode}; path=/`;
+      document.cookie = `googtrans=/en/${langCode}; domain=${window.location.hostname}; path=/`;
+    }
+    window.location.reload();
+  };
+
   const [hoveredMarker, setHoveredMarker] = useState<
     string | null
   >(null);
@@ -147,7 +183,7 @@ export function LandingPage({
       <nav
         className="
     fixed top-0 left-0 right-0 z-50
-    backdrop-blur-sm h-20
+    bg-transparent h-2
     bg-white/70
     transition-all duration-300 p-0
   "
@@ -158,7 +194,7 @@ export function LandingPage({
             {/* Logo */}
             <div className="flex items-center gap-2">
               <div
-                className={`text-2xl transition-colors ${scrolled ? "text-purple-600" : "text-white"
+                className={`text-2xl transition-colors ${scrolled ? "text-blue-600" : "text-white"
                   }`}
               >
                 <img src="/src/navlogo.png" className={`w-15 h-32`} alt="" />
@@ -167,21 +203,53 @@ export function LandingPage({
               <span
                 className={`text-xl transition-colors ${scrolled ? "text-gray-900" : "text-white"
                   }`}
-              >
-                {/* TripPlanner */}
-              </span>
+              >              </span>
             </div>
 
-            {/* CTA Button */}
-            <button
-              onClick={onGetStarted}
-              className={`px-6 py-2 rounded-full transition-all ${scrolled
-                ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:shadow-lg"
-                : "bg-white text-purple-600 hover:shadow-xl"
-                }`}
-            >
-              Get Started
-            </button>
+            <div className="flex items-center gap-4">
+
+
+
+              {/* header buttons */}
+              <button
+                onClick={onMyTrips}
+                className={`bg-white border border-gray-300 rounded-lg font-bold cursor-pointer text-gray-600 px-6 py-2 rounded-full transition-all   cursor-pointer`}
+              >
+                Past Trips
+              </button>
+
+
+              <button
+                onClick={onGetStarted}
+                className={`bg-white border border-gray-300 rounded-lg font-bold cursor-pointer text-gray-600 px-6 py-2 rounded-full transition-all   cursor-pointer`}
+
+              >
+                Get Started
+              </button>
+
+              {/* Language Dropdown */}
+              <div className="relative group flex items-center  text-black">
+                <button className={`flex items-center gap-2 transition-colors bg-white font-medium text-sm px-3 py-2 rounded-full border shadow-sm cursor-pointer ${scrolled ? 'bg-gray-50/80 hover:bg-gray-100 text-gray-700 border-gray-200' : 'bg-white/20 hover:bg-white/30  '}`}>
+                  <img src={`https://flagcdn.com/w20/${LANGUAGES.find(l => l.code === currentLang)?.flag || 'gb'}.png`} srcSet={`https://flagcdn.com/w40/${LANGUAGES.find(l => l.code === currentLang)?.flag || 'gb'}.png 2x`} width="20" alt="Flag" className="rounded-sm shadow-sm" />
+                  <span className="uppercase">{LANGUAGES.find(l => l.code === currentLang)?.code}</span>
+                  <svg className={`w-3.5 h-3.5 transition-colors ${scrolled ? 'text-gray-500 group-hover:text-gray-700' : 'text-white'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div className="absolute right-0 top-[100%] mt-2 w-32 bg-white rounded-2xl  border border-gray-100 opacity-0 invisible group-hover:opacity-100 p-2 group-hover:visible transition-all duration-200 transform origin-top-right group-hover:translate-y-0 translate-y-2 z-50">
+                  <div className="p-2 space-y-1">
+                    {LANGUAGES.map(lang => (
+                      <button
+                        key={lang.code}
+                        onClick={() => handleLanguageChange(lang.code)}
+                        className={`w-full text-center px-3 py-2 text-sm flex items-center gap-3 rounded-xl transition-colors cursor-pointer ${currentLang === lang.code ? 'bg-blue-50 text-blue-700 font-bold' : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900 font-medium'}`}
+                      >
+                        <img src={`https://flagcdn.com/w20/${lang.flag}.png`} srcSet={`https://flagcdn.com/w40/${lang.flag}.png 2x`} width="20" height="15" alt="Flag" className="rounded-sm shadow-sm" />
+                        {lang.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </nav>
@@ -196,14 +264,14 @@ export function LandingPage({
             alt="Travel destination"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-purple-900/70" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-blue-900/70" />
         </div>
 
         {/* Content */}
         <div className="relative z-10 w-full">
           <div className="max-w-7xl mx-auto px-6 py-20">
             <div className="max-w-3xl">
-              <div className="inline-block bg-white/10 backdrop-blur-sm text-white px-4 py-2 rounded-full mb-6 border border-white/20">
+              <div className="inline-block bg-white/10 bg-transparent-sm text-white px-4 py-2 rounded-full mb-6 border border-white/20">
                 <span className="flex items-center gap-2">
                   ✨ AI-Powered Travel Planning
                 </span>
@@ -211,7 +279,7 @@ export function LandingPage({
 
               <h1 className="text-4xl md:text-6xl mb-6 text-white leading-tight">
                 Your Dream Vacation
-                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
+                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-400">
                   Starts Here
                 </span>
               </h1>
@@ -226,7 +294,7 @@ export function LandingPage({
               <div className="flex flex-col sm:flex-row flex-wrap gap-4 mb-12">
                 <button
                   onClick={onGetStarted}
-                  className="bg-gradient-to-r from-purple-600 to-blue-600 w-fit text-white px-8 py-4 rounded-full hover:shadow-2xl transition-all inline-flex items-center justify-center gap-2 text-lg hover:scale-105"
+                  className="bg-gradient-to-r cursor-pointer from-blue-600 to-blue-600 w-fit text-white px-8 py-4 rounded-full hover:shadow-2xl transition-all inline-flex items-center justify-center gap-2 text-lg hover:scale-105"
                 >
                   <span>Start Planning Your Trip</span>
                   <ArrowRight className="w-5 h-5" />
@@ -235,7 +303,7 @@ export function LandingPage({
 
               {/* Animated Stats Counter */}
               <div className="grid grid-cols-3 gap-3 sm:gap-6">
-                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-6 border border-white/20">
+                <div className="bg-white/10 bg-transparent-md rounded-2xl p-4 sm:p-6 border border-white/20">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
                       <Users className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
@@ -249,10 +317,10 @@ export function LandingPage({
                   </div>
                 </div>
 
-                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-6 border border-white/20">
+                <div className="bg-white/10 bg-transparent-md rounded-2xl p-4 sm:p-6 border border-white/20">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                      <Building2 className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400" />
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                      <Building2 className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
                     </div>
                   </div>
                   <div className="text-2xl sm:text-4xl text-white mb-1">
@@ -263,7 +331,7 @@ export function LandingPage({
                   </div>
                 </div>
 
-                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-6 border border-white/20">
+                <div className="bg-white/10 bg-transparent-md rounded-2xl p-4 sm:p-6 border border-white/20">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
                       <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
@@ -282,7 +350,7 @@ export function LandingPage({
         </div>
 
         {/* Floating Ads - Bottom Right */}
-        <div className="absolute bottom-6 right-4 bg-gradient-to-r from-orange-500 to-red-500 text-white px-3 py-2 rounded-xl text-xs shadow-2xl backdrop-blur-sm z-20 border border-white/30 max-w-[180px] animate-bump">
+        <div className="absolute bottom-6 right-4 bg-gradient-to-r from-orange-500 to-red-500 text-white px-3 py-2 rounded-xl text-xs shadow-2xl bg-transparent-sm z-20 border border-white/30 max-w-[180px] animate-float">
           <div className="flex items-center gap-2">
             <span className="text-base">🎉</span>
             <div className="text-xs leading-tight">
@@ -318,7 +386,7 @@ export function LandingPage({
 
         <div className="relative max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <div className="inline-block bg-gradient-to-r from-purple-500 to-blue-500 text-white px-6 py-2 rounded-full mb-4">
+            <div className="inline-block bg-gradient-to-r from-blue-500 to-blue-500 text-white px-6 py-2 rounded-full mb-4">
               <span className="flex items-center gap-2">
                 ✨ Simple & Efficient
               </span>
@@ -335,12 +403,12 @@ export function LandingPage({
           <div className="grid gap-12 md:grid-cols-3 max-w-6xl mx-auto">
             {/* Step 1 */}
             <div className="relative">
-              <div className="absolute -top-4 -left-4 w-16 h-16 bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg">
+              <div className="absolute -top-4 -left-4 w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-600 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg">
                 1
               </div>
-              <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-8 pt-12 border border-purple-100">
+              <div className="bg-gradient-to-br from-blue-50 to-blue-50 rounded-2xl p-8 pt-12 border border-blue-100">
                 <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center mb-6 shadow-md">
-                  <MapPin className="w-7 h-7 text-purple-600" />
+                  <MapPin className="w-7 h-7 text-blue-600" />
                 </div>
                 <h3 className="text-2xl mb-3 text-gray-900">
                   Choose Your Destination
@@ -354,12 +422,12 @@ export function LandingPage({
 
             {/* Step 2 */}
             <div className="relative">
-              <div className="absolute -top-4 -left-4 w-16 h-16 bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg">
+              <div className="absolute -top-4 -left-4 w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-600 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg">
                 2
               </div>
-              <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-8 pt-12 border border-purple-100">
+              <div className="bg-gradient-to-br from-blue-50 to-blue-50 rounded-2xl p-8 pt-12 border border-blue-100">
                 <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center mb-6 shadow-md">
-                  <Sparkles className="w-7 h-7 text-purple-600" />
+                  <Sparkles className="w-7 h-7 text-blue-600" />
                 </div>
                 <h3 className="text-2xl mb-3 text-gray-900">
                   Get AI Recommendations
@@ -373,12 +441,12 @@ export function LandingPage({
 
             {/* Step 3 */}
             <div className="relative">
-              <div className="absolute -top-4 -left-4 w-16 h-16 bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg">
+              <div className="absolute -top-4 -left-4 w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-600 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg">
                 3
               </div>
-              <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-8 pt-12 border border-purple-100">
+              <div className="bg-gradient-to-br from-blue-50 to-blue-50 rounded-2xl p-8 pt-12 border border-blue-100">
                 <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center mb-6 shadow-md">
-                  <Star className="w-7 h-7 text-purple-600" />
+                  <Star className="w-7 h-7 text-blue-600" />
                 </div>
                 <h3 className="text-2xl mb-3 text-gray-900">
                   Explore & Get Ready to Go
@@ -395,7 +463,7 @@ export function LandingPage({
           <div className="text-center mt-12">
             <button
               onClick={onGetStarted}
-              className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-10 py-4 rounded-full hover:shadow-2xl transition-all inline-flex items-center gap-3 text-lg hover:scale-105"
+              className="bg-gradient-to-r cursor-pointer from-blue-600 to-blue-600 text-white px-10 py-4 rounded-full hover:shadow-2xl transition-all inline-flex items-center gap-3 text-lg hover:scale-105"
             >
               <span>Start Planning Now</span>
               <ArrowRight className="w-5 h-5" />
@@ -403,15 +471,15 @@ export function LandingPage({
           </div>
         </div>
       </div>
-      {/* <InteractiveGlobeSection/> */}
+      <InteractiveGlobeSection />
 
 
       {/* Vendor Services Section */}
 
       <TrustedVendorServices
         onVendorClick={onVendorClick}
-        onViewVendors={onViewVendors}
-        onRegisterVendor={onRegisterVendor}
+        onViewVendors={onViewVendors || (() => { })}
+        onRegisterVendor={onRegisterVendor || (() => { })}
       />
 
 
@@ -487,8 +555,8 @@ export function LandingPage({
               </div>
 
               <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 fl w-[200px]   items-start flex-1">
-                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center shrink-0">
-                  <Clock className="w-6 h-6 text-purple-600" />
+                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center shrink-0">
+                  <Clock className="w-6 h-6 text-blue-600" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-1">
@@ -518,7 +586,7 @@ export function LandingPage({
 
         </div>
         <div className='mt-12 h-[500px]'>
-          <CustomerReviewSlider />
+          <CustomerReviewSlider onLeaveFeedback={onLeaveFeedback} />
         </div>
       </div>
 
@@ -535,7 +603,7 @@ export function LandingPage({
           </p>
           <button
             onClick={onGetStarted}
-            className="bg-white text-blue-600 px-8 py-4 rounded-full hover:bg-gray-100 transition-all inline-flex items-center gap-2 text-lg shadow-lg"
+            className="bg-white cursor-pointer text-blue-600 px-8 py-4 rounded-full hover:bg-gray-100 transition-all inline-flex items-center gap-2 text-lg shadow-lg"
           >
             <span>Plan Your Trip Now</span>
             <ArrowRight className="w-5 h-5" />

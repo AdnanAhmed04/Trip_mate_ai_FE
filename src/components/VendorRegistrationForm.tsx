@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X, Plus, Upload, Building2, Mail, MapPin, FileText, Tag, ArrowLeft } from "lucide-react";
+import { X, Plus, Upload, Building2, Mail, MapPin, FileText, Tag, ArrowLeft, CheckCircle } from "lucide-react";
 import { api } from "../services/api";
 
 interface Branch {
@@ -19,6 +19,7 @@ interface VendorFormData {
   aboutUs: string;
   specialOffer: string;
   ourServices: string[];
+  serviceLocations: string[];
 }
 
 interface VendorRegistrationFormProps {
@@ -60,12 +61,15 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
     aboutUs: "",
     specialOffer: "",
     ourServices: [],
+    serviceLocations: [],
   });
 
   const [customService, setCustomService] = useState("");
+  const [customLocation, setCustomLocation] = useState("");
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleServiceToggle = (service: string) => {
     setFormData((prev) => ({
@@ -88,6 +92,23 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
       }));
       setCustomService("");
     }
+  };
+
+  const handleAddCustomLocation = () => {
+    if (customLocation.trim() && !formData.serviceLocations.includes(customLocation)) {
+      setFormData((prev) => ({
+        ...prev,
+        serviceLocations: [...prev.serviceLocations, customLocation],
+      }));
+      setCustomLocation("");
+    }
+  };
+
+  const handleRemoveLocation = (location: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      serviceLocations: prev.serviceLocations.filter((l) => l !== location),
+    }));
   };
 
   const handleAddBranch = () => {
@@ -170,6 +191,7 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
 
     // branches optional
     fd.append("branches", JSON.stringify(data.branches || []));
+    fd.append("serviceLocations", JSON.stringify(data.serviceLocations || []));
 
     // IMPORTANT: multer field is uploadLogo.single("logo")
     if (data.companyLogo) fd.append("logo", data.companyLogo);
@@ -186,24 +208,30 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
       ...formData,
       branches: formData.branches.filter((b) => b.name.trim() && b.location.trim() && b.phone.trim()),
     };
-
     try {
       setLoading(true);
+      // Step 1: Register vendor (saved as pending)
       await submitVendor(filteredData);
-      alert("Vendor registered successfully!");
-      onBack(); // Go back after success
+      
+      setLoading(false);
+      setShowSuccess(true);
+
+      // Wait 4 seconds then redirect to home
+      setTimeout(() => {
+        onBack();
+      }, 4000);
+
     } catch (err: any) {
       alert(err?.message || "Error submitting vendor");
-    } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-24 pb-8 px-4">
       <div className="max-w-4xl mx-auto">
-        <div className="mb-8">
-          <button onClick={onBack} className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors">
+        <div className="mb-8 relative z-50">
+          <button onClick={onBack} className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors cursor-pointer relative z-50">
             <ArrowLeft className="w-5 h-5" />
             <span>Back</span>
           </button>
@@ -292,6 +320,49 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
             )}
 
             {errors.vendorServices && <p className="text-red-500 text-sm mt-2">{errors.vendorServices}</p>}
+          </div>
+
+          {/* Service Locations */}
+          <div>
+            <label className="flex items-center gap-2 mb-3 text-lg text-gray-900">
+              <MapPin className="w-5 h-5 text-blue-600" />
+              <span>Service Locations (Countries/Cities)</span>
+            </label>
+            <p className="text-sm text-gray-500 mb-4">
+              Where do you operate? This helps us plot your business on our Interactive Globe!
+            </p>
+
+            <div className="flex gap-2 mb-4">
+              <input
+                type="text"
+                value={customLocation}
+                onChange={(e) => setCustomLocation(e.target.value)}
+                placeholder="e.g., Canada, Paris, Tokyo..."
+                className="flex-1 border-2 border-gray-200 rounded-2xl px-5 py-3 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleAddCustomLocation();
+                  }
+                }}
+              />
+              <button type="button" onClick={handleAddCustomLocation} className="bg-blue-600 text-white px-6 py-3 rounded-2xl hover:bg-blue-700 transition-colors">
+                Add
+              </button>
+            </div>
+
+            {formData.serviceLocations.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {formData.serviceLocations.map((location) => (
+                  <span key={location} className="bg-blue-100 text-blue-700 px-4 py-2 rounded-full flex items-center gap-2">
+                    {location}
+                    <button type="button" onClick={() => handleRemoveLocation(location)} className="hover:text-blue-900">
+                      <X className="w-4 h-4" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Branches */}
@@ -461,11 +532,45 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
               disabled={loading}
               className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-5 rounded-2xl hover:shadow-2xl transition-all text-lg hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60"
             >
-              {loading ? "Submitting..." : "Submit Registration"}
+              {loading ? "Processing..." : "Submit & Proceed to Payment"}
             </button>
           </div>
         </form>
       </div>
+
+      {/* Success Modal */}
+      {showSuccess && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+          <div className="bg-white rounded-[32px] p-8 md:p-12 shadow-2xl max-w-lg w-full relative z-[101] transform transition-all scale-100 animate-in fade-in zoom-in duration-300">
+            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-8">
+              <CheckCircle size={40} className="text-green-500" />
+            </div>
+            <h2 className="text-3xl font-black text-center mb-4 text-gray-900 leading-tight">
+              Application Received!
+            </h2>
+            <p className="text-gray-600 text-center text-lg leading-relaxed mb-8">
+              Admin is considering your services. <br/>
+              Soon you will be updated.
+            </p>
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-12 h-1 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-full bg-blue-600 animate-[loading_4s_linear_forwards]" />
+              </div>
+              <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">
+                Redirecting to home...
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      <style>{`
+        @keyframes loading {
+          0% { width: 0%; }
+          100% { width: 100%; }
+        }
+      `}</style>
     </div>
   );
 }

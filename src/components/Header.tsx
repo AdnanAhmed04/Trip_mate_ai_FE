@@ -17,23 +17,23 @@ export function Header({ isSignedIn, onCreateTrip, onMyTrips, onProfileClick, on
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-lg border-b border-gray-200 shadow-sm">
+    <header className="sticky top-0 z-50 bg-white/95   shadow-sm">
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <div 
+          <div
             onClick={onLogoClick}
             className="flex items-center gap-3 cursor-pointer group"
           >
             <div className="relative">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
                 <Plane className="w-6 h-6 text-white" />
                 {/* <img src="" alt="" srcset="" /> */}
               </div>
               <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white" />
             </div>
             <div>
-              <div className="text-xl tracking-tight bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              <div className="text-xl tracking-tight bg-gradient-to-r from-blue-600 to-blue-600 bg-clip-text text-transparent">
                 TripPlanner
               </div>
               <div className="text-xs text-gray-500">AI-Powered Travel</div>
@@ -44,22 +44,20 @@ export function Header({ isSignedIn, onCreateTrip, onMyTrips, onProfileClick, on
           <nav className="hidden md:flex items-center gap-2">
             <button
               onClick={onCreateTrip}
-              className={`px-5 py-2.5 rounded-xl transition-all duration-200 flex items-center gap-2 ${
-                currentView === 'create'
-                  ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-500/30'
-                  : 'text-gray-700 hover:bg-gray-100'
-              }`}
+              className={`px-5 py-2.5 rounded-xl transition-all cursor-pointer duration-200 flex items-center gap-2 ${currentView === 'create'
+                ? 'bg-gradient-to-r from-blue-600 to-blue-600 cursor-pointer text-white shadow-lg shadow-blue-500/30'
+                : 'text-gray-700 cursor-pointer hover:bg-gray-100'
+                }`}
             >
               <MapPin className="w-4 h-4" />
               <span>Create Trip</span>
             </button>
             <button
               onClick={onMyTrips}
-              className={`px-5 py-2.5 rounded-xl transition-all duration-200 flex items-center gap-2 ${
-                currentView === 'trips'
-                  ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-500/30'
-                  : 'text-gray-700 hover:bg-gray-100'
-              }`}
+              className={`px-5 py-2.5 rounded-xl transition-all cursor-pointer duration-200 flex items-center gap-2 ${currentView === 'trips'
+                ? 'bg-gradient-to-r from-blue-600 to-blue-600 cursor-pointer text-white shadow-lg shadow-blue-500/30'
+                : 'text-gray-700 cursor-pointer hover:bg-gray-100'
+                }`}
             >
               <span>My Trips</span>
             </button>
@@ -72,14 +70,14 @@ export function Header({ isSignedIn, onCreateTrip, onMyTrips, onProfileClick, on
                 {/* Profile Button */}
                 <button
                   onClick={onProfileClick}
-                  className="w-11 h-11 bg-gradient-to-br from-gray-900 to-gray-700 rounded-xl flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-all hover:scale-105"
+                  className="w-11 h-11 cursor-pointer bg-gradient-to-br from-gray-900 to-gray-700 rounded-xl flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-all hover:scale-105"
                 >
                   <User className="w-5 h-5" />
                 </button>
                 {/* Logout Button */}
                 <button
                   onClick={onLogoutClick}
-                  className="hidden md:block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-xl transition-colors"
+                  className="hidden md:block cursor-pointer px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-xl transition-colors"
                 >
                   Logout
                 </button>
@@ -96,7 +94,7 @@ export function Header({ isSignedIn, onCreateTrip, onMyTrips, onProfileClick, on
                 {/* Signup Button */}
                 <button
                   onClick={onSignupClick}
-                  className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl"
+                  className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-600 text-white rounded-xl hover:from-blue-700 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl"
                 >
                   Sign Up
                 </button>
@@ -121,11 +119,10 @@ export function Header({ isSignedIn, onCreateTrip, onMyTrips, onProfileClick, on
                 onCreateTrip();
                 setMobileMenuOpen(false);
               }}
-              className={`w-full px-5 py-3 rounded-xl transition-all duration-200 flex items-center gap-3 ${
-                currentView === 'create'
-                  ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg'
-                  : 'text-gray-700 hover:bg-gray-100'
-              }`}
+              className={`w-full px-5 py-3 rounded-xl transition-all duration-200 flex items-center gap-3 ${currentView === 'create'
+                ? 'bg-gradient-to-r from-blue-600 to-blue-600 text-white shadow-lg'
+                : 'text-gray-700 hover:bg-gray-100'
+                }`}
             >
               <MapPin className="w-4 h-4" />
               <span>Create Trip</span>
@@ -135,11 +132,10 @@ export function Header({ isSignedIn, onCreateTrip, onMyTrips, onProfileClick, on
                 onMyTrips();
                 setMobileMenuOpen(false);
               }}
-              className={`w-full px-5 py-3 rounded-xl transition-all duration-200 flex items-center gap-3 ${
-                currentView === 'trips'
-                  ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg'
-                  : 'text-gray-700 hover:bg-gray-100'
-              }`}
+              className={`w-full px-5 py-3 rounded-xl transition-all duration-200 flex items-center gap-3 ${currentView === 'trips'
+                ? 'bg-gradient-to-r from-blue-600 to-blue-600 text-white shadow-lg'
+                : 'text-gray-700 hover:bg-gray-100'
+                }`}
             >
               <span>My Trips</span>
             </button>
@@ -159,7 +155,7 @@ export function Header({ isSignedIn, onCreateTrip, onMyTrips, onProfileClick, on
                     onSignupClick();
                     setMobileMenuOpen(false);
                   }}
-                  className="w-full px-5 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 transition-all"
+                  className="w-full px-5 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-600 text-white hover:from-blue-700 hover:to-blue-700 transition-all"
                 >
                   Sign Up
                 </button>

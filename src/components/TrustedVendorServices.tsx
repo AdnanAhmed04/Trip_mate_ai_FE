@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { ArrowRight, Building2, MapPin, Star } from "lucide-react";
-import { api } from "../services/api";
+import { api, BASE_URL } from "../services/api";
 import { Vendor } from "../types";
 
 function normalizeText(s: string, max = 120) {
@@ -47,7 +47,9 @@ function mapApiVendorToUi(v: Vendor): Vendor {
     ...v,
     id: v._id,
     name: v.companyName || "Unnamed Vendor",
-    image: v.logoUrl || getVendorPlaceholderImage(v.vendorType),
+    image: v.logoUrl
+      ? (v.logoUrl.startsWith('http') ? v.logoUrl : `${BASE_URL}/${v.logoUrl}`)
+      : getVendorPlaceholderImage(v.vendorType),
     rating: stableRatingFromId(v._id),
     category,
     description,
@@ -123,7 +125,7 @@ export function TrustedVendorServices({
   const topVendors = useMemo(() => vendors.slice(0, 6), [vendors]);
 
   return (
-    <div className="py-16 bg-[#96959550]">
+    <div className="py-16 bg-gray-200">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-12">
           <h2 className="text-4xl mb-4">Trusted Vendor Services</h2>
@@ -205,10 +207,10 @@ export function TrustedVendorServices({
                 transition-all
                 text-base sm:text-lg
                 hover:scale-105
-                inline-flex items-center justify-center gap-2
+                inline-flex items-center justify-center gap-2 cursor-pointer
               "
             >
-              <Building2 className="w-5 h-5" />
+              <Building2 className="w-5 h-5 " />
               <span>View More Vendors</span>
             </button>
 
@@ -217,7 +219,7 @@ export function TrustedVendorServices({
               className="
                 w-fit sm:w-auto
                 bg-white
-                border-2 border-blue-600
+                border-2 border-blue-600 cursor-pointer
                 text-blue-600
                 px-6 sm:px-8
                 py-3 sm:py-4

@@ -40,10 +40,10 @@ export function VendorDetails({ vendor, onBack }: VendorDetailsProps) {
   };
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="max-w-6xl mx-auto pt-8 relative z-20">
       <button
         onClick={onBack}
-        className="flex items-center gap-2 text-gray-700 hover:text-black mb-6"
+        className="flex items-center gap-2 text-gray-700 hover:text-black mb-6 cursor-pointer relative z-20"
       >
         <ArrowLeft className="w-5 h-5" />
         <span>Back to vendors</span>
@@ -64,7 +64,7 @@ export function VendorDetails({ vendor, onBack }: VendorDetailsProps) {
                 <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                 <span className="text-sm">{vendor.rating}</span>
               </div>
-              <div className="bg-purple-600 text-white px-3 py-1 rounded-full text-sm">
+              <div className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">
                 Verified Vendor
               </div>
             </div>
@@ -87,8 +87,8 @@ export function VendorDetails({ vendor, onBack }: VendorDetailsProps) {
               <div className="text-2xl mb-1">Top</div>
               <div className="text-sm text-gray-600">Rated Service</div>
             </div>
-            <div className="bg-purple-50 rounded-lg p-6 text-center">
-              <Clock className="w-8 h-8 text-purple-600 mx-auto mb-2" />
+            <div className="bg-blue-50 rounded-lg p-6 text-center">
+              <Clock className="w-8 h-8 text-blue-600 mx-auto mb-2" />
               <div className="text-2xl mb-1">Fast</div>
               <div className="text-sm text-gray-600">Response Time</div>
             </div>
@@ -112,9 +112,9 @@ export function VendorDetails({ vendor, onBack }: VendorDetailsProps) {
               </div>
 
               {vendor.specialOffer && (
-                <div className="mt-8 bg-gradient-to-br from-purple-600 to-blue-600 text-white p-6 rounded-lg">
+                <div className="mt-8 bg-gradient-to-br from-blue-600 to-blue-600 text-white p-6 rounded-lg">
                   <h3 className="text-xl mb-2">Special Offer</h3>
-                  <p className="text-purple-100 mb-4">
+                  <p className="text-blue-100 mb-4">
                     {vendor.specialOffer}
                   </p>
                 </div>

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Search, MapPin, DollarSign, Filter, ArrowLeft, Star } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
-import { api } from "../services/api";
+import { api, BASE_URL } from "../services/api";
 import type { Vendor } from "../types";
 
 interface VendorListingProps {
@@ -53,9 +53,9 @@ function mapApiVendorToUi(v: Vendor): Vendor {
     (v.city?.trim() || "") ||
     "Location not set";
 
-  // If later your backend serves uploaded logos (logoUrl), you can use it:
-  // const image = v.logoUrl ? `http://localhost:5000/${v.logoUrl}` : getVendorPlaceholderImage(v.vendorType);
-  const image = v.logoUrl || getVendorPlaceholderImage(v.vendorType);
+  const image = v.logoUrl
+    ? (v.logoUrl.startsWith('http') ? v.logoUrl : `${BASE_URL}/${v.logoUrl}`)
+    : getVendorPlaceholderImage(v.vendorType);
 
   const services = [
     ...(v.services || []),
@@ -94,6 +94,7 @@ export function VendorListing({ onBack, onVendorClick }: VendorListingProps) {
   const [allVendors, setAllVendors] = useState<Vendor[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [visibleCount, setVisibleCount] = useState(6);
 
   useEffect(() => {
     let alive = true;
@@ -213,10 +214,18 @@ export function VendorListing({ onBack, onVendorClick }: VendorListingProps) {
 
       {/* Vendor Grid */}
       <div className="max-w-[90%] mx-auto px-4 pb-16">
-        <div className="mb-6 flex justify-items-start">
-          <p className="text-gray-600 w-[35%] flex justify-center">
-            {loading ? "Loading..." : `Showing ${filteredVendors.length} ${filteredVendors.length === 1 ? "vendor" : "vendors"}`}
+        <div className="mb-6 flex justify-between items-center px-8">
+          <p className="text-gray-600 font-bold uppercase text-[10px] tracking-widest">
+            {loading ? "Discovering services..." : `Showing ${Math.min(visibleCount, filteredVendors.length)} of ${filteredVendors.length} Verified Vendors`}
           </p>
+          {visibleCount < filteredVendors.length && (
+            <button 
+              onClick={() => setVisibleCount(filteredVendors.length)}
+              className="text-[10px] font-black text-blue-600 uppercase tracking-widest hover:underline"
+            >
+              Show All {filteredVendors.length}
+            </button>
+          )}
         </div>
 
         {!loading && error && (
@@ -236,67 +245,81 @@ export function VendorListing({ onBack, onVendorClick }: VendorListingProps) {
         ) : (
           !loading &&
           !error && (
-            <div className="flex justify-center flex-wrap gap-8">
-              {filteredVendors.map((vendor) => (
-                <div
-                  key={vendor.id}
-                  onClick={() => onVendorClick(vendor)}
-                  className="bg-white rounded-3xl shadow-lg border border-2 w-[400px] overflow-hidden hover:shadow-2xl transition-all cursor-pointer group hover:scale-[1.02]"
-                >
-                  {/* Image */}
-                  <div className="relative h-56 overflow-hidden">
-                    <ImageWithFallback
-                      src={vendor.image || ""}
-                      alt={vendor.name || ""}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
-                    {/* Price label removed if not in vendor */}
-                  </div>
+            <div className="flex flex-col items-center gap-12">
+              <div className="flex justify-center flex-wrap gap-8">
+                {filteredVendors.slice(0, visibleCount).map((vendor) => (
+                  <div
+                    key={vendor.id}
+                    onClick={() => onVendorClick(vendor)}
+                    className="bg-white rounded-3xl shadow-lg border border-2 w-[400px] overflow-hidden hover:shadow-2xl transition-all cursor-pointer group hover:scale-[1.02]"
+                  >
+                    {/* Image */}
+                    <div className="relative h-56 overflow-hidden">
+                      <ImageWithFallback
+                        src={vendor.image || ""}
+                        alt={vendor.name || ""}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      />
+                      {/* Price label removed if not in vendor */}
+                    </div>
 
-                  {/* Content */}
-                  <div className="p-6">
-                    <div className="flex items-start justify-between mb-2">
-                      <h3 className="text-2xl text-gray-900 flex-1">{vendor.name}</h3>
-                      <div className="flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded-lg">
-                        <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                        <span className="text-sm">{vendor.rating}</span>
+                    {/* Content */}
+                    <div className="p-6">
+                      <div className="flex items-start justify-between mb-2">
+                        <h3 className="text-2xl text-gray-900 flex-1">{vendor.name}</h3>
+                        <div className="flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded-lg">
+                          <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                          <span className="text-sm">{vendor.rating}</span>
+                        </div>
                       </div>
+
+                      <div className="flex items-center gap-2 text-gray-600 mb-3">
+                        <MapPin className="w-4 h-4" />
+                        <span>{vendor.location}</span>
+                      </div>
+
+                      <div className="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm mb-4">
+                        {vendor.category}
+                      </div>
+
+                      <p className="text-gray-600 mb-4 line-clamp-2">{vendor.description}</p>
+
+                      {/* Services Tags */}
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {(vendor.services || []).slice(0, 2).map((service, idx) => (
+                          <span
+                            key={idx}
+                            className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs"
+                          >
+                            {service}
+                          </span>
+                        ))}
+                        {(vendor.services || []).length > 2 && (
+                          <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs">
+                            +{(vendor.services || []).length - 2} more
+                          </span>
+                        )}
+                      </div>
+
+                      <button className="w-full bg-gradient-to-r from-blue-600 to-blue-600 text-white py-3 rounded-2xl hover:shadow-lg transition-all">
+                        View Details
+                      </button>
                     </div>
-
-                    <div className="flex items-center gap-2 text-gray-600 mb-3">
-                      <MapPin className="w-4 h-4" />
-                      <span>{vendor.location}</span>
-                    </div>
-
-                    <div className="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm mb-4">
-                      {vendor.category}
-                    </div>
-
-                    <p className="text-gray-600 mb-4 line-clamp-2">{vendor.description}</p>
-
-                    {/* Services Tags */}
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {(vendor.services || []).slice(0, 2).map((service, idx) => (
-                        <span
-                          key={idx}
-                          className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs"
-                        >
-                          {service}
-                        </span>
-                      ))}
-                      {(vendor.services || []).length > 2 && (
-                        <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs">
-                          +{(vendor.services || []).length - 2} more
-                        </span>
-                      )}
-                    </div>
-
-                    <button className="w-full bg-gradient-to-r from-blue-600 to-blue-600 text-white py-3 rounded-2xl hover:shadow-lg transition-all">
-                      View Details
-                    </button>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+
+              {visibleCount < filteredVendors.length && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setVisibleCount(prev => prev + 6);
+                  }}
+                  className="px-12 py-4 bg-white border-2 border-blue-600 text-blue-600 font-black rounded-2xl hover:bg-blue-50 transition-all shadow-xl hover:shadow-2xl active:scale-95 uppercase tracking-widest text-sm"
+                >
+                  Show More Vendors
+                </button>
+              )}
             </div>
           )
         )}
