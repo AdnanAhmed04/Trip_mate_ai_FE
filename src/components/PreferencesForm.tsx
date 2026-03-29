@@ -142,16 +142,16 @@ export function PreferencesForm({ onGenerateTrip, onBack }: PreferencesFormProps
   return (
     <div className="relative">
       {/* Background Image with Overlay */}
-      <div className="fixed inset-0 -z-10">
+      <div className="fixed inset-0 ">
         <ImageWithFallback
-          src="https://images.unsplash.com/photo-1595234336271-178875797b4d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0cmF2ZWwlMjBwbGFubmluZyUyMHdvcmtzcGFjZSUyMGRlc2t8ZW58MXx8fHwxNzY0Nzc4NzczfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+          src="https://images.pexels.com/photos/33856126/pexels-photo-33856126.jpeg"
           alt="Travel planning background"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-900/85 via-black/80 to-gray-900/85" />
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-100 via-gray-50 to-gray-100" />
       </div>
 
-      <div className="max-w-5xl mx-auto animate-fade-in relative z-50 pt-12 pb-8">
+      <div className="max-w-7xl  mx-auto animate-fade-in relative z-500 pt-12 pb-8">
         {onBack && (
           <button
             onClick={onBack}
@@ -189,7 +189,7 @@ export function PreferencesForm({ onGenerateTrip, onBack }: PreferencesFormProps
         </div>
 
         {/* Form */}
-        <div className="bg-white/95 bg-transparent-sm rounded-3xl shadow-2xl p-8 md:p-12 border border-gray-200">
+        <div className=" bg-gray-500/40 backdrop-blur-sm rounded-3xl shadow-2xl p-8 md:p-12 border border-gray-200">
           <div className="space-y-8">
             {/* Origin and Destination */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

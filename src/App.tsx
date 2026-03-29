@@ -89,7 +89,7 @@ function App() {
       api.payments.getSuccessInfo(paymentSessionId)
         .then((res) => {
           if (res.user) {
-             localStorage.setItem('user', JSON.stringify(res.user));
+            localStorage.setItem('user', JSON.stringify(res.user));
           }
         })
         .catch((err) => console.error('Trip payment verification failed:', err));
@@ -157,56 +157,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-white">
-      <nav className="fixed top-0 left-0 right-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center cursor-pointer" onClick={() => setCurrentView('landing')}>
-            </div>
 
-            <div className="hidden md:flex items-center space-x-8">
-              <button onClick={() => setCurrentView('landing')} className="text-gray-600 hover:text-black transition-colors flex-shrink-0">Home</button>
-              <button onClick={() => setCurrentView('vendor-listing')} className="text-gray-600 hover:text-black transition-colors flex-shrink-0">Vendors</button>
-              <button onClick={() => setCurrentView('trip-planner')} className="text-gray-600 hover:text-black transition-colors flex-shrink-0">Trip Planner</button>
-              
-              <div className="relative group pt-4 pb-4 -my-4 flex items-center">
-                <button className="flex items-center gap-2 text-gray-600 hover:text-black transition-colors font-medium text-sm bg-gray-50/50 hover:bg-gray-100 px-3 py-1.5 rounded-full border border-gray-100">
-                  <img src={`https://flagcdn.com/w20/${LANGUAGES.find(l => l.code === currentLang)?.flag || 'gb'}.png`} width="20" alt="Flag" className="rounded-sm shadow-sm" />
-                  <span className="uppercase">{LANGUAGES.find(l => l.code === currentLang)?.code}</span>
-                  <svg className="w-3.5 h-3.5 text-gray-400 group-hover:text-gray-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
-                <div className="absolute right-0 top-[100%] mt-0 w-36 bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right group-hover:translate-y-0 translate-y-2 z-50">
-                  <div className="p-2 space-y-1">
-                    {LANGUAGES.map(lang => (
-                      <button 
-                        key={lang.code}
-                        onClick={() => setCurrentLang(lang.code)}
-                        className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2.5 rounded-xl transition-colors ${currentLang === lang.code ? 'bg-blue-50 text-blue-700 font-bold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 font-medium'}`}
-                      >
-                        <img src={`https://flagcdn.com/w20/${lang.flag}.png`} width="20" alt="Flag" className="rounded-sm shadow-sm" />
-                        {lang.name}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {isSignedIn ? (
-                <div className="flex items-center gap-4">
-                  <span className="text-sm font-medium text-gray-700">Welcome!</span>
-                  <button onClick={() => setCurrentView('feedback')} className="text-gray-600 hover:text-black transition-colors font-medium text-sm">Feedback</button>
-                  <button onClick={handleLogout} className="bg-gray-100 text-gray-800 px-4 py-2 rounded-full hover:bg-gray-200 transition-all font-medium text-sm">log out</button>
-                </div>
-              ) : (
-                <div className="flex items-center gap-4">
-                  <button onClick={() => { setPendingView('feedback'); setCurrentView('login'); }} className="text-gray-600 hover:text-black transition-colors font-medium text-sm mr-2">Feedback</button>
-                  <button onClick={() => setCurrentView('login')} className="text-gray-600 hover:text-black transition-colors font-medium">Log in</button>
-                  <button onClick={() => setCurrentView('signup')} className="bg-black text-white px-4 py-2 rounded-full hover:bg-gray-800 transition-all font-medium text-sm">Sign up</button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </nav>
 
       <main className="pt-16">
         {currentView === 'landing' && (
@@ -283,16 +234,16 @@ function App() {
 
         {currentView === 'trip-payment-success' && (
           <div className="min-h-[80vh] flex items-center justify-center px-4">
-             <div className="bg-white p-8 md:p-12 rounded-3xl shadow-xl max-w-lg w-full text-center border border-gray-100">
-                <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <svg className="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                </div>
-                <h2 className="text-3xl font-black mb-4 text-gray-900">Payment Successful!</h2>
-                <p className="text-gray-600 mb-8 text-lg">You now have unlimited access to generate trips.</p>
-                <button onClick={() => setCurrentView('trip-planner-form')} className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
-                    Start Planning Your Next Trip
-                </button>
-             </div>
+            <div className="bg-white p-8 md:p-12 rounded-3xl shadow-xl max-w-lg w-full text-center border border-gray-100">
+              <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg className="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+              </div>
+              <h2 className="text-3xl font-black mb-4 text-gray-900">Payment Successful!</h2>
+              <p className="text-gray-600 mb-8 text-lg">You now have unlimited access to generate trips.</p>
+              <button onClick={() => setCurrentView('trip-planner-form')} className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
+                Start Planning Your Next Trip
+              </button>
+            </div>
           </div>
         )}
 
