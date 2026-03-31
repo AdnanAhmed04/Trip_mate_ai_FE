@@ -3516,3 +3516,33 @@ html {
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+@keyframes blink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes customBounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.blink-bounce {
+  animation: customBounce 0.5s ease-in-out infinite,
+    blink 2.5s infinite;
+}

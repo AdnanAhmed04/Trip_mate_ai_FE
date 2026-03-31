@@ -350,12 +350,12 @@ export function LandingPage({
         </div>
 
         {/* Floating Ads - Bottom Right */}
-        <div className="absolute bottom-6 right-4 bg-gradient-to-r from-orange-500 to-red-500 text-white px-3 py-2 rounded-xl text-xs shadow-2xl bg-transparent-sm z-20 border border-white/30 max-w-[180px] animate-float">
+        <div className="blink-bounce absolute bottom-[80px] right-4 bg-gradient-to-r from-orange-500 to-red-500 text-white px-3 py-2 rounded-xl text-xs shadow-2xl z-20 border border-white/30 max-w-[180px]">
           <div className="flex items-center gap-2">
             <span className="text-base">🎉</span>
             <div className="text-xs leading-tight">
-              <div className="font-semibold">Special Offer</div>
-              <div>20% on Premium</div>
+              <div className="font-semibold">20% Off Premium</div>
+              <div>for First <b className="text-white">50</b> Members</div>
             </div>
           </div>
         </div>

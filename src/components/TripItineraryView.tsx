@@ -409,8 +409,41 @@ export function TripItineraryView({ trip, onBack }: TripItineraryViewProps) {
                                     </h2>
                                     <p className="text-gray-500 font-bold text-[10px] uppercase tracking-[0.2em] mt-1">Recommended for your budget</p>
                                 </div>
-                                <div className="p-3 bg-blue-50 rounded-2xl border border-blue-100/50">
-                                    <Home className="w-5 h-5 text-[#313de8]" />
+                                <div className="">
+                                    <div className="flex justify-center md:justify-end">
+                                        <button
+                                            onClick={handleSave}
+                                            disabled={saved || isSaving}
+                                            className={`px-2 py-2 rounded-xl font-bold uppercase tracking-wider transition-all duration-300 flex items-center gap-3 ${saved
+                                                ? 'bg-green-500 text-white cursor-default shadow-lg shadow-green-500/20'
+                                                : 'bg-[#313de8] hover:bg-[#252eb5] text-white hover:shadow-2xl hover:shadow-blue-500/40 hover:-translate-y-1 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0'
+                                                }`}
+                                        >
+                                            {isSaving ? (
+                                                <>
+                                                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                                    Saving...
+                                                </>
+                                            ) : saved ? (
+                                                <>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                                    Saved to Profile
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Bookmark className="w-5 h-5 fill-current" />
+                                                    {/* <img
+                                                        src='https://cdn-icons-png.freepik.com/512/5290/5290623.png?uid=R109325010&ga=GA1.1.1904773978.1767900027'
+                                                        alt='save'
+                                                        className="w-5 h-5 object-cover"
+                                                        color='text-red-500'
+                                                    /> */}
+                                                    Save to My Trips
+                                                </>
+                                            )}
+                                        </button>
+                                    </div>
+                                    {/* <Home className="w-5 h-5 text-[#313de8]" /> */}
                                 </div>
                             </div>
                             <div className="grid sm:grid-cols-2 gap-6">
@@ -564,14 +597,13 @@ export function TripItineraryView({ trip, onBack }: TripItineraryViewProps) {
                         </div>
                     </div>
                     <div className="flex justify-center md:justify-end mt-8">
-                        <button 
+                        <button
                             onClick={handleSave}
                             disabled={saved || isSaving}
-                            className={`px-8 py-4 rounded-xl font-bold uppercase tracking-wider transition-all duration-300 flex items-center gap-3 ${
-                                saved 
-                                    ? 'bg-green-500 text-white cursor-default shadow-lg shadow-green-500/20' 
-                                    : 'bg-[#313de8] hover:bg-[#252eb5] text-white shadow-xl shadow-blue-500/20 hover:shadow-2xl hover:shadow-blue-500/40 hover:-translate-y-1 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0'
-                            }`}
+                            className={`px-8 py-4 rounded-xl font-bold uppercase tracking-wider transition-all duration-300 flex items-center gap-3 ${saved
+                                ? 'bg-green-500 text-white cursor-default shadow-lg shadow-green-500/20'
+                                : 'bg-[#313de8] hover:bg-[#252eb5] text-white shadow-xl shadow-blue-500/20 hover:shadow-2xl hover:shadow-blue-500/40 hover:-translate-y-1 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0'
+                                }`}
                         >
                             {isSaving ? (
                                 <>

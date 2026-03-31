@@ -212,7 +212,7 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
       setLoading(true);
       // Step 1: Register vendor (saved as pending)
       await submitVendor(filteredData);
-      
+
       setLoading(false);
       setShowSuccess(true);
 
@@ -229,21 +229,21 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-24 pb-8 px-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-8 relative z-50">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-2 mt-8 relative z-50">
           <button onClick={onBack} className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors cursor-pointer relative z-50">
             <ArrowLeft className="w-5 h-5" />
             <span>Back</span>
           </button>
           <h1 className="text-4xl mb-2 text-gray-900">Vendor Registration</h1>
-          <p className="text-xl text-gray-600">Join our platform and reach thousands of travelers</p>
+          <p className="text-md text-gray-500">Join our platform and reach thousands of travelers</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-3xl shadow-xl p-8 space-y-8">
           {/* Company Name */}
           <div>
             <label className="flex items-center gap-2 mb-3 text-lg text-gray-900">
-              <Building2 className="w-5 h-5 text-blue-600" />
+              <Building2 className="w-5 h-5 text-gray-600" />
               <span>Company Name *</span>
             </label>
             <input
@@ -251,7 +251,7 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
               value={formData.companyName}
               onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
               placeholder="Enter your company name"
-              className="w-full border-2 border-gray-200 rounded-2xl px-5 py-4 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none"
+              className="w-full border-2 border-gray-200 rounded-2xl px-5 py-4 focus:border-gray-500 focus:ring-1 focus:ring-gray-100 transition-all outline-none"
             />
             {errors.companyName && <p className="text-red-500 text-sm mt-2">{errors.companyName}</p>}
           </div>
@@ -259,24 +259,24 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
           {/* Vendor Services */}
           <div>
             <label className="flex items-center gap-2 mb-3 text-lg text-gray-900">
-              <Tag className="w-5 h-5 text-blue-600" />
+              <Tag className="w-5 h-5 text-gray-600" />
               <span>Vendor Services * (Select at least 1)</span>
             </label>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+            <div className="grid grid-cols-4 md:grid-cols-4 gap-3 mb-4">
               {serviceOptions.map((service) => (
                 <label
                   key={service}
                   className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${formData.vendorServices.includes(service)
-                    ? "border-blue-500 bg-blue-50"
-                    : "border-gray-200 hover:border-blue-300"
+                    ? "border-gray-500 bg-gray-50"
+                    : "border-gray-200 hover:border-gray-300"
                     }`}
                 >
                   <input
                     type="checkbox"
                     checked={formData.vendorServices.includes(service)}
                     onChange={() => handleServiceToggle(service)}
-                    className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
+                    className="w-5 h-5 text-gray-600 rounded focus:ring-gray-500"
                   />
                   <span className="text-gray-900">{service}</span>
                 </label>
@@ -290,7 +290,7 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
                 value={customService}
                 onChange={(e) => setCustomService(e.target.value)}
                 placeholder="Add custom service..."
-                className="flex-1 border-2 border-gray-200 rounded-2xl px-5 py-3 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none"
+                className="flex-1 border-2 border-gray-200 rounded-2xl px-5 py-3 focus:border-gray-500 focus:ring-1 focus:ring-gray-100 transition-all outline-none"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
@@ -298,7 +298,7 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
                   }
                 }}
               />
-              <button type="button" onClick={handleAddCustomService} className="bg-blue-600 text-white px-6 py-3 rounded-2xl hover:bg-blue-700 transition-colors">
+              <button type="button" onClick={handleAddCustomService} className="bg-gray-600 text-white px-6 py-3 rounded-2xl hover:bg-gray-700 transition-colors">
                 Add
               </button>
             </div>
@@ -309,9 +309,9 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
                 {formData.vendorServices
                   .filter((s) => !serviceOptions.includes(s))
                   .map((service) => (
-                    <span key={service} className="bg-blue-100 text-blue-700 px-4 py-2 rounded-full flex items-center gap-2">
+                    <span key={service} className="bg-gray-100 text-gray-700 px-4 py-2 rounded-full flex items-center gap-2">
                       {service}
-                      <button type="button" onClick={() => handleServiceToggle(service)} className="hover:text-blue-900">
+                      <button type="button" onClick={() => handleServiceToggle(service)} className="hover:text-gray-900">
                         <X className="w-4 h-4" />
                       </button>
                     </span>
@@ -325,7 +325,7 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
           {/* Service Locations */}
           <div>
             <label className="flex items-center gap-2 mb-3 text-lg text-gray-900">
-              <MapPin className="w-5 h-5 text-blue-600" />
+              <MapPin className="w-5 h-5 text-gray-600" />
               <span>Service Locations (Countries/Cities)</span>
             </label>
             <p className="text-sm text-gray-500 mb-4">
@@ -338,7 +338,7 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
                 value={customLocation}
                 onChange={(e) => setCustomLocation(e.target.value)}
                 placeholder="e.g., Canada, Paris, Tokyo..."
-                className="flex-1 border-2 border-gray-200 rounded-2xl px-5 py-3 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none"
+                className="flex-1 border-2 border-gray-200 rounded-2xl px-5 py-3 focus:border-gray-500 focus:ring-1 focus:ring-gray-100 transition-all outline-none"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
@@ -346,7 +346,7 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
                   }
                 }}
               />
-              <button type="button" onClick={handleAddCustomLocation} className="bg-blue-600 text-white px-6 py-3 rounded-2xl hover:bg-blue-700 transition-colors">
+              <button type="button" onClick={handleAddCustomLocation} className="bg-gray-600 text-white px-6 py-3 rounded-2xl hover:bg-gray-700 transition-colors">
                 Add
               </button>
             </div>
@@ -354,9 +354,9 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
             {formData.serviceLocations.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {formData.serviceLocations.map((location) => (
-                  <span key={location} className="bg-blue-100 text-blue-700 px-4 py-2 rounded-full flex items-center gap-2">
+                  <span key={location} className="bg-gray-100 text-gray-700 px-4 py-2 rounded-full flex items-center gap-2">
                     {location}
-                    <button type="button" onClick={() => handleRemoveLocation(location)} className="hover:text-blue-900">
+                    <button type="button" onClick={() => handleRemoveLocation(location)} className="hover:text-gray-900">
                       <X className="w-4 h-4" />
                     </button>
                   </span>
@@ -368,7 +368,7 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
           {/* Branches */}
           <div>
             <label className="flex items-center gap-2 mb-3 text-lg text-gray-900">
-              <MapPin className="w-5 h-5 text-blue-600" />
+              <MapPin className="w-5 h-5 text-gray-600" />
               <span>Branches (Optional)</span>
             </label>
             <p className="text-sm text-gray-500 mb-4">
@@ -391,28 +391,28 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
                       value={branch.name}
                       onChange={(e) => handleBranchChange(branch.id, "name", e.target.value)}
                       placeholder="Branch Name *"
-                      className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none"
+                      className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 :border-gray-500 focus:ring-1 focus:ring-gray-100 transition-all outline-none" focus
                     />
                     <input
                       type="text"
                       value={branch.location}
                       onChange={(e) => handleBranchChange(branch.id, "location", e.target.value)}
                       placeholder="Branch Location *"
-                      className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none"
+                      className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-gray-500 focus:ring-1 focus:ring-gray-100 transition-all outline-none"
                     />
                     <input
                       type="tel"
                       value={branch.phone}
                       onChange={(e) => handleBranchChange(branch.id, "phone", e.target.value)}
                       placeholder="Branch Phone *"
-                      className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none"
+                      className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-gray-500 focus:ring-1 focus:ring-gray-100 transition-all outline-none"
                     />
                   </div>
                 </div>
               ))}
             </div>
 
-            <button type="button" onClick={handleAddBranch} className="mt-4 flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors">
+            <button type="button" onClick={handleAddBranch} className="mt-4 flex items-center gap-2 text-gray-600 hover:text-gray-700 transition-colors">
               <Plus className="w-5 h-5" />
               <span>Add Branch</span>
             </button>
@@ -423,14 +423,14 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
           {/* Vendor Type */}
           <div>
             <label className="flex items-center gap-2 mb-3 text-lg text-gray-900">
-              <Building2 className="w-5 h-5 text-blue-600" />
+              <Building2 className="w-5 h-5 text-gray-600" />
               <span>Vendor Type *</span>
             </label>
 
             <select
               value={formData.vendorType}
               onChange={(e) => setFormData({ ...formData, vendorType: e.target.value })}
-              className="w-full border-2 border-gray-200 rounded-2xl px-5 py-4 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none"
+              className="w-full border-2 border-gray-200 rounded-2xl px-5 py-4 focus:border-gray-500 focus:ring-1 focus:ring-gray-100 transition-all outline-none"
             >
               <option value="">Select vendor type</option>
               {vendorTypeOptions.map((type) => (
@@ -446,7 +446,7 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
           {/* Company Logo */}
           <div>
             <label className="flex items-center gap-2 mb-3 text-lg text-gray-900">
-              <Upload className="w-5 h-5 text-blue-600" />
+              <Upload className="w-5 h-5 text-gray-600" />
               <span>Company Logo * (Any image format)</span>
             </label>
 
@@ -481,7 +481,7 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
           {/* Email */}
           <div>
             <label className="flex items-center gap-2 mb-3 text-lg text-gray-900">
-              <Mail className="w-5 h-5 text-blue-600" />
+              <Mail className="w-5 h-5 text-gray-600" />
               <span>Email *</span>
             </label>
             <input
@@ -489,7 +489,7 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               placeholder="company@example.com"
-              className="w-full border-2 border-gray-200 rounded-2xl px-5 py-4 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none"
+              className="w-full border-2 border-gray-200 rounded-2xl px-5 py-4 focus:border-gray-500 focus:ring-1 focus:ring-gray-100 transition-all outline-none"
             />
             {errors.email && <p className="text-red-500 text-sm mt-2">{errors.email}</p>}
           </div>
@@ -497,32 +497,47 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
           {/* About Us */}
           <div>
             <label className="flex items-center gap-2 mb-3 text-lg text-gray-900">
-              <FileText className="w-5 h-5 text-blue-600" />
+              <FileText className="w-5 h-5 text-gray-600" />
               <span>About Us *</span>
             </label>
             <textarea
               value={formData.aboutUs}
               onChange={(e) => setFormData({ ...formData, aboutUs: e.target.value })}
-              placeholder="Tell us about your company..."
+              placeholder="Tell us about your company and services..."
               rows={6}
-              className="w-full border-2 border-gray-200 rounded-2xl px-5 py-4 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none resize-none"
+              className="w-full border-2 border-gray-200 rounded-2xl px-5 py-4 focus:border-gray-500 focus:ring-1 focus:ring-gray-100 transition-all outline-none resize-none"
             />
             {errors.aboutUs && <p className="text-red-500 text-sm mt-2">{errors.aboutUs}</p>}
           </div>
 
           {/* Special Offer */}
-          <div>
-            <label className="flex items-center gap-2 mb-3 text-lg text-gray-900">
-              <Tag className="w-5 h-5 text-blue-600" />
-              <span>Special Offer (Optional)</span>
-            </label>
-            <input
-              type="text"
-              value={formData.specialOffer}
-              onChange={(e) => setFormData({ ...formData, specialOffer: e.target.value })}
-              placeholder="e.g., 10% discount on bookings"
-              className="w-full border-2 border-gray-200 rounded-2xl px-5 py-4 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all outline-none"
-            />
+          <div className="flex justify-between gap-4">
+            <div className="w-1/2">
+              <label className="flex items-center gap-2 mb-3 text-lg text-gray-900">
+                <img className="w-12 h-10" src="https://cdn-icons-png.freepik.com/512/9023/9023509.png?uid=R109325010&ga=GA1.1.1904773978.1767900027" alt="" />
+                <span>Special Offer (Optional)</span>
+              </label>
+              <input
+                type="text"
+                value={formData.specialOffer}
+                onChange={(e) => setFormData({ ...formData, specialOffer: e.target.value })}
+                placeholder="e.g., 10% discount on bookings"
+                className="w-full border-2 border-gray-200 rounded-2xl px-5 py-4 focus:border-gray-500 focus:ring-1 focus:ring-gray-100 transition-all outline-none"
+              />
+            </div>
+            <div className="w-1/2">
+              <label className="flex items-center gap-2 mb-3 text-lg text-gray-900">
+                <img className="w-12 h-10" src="https://cdn-icons-png.freepik.com/512/16227/16227030.png?uid=R109325010&ga=GA1.1.1904773978.1767900027" alt="" />
+                <span>Add Promo Code (Optional)</span>
+              </label>
+              <input
+                type="text"
+                value={formData.specialOffer}
+                onChange={(e) => setFormData({ ...formData, specialOffer: e.target.value })}
+                placeholder="Enter promo code"
+                className="w-full border-2 border-gray-200 rounded-2xl px-5 py-4 focus:border-gray-500 focus:ring-4 focus:gray-100 transition-all outline-none"
+              />
+            </div>
           </div>
 
           {/* Submit */}
@@ -530,7 +545,7 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-5 rounded-2xl hover:shadow-2xl transition-all text-lg hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60"
+              className="w-full bg-gradient-to-r from-gray-600 to-gray-700 text-white py-5 rounded-2xl hover:shadow-2xl transition-all text-lg hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60"
             >
               {loading ? "Processing..." : "Submit & Proceed to Payment"}
             </button>
@@ -550,12 +565,12 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
               Application Received!
             </h2>
             <p className="text-gray-600 text-center text-lg leading-relaxed mb-8">
-              Admin is considering your services. <br/>
+              Admin is considering your services. <br />
               Soon you will be updated.
             </p>
             <div className="flex flex-col items-center gap-4">
               <div className="w-12 h-1 bg-gray-100 rounded-full overflow-hidden">
-                <div className="h-full bg-blue-600 animate-[loading_4s_linear_forwards]" />
+                <div className="h-full bg-gray-600 animate-[loading_4s_linear_forwards]" />
               </div>
               <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">
                 Redirecting to home...
@@ -564,7 +579,7 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
           </div>
         </div>
       )}
-      
+
       <style>{`
         @keyframes loading {
           0% { width: 0%; }
