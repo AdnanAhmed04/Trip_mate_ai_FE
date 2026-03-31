@@ -120,8 +120,19 @@ interface CustomerReviewSliderProps {
 
 const CustomerReviewSlider: React.FC<CustomerReviewSliderProps> = ({ onLeaveFeedback }) => {
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [currentIndex, setCurrentIndex] = useState<number>(0); // Type currentIndex
-  const reviewsPerPage = 3;
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [itemsPerPage, setItemsPerPage] = useState<number>(3);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) setItemsPerPage(1);
+      else if (window.innerWidth < 1024) setItemsPerPage(2);
+      else setItemsPerPage(3);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const fetchFeedbacks = async () => {
@@ -175,42 +186,35 @@ const CustomerReviewSlider: React.FC<CustomerReviewSliderProps> = ({ onLeaveFeed
     fetchFeedbacks();
   }, []);
 
-  // Function to get reviews for the current slide
-  const getCurrentReviews = (): Review[] => {
-    const start = currentIndex * reviewsPerPage;
-    const end = start + reviewsPerPage;
-    return reviews.slice(start, end);
-  };
-
   useEffect(() => {
     if (reviews.length === 0) return;
 
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => {
-        const totalPages = Math.ceil(reviews.length / reviewsPerPage);
-        return totalPages > 0 ? (prevIndex + 1) % totalPages : 0;
+        const maxIndex = Math.max(0, reviews.length - itemsPerPage);
+        return prevIndex >= maxIndex ? 0 : prevIndex + 1;
       });
     }, 3000); // Slide every 3 seconds
 
-    return () => clearInterval(interval); // Cleanup the interval on component unmount
-  }, [reviews.length]);
+    return () => clearInterval(interval);
+  }, [reviews.length, itemsPerPage]);
 
   const nextSlide = (): void => {
     setCurrentIndex((prevIndex) => {
-      const totalPages = Math.ceil(reviews.length / reviewsPerPage);
-      return totalPages > 0 ? (prevIndex + 1) % totalPages : 0;
+      const maxIndex = Math.max(0, reviews.length - itemsPerPage);
+      return prevIndex >= maxIndex ? 0 : prevIndex + 1;
     });
   };
 
   const prevSlide = (): void => {
     setCurrentIndex((prevIndex) => {
-      const totalPages = Math.ceil(reviews.length / reviewsPerPage);
-      return totalPages > 0 ? (prevIndex - 1 + totalPages) % totalPages : 0;
+      const maxIndex = Math.max(0, reviews.length - itemsPerPage);
+      return prevIndex <= 0 ? maxIndex : prevIndex - 1;
     });
   };
 
   return (
-    <div className="relative w-[70%]  sm:w-[80%] md:w-[70%] lg:w-[50%] m-auto overflow-hidden py-12  ">
+    <div className="relative  m-auto overflow-hidden py-12  ">
       <div className="flex flex-col items-center mb-8 mt-6">
         <h2 className="text-4xl text-white font-extrabold text-center mb-4">
           What People Love About Us
@@ -225,15 +229,23 @@ const CustomerReviewSlider: React.FC<CustomerReviewSliderProps> = ({ onLeaveFeed
         )}
       </div>
 
-      <div className="flex transition-transform duration-500 ease-in-out items-stretch">
-        {getCurrentReviews().map((review, index) => (
-          <div key={index} className="w-full sm:w-1/2 md:w-1/3 px-4 mb-6 flex">
-            <div className="w-full">
-              <ReviewItem review={review} />
+      <div className="overflow-hidden w-full  relative">
+        <div
+          className="flex transition-transform duration-500 ease-in-out items-stretch"
+          style={{ transform: `translateX(-${currentIndex * (100 / itemsPerPage)}%)` }}
+        >
+          {reviews.map((review, index) => (
+            <div
+              key={index}
+              className="px-4 mb-6 flex-shrink-0 flex"
+              style={{ width: `${100 / itemsPerPage}%` }}
+            >
+              <div className="w-full h-full">
+                <ReviewItem review={review} />
+              </div>
             </div>
-            <br />
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       {/* Navigation buttons */}

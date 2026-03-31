@@ -151,16 +151,15 @@ export function PreferencesForm({ onGenerateTrip, onBack }: PreferencesFormProps
         <div className="absolute inset-0 bg-gradient-to-b from-gray-100 via-gray-50 to-gray-100" />
       </div>
 
-      <div className="max-w-7xl  mx-auto animate-fade-in relative z-500 pt-12 pb-8">
-        {onBack && (
-          <button
-            onClick={onBack}
-            className="relative z-50 flex items-center gap-2  mb-8 "
-          >
-            <ArrowLeft className="w-5 h-5 cursor-pointer" />
-            <span className="cursor-pointer">Back</span>
-          </button>
-        )}
+      <div className="max-w-7xl bg-[rgba(209,213,219,0.8)] backdrop-blur-sm rounded-3xl shadow-2xl p-8 md:p-12 border border-gray-200 mx-auto animate-fade-in relative z-50 pt-6 pb-8">        {onBack && (
+        <button
+          onClick={onBack}
+          className="relative z-50 flex items-center gap-2  mb-8 "
+        >
+          <ArrowLeft className="w-5 h-5 cursor-pointer" />
+          <span className="cursor-pointer">Back</span>
+        </button>
+      )}
         {/* Hero Header */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 bg-blue-500 text-gray-600 px-4 py-2 rounded-full mb-4">

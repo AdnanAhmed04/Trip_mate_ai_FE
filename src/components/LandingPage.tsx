@@ -484,109 +484,131 @@ export function LandingPage({
 
 
       {/* Why Trust Us Section */}
-      <div className="relative py-20 overflow-hidden">
-        {/* Background Image with Overlay */}
+      <div className="relative py-16 sm:py-20 overflow-hidden">
+        {/* Background */}
         <div className="absolute inset-0">
           <ImageWithFallback
-            src="https://images.unsplash.com/photo-1742782459449-85ed928fe8ff?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0cnVzdCUyMHJlbGlhYmlsaXR5JTIwdHJhdmVsfGVufDF8fHx8MTc2NDc3ODc3M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+            src="https://images.unsplash.com/photo-1742782459449-85ed928fe8ff?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080"
             alt="Trust background"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-gray-900/85 via-black/80 to-gray-900/85" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-3 text-white">
+        {/* Content */}
+        <div className="relative mx-auto px-4 sm:px-6 lg:px-8">
+
+          {/* Heading */}
+          <div className="text-center mb-10 sm:mb-14">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-8 text-white">
               Why Trust Us?
             </h2>
-            <p className="text-base sm:text-lg md:text-xl text-gray-200 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-gray-200 max-w-2xl mb-8 mx-auto">
               We're committed to providing the best travel planning experience
             </p>
           </div>
 
-          {/* Cards */}
-          <div className=" ">
-            <div
-              className="flex justify-center gap-8"
-            >
-              {/* Card */}
-              <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 w-[200px] items-start flex-1">
-                <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center shrink-0">
-                  <MessageSquare className="w-6 h-6 text-orange-600" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">
-                    Real User Reviews
-                  </h3>
-                  <p className="text-sm text-gray-600 leading-relaxed">
-                    See what other travellers say about their experiences and get honest
-                    feedback. Rated 4.8/5 by 200,000+ happy travellers.
-                  </p>
-                </div>
-              </div>
+          {/* Cards Grid */}
+          <div className="flex justify-center mx-auto flex-wrap w-[60%]  sm:w-[80%] md:w-[80%] lg:w-[80%] gap-6">
 
-              <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 w-[200px]   items-start flex-1">
-                <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center shrink-0">
-                  <DollarSign className="w-6 h-6 text-green-600" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">
-                    Transparent Pricing
-                  </h3>
-                  <p className="text-sm text-gray-600 leading-relaxed">
-                    No hidden fees, just clear, straightforward service. Zero booking fees.
-                  </p>
-                </div>
+            {/* Card 1 */}
+            <div className="bg-white/90 backdrop-blur-sm flex-1 min-w-[250px] max-w-[320px] rounded-2xl p-4 shadow-lg border border-gray-100 flex flex-col gap-4 hover:scale-105 transition">
+              <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+                <MessageSquare className="w-6 h-6 text-orange-600" />
               </div>
-
-              <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100  w-[200px]   items-start flex-1">
-                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center shrink-0">
-                  <Shield className="w-6 h-6 text-blue-600" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">
-                    Secure Booking
-                  </h3>
-                  <p className="text-sm text-gray-600 leading-relaxed">
-                    Your data and payments are always protected with industry-leading security.
-                  </p>
-                </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">
+                  Real User Reviews
+                </h3>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  See what other travellers say about their experiences and get honest
+                  feedback. Rated 4.8/5 by 200,000+ happy travellers.
+                </p>
               </div>
+            </div>
 
-              <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 fl w-[200px]   items-start flex-1">
-                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center shrink-0">
-                  <Clock className="w-6 h-6 text-blue-600" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">
-                    Exclusive Deals
-                  </h3>
-                  <p className="text-sm text-gray-600 leading-relaxed">
-                    Enjoy special offers and discounts you won’t find elsewhere.
-                  </p>
-                </div>
+            {/* Card 2 */}
+            <div className="bg-white/90 backdrop-blur-sm flex-1 min-w-[250px] max-w-[320px] rounded-2xl p-4 shadow-lg border border-gray-100 flex flex-col gap-4 hover:scale-105 transition">
+              <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                <DollarSign className="w-6 h-6 text-green-600" />
               </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">
+                  Transparent Pricing
+                </h3>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  No hidden fees, just clear, straightforward service. Zero booking fees.
+                </p>
+              </div>
+            </div>
 
-              <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 w-[200px] items-start flex-1">
-                <div className="w-12 h-12 bg-fuchsia-100 rounded-xl flex items-center justify-center shrink-0">
-                  <Sparkles className="w-6 h-6 text-fuchsia-600" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">
-                    AI-Powered Recommendations
-                  </h3>
-                  <p className="text-sm text-gray-600 leading-relaxed">
-                    Get personalized travel suggestions based on your preferences and past trips.
-                  </p>
-                </div>
+            {/* Card 3 */}
+            <div className="bg-white/90 backdrop-blur-sm flex-1 min-w-[250px] max-w-[320px] rounded-2xl p-4 shadow-lg border border-gray-100 flex flex-col gap-4 hover:scale-105 transition">
+              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                <Shield className="w-6 h-6 text-blue-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">
+                  Secure Booking
+                </h3>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  Your data and payments are always protected with industry-leading security.
+                </p>
+              </div>
+            </div>
+
+            {/* Card 4 */}
+            <div className="bg-white/90 backdrop-blur-sm flex-1 min-w-[250px] max-w-[320px] rounded-2xl p-4 shadow-lg border border-gray-100 flex flex-col gap-4 hover:scale-105 transition">
+              <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
+                <Clock className="w-6 h-6 text-indigo-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">
+                  Exclusive Deals
+                </h3>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  Enjoy special offers and discounts you won’t find elsewhere.
+                </p>
+              </div>
+            </div>
+
+            {/* Card 5 */}
+            <div className="bg-white/90 backdrop-blur-sm flex-1 min-w-[250px] max-w-[320px] rounded-2xl p-4 shadow-lg border border-gray-100 flex flex-col gap-4 hover:scale-105 transition">
+              <div className="w-12 h-12 bg-fuchsia-100 rounded-xl flex items-center justify-center">
+                <Sparkles className="w-6 h-6 text-fuchsia-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">
+                  AI-Powered Recommendations
+                </h3>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  Get personalized travel suggestions based on your preferences and past trips.
+                </p>
+              </div>
+            </div>
+
+            {/* Card 6 */}
+            <div className="bg-white/90 backdrop-blur-sm flex-1 min-w-[250px] max-w-[320px] rounded-2xl p-4 shadow-lg border border-gray-100 flex flex-col gap-4 hover:scale-105 transition">
+              <div className="w-12 h-12 bg-fuchsia-100 rounded-xl flex items-center justify-center">
+                <Sparkles className="w-6 h-6 text-fuchsia-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">
+                  Verified Listings
+                </h3>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  Browse with confidence knowing all hotels, flights, and services are carefully verified for quality and reliability.
+                </p>
               </div>
             </div>
           </div>
-
         </div>
-        <div className='mt-12 h-[500px]'>
-          <CustomerReviewSlider onLeaveFeedback={onLeaveFeedback} />
+
+        {/* Reviews Section */}
+        <div className="relative mt-12 sm:mt-16 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-6xl mx-auto">
+            <CustomerReviewSlider onLeaveFeedback={onLeaveFeedback} />
+          </div>
         </div>
       </div>
 
