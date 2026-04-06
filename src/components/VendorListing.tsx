@@ -51,7 +51,8 @@ function mapApiVendorToUi(v: Vendor): Vendor {
   const location =
     (firstBranch?.location?.trim() || "") ||
     (v.city?.trim() || "") ||
-    "Location not set";
+    (v.serviceLocations && v.serviceLocations.length > 0 ? v.serviceLocations.join(", ").trim() : "") ||
+    "Physical office not present";
 
   const image = v.logoUrl
     ? (v.logoUrl.startsWith('http') ? v.logoUrl : `${BASE_URL}${v.logoUrl.startsWith('/') ? '' : '/'}${v.logoUrl}`)
@@ -273,9 +274,9 @@ export function VendorListing({ onBack, onVendorClick }: VendorListingProps) {
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 text-gray-600 mb-3">
-                        <MapPin className="w-4 h-4" />
-                        <span>{vendor.location}</span>
+                      <div className="flex items-center gap-2 text-gray-600 mb-3 min-w-0">
+                        <MapPin className="w-4 h-4 flex-shrink-0" />
+                        <span className="truncate">{vendor.location}</span>
                       </div>
 
                       <div className="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm mb-4">

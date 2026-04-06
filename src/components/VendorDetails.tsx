@@ -20,7 +20,7 @@ export function VendorDetails({ vendor, onBack }: VendorDetailsProps) {
   const contact = {
     phone: firstBranch?.phone || "Contact for details",
     email: vendor.email || "Contact for details",
-    address: firstBranch?.location || vendor.city || vendor.location || "Location available on request",
+    address: firstBranch?.location || vendor.city || (vendor.serviceLocations?.length ? vendor.serviceLocations.join(", ") : vendor.location) || "Physical office not present",
     whatsapp: firstBranch?.phone || ""
   };
 

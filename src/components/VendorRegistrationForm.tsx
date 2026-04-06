@@ -204,8 +204,20 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
     e.preventDefault();
     if (!validateForm()) return;
 
+    const finalServiceLocations = [...formData.serviceLocations];
+    if (customLocation.trim() && !finalServiceLocations.includes(customLocation.trim())) {
+      finalServiceLocations.push(customLocation.trim());
+    }
+
+    const finalVendorServices = [...formData.vendorServices];
+    if (customService.trim() && !finalVendorServices.includes(customService.trim())) {
+      finalVendorServices.push(customService.trim());
+    }
+
     const filteredData: VendorFormData = {
       ...formData,
+      serviceLocations: finalServiceLocations,
+      vendorServices: finalVendorServices,
       branches: formData.branches.filter((b) => b.name.trim() && b.location.trim() && b.phone.trim()),
     };
     try {
@@ -229,14 +241,49 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-24 pb-8 px-4">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-2 mt-8 relative z-50">
-          <button onClick={onBack} className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors cursor-pointer relative z-50">
-            <ArrowLeft className="w-5 h-5" />
-            <span>Back</span>
-          </button>
-          <h1 className="text-4xl mb-2 text-gray-900">Vendor Registration</h1>
-          <p className="text-md text-gray-500">Join our platform and reach thousands of travelers</p>
+      <div className="max-w-8xl mx-auto ">
+
+        <div className="mb-6 mt-8 relative z-50 rounded-2xl overflow-hidden h-[250px] md:h-[260px]">
+
+          {/* Background Image */}
+          <img
+            src="https://images.pexels.com/photos/19825310/pexels-photo-19825310.jpeg"
+            alt="travel"
+            className="absolute inset-0 w-full h-full object-cover "
+          />
+
+          {/* Gradient Overlay (better than plain black) */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/30"></div>
+
+
+
+          {/* Content */}
+          <div className="relative  z-10 px-6  text-white h-full  flex flex-col p-8">
+
+            <div className="flex flex-col justify-between">
+              {/* Back Button */}
+              <button
+                onClick={onBack}
+                className="flex items-center mt-10 gap-2 text-gray-200 hover:text-white mb-3 transition"
+              >
+                <ArrowLeft className="w-5 h-5" />
+                <span className="text-sm font-medium">Back</span>
+              </button>
+            </div>
+
+            <div>
+              {/* Heading */}
+              <h1 className="text-5xl md:text-4xl font-semibold mb-1">
+                Vendor Registration
+              </h1>
+
+              {/* Subtitle */}
+              <p className="text-gray-200 text-md mt-2">
+                Join our platform and reach thousands of travelers
+              </p>
+            </div>
+
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-3xl shadow-xl p-8 space-y-8">
@@ -253,7 +300,7 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
               placeholder="Enter your company name"
               className="w-full border-2 border-gray-200 rounded-2xl px-5 py-4 focus:border-gray-500 focus:ring-1 focus:ring-gray-100 transition-all outline-none"
             />
-            {errors.companyName && <p className="text-red-500 text-sm mt-2">{errors.companyName}</p>}
+            {errors.companyName && <p className="text-red-500  mt-2">{errors.companyName}</p>}
           </div>
 
           {/* Vendor Services */}
@@ -298,8 +345,8 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
                   }
                 }}
               />
-              <button type="button" onClick={handleAddCustomService} className="bg-gray-600 text-white px-6 py-3 rounded-2xl hover:bg-gray-700 transition-colors">
-                Add
+              <button type="button" onClick={handleAddCustomService} className="bg-gray-600 cursor-pointer px-6 py-3 rounded-2xl border-2 border-gray-200 hover:bg-gray-700 transition-colors">
+                +Add
               </button>
             </div>
 
@@ -319,7 +366,7 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
               </div>
             )}
 
-            {errors.vendorServices && <p className="text-red-500 text-sm mt-2">{errors.vendorServices}</p>}
+            {errors.vendorServices && <p className="text-red-500  mt-2">{errors.vendorServices}</p>}
           </div>
 
           {/* Service Locations */}
@@ -328,7 +375,7 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
               <MapPin className="w-5 h-5 text-gray-600" />
               <span>Service Locations (Countries/Cities)</span>
             </label>
-            <p className="text-sm text-gray-500 mb-4">
+            <p className="text-gray-500 mb-4">
               Where do you operate? This helps us plot your business on our Interactive Globe!
             </p>
 
@@ -346,8 +393,8 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
                   }
                 }}
               />
-              <button type="button" onClick={handleAddCustomLocation} className="bg-gray-600 text-white px-6 py-3 rounded-2xl hover:bg-gray-700 transition-colors">
-                Add
+              <button type="button" onClick={handleAddCustomLocation} className="bg-gray-600  px-6 py-3 rounded-2xl cursor-pointer border-2 border-gray-200 hover:bg-gray-700 transition-colors">
+                + Add
               </button>
             </div>
 
@@ -371,7 +418,7 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
               <MapPin className="w-5 h-5 text-gray-600" />
               <span>Branches (Optional)</span>
             </label>
-            <p className="text-sm text-gray-500 mb-4">
+            <p className="text-gray-500 mb-4">
               Add your business locations. Each branch requires a name, location, and phone number.
             </p>
 
@@ -391,7 +438,7 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
                       value={branch.name}
                       onChange={(e) => handleBranchChange(branch.id, "name", e.target.value)}
                       placeholder="Branch Name *"
-                      className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 :border-gray-500 focus:ring-1 focus:ring-gray-100 transition-all outline-none" focus
+                      className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-gray-500 focus:ring-1 focus:ring-gray-100 transition-all outline-none"
                     />
                     <input
                       type="text"
@@ -412,12 +459,12 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
               ))}
             </div>
 
-            <button type="button" onClick={handleAddBranch} className="mt-4 flex items-center gap-2 text-gray-600 hover:text-gray-700 transition-colors">
+            <button type="button" onClick={handleAddBranch} className="mt-4 flex items-center cursor-pointer border-2 border-gray-200 px-4 py-2 rounded-2xl gap-2 text-gray-600 hover:text-gray-700 transition-colors">
               <Plus className="w-5 h-5" />
-              <span>Add Branch</span>
+              <span>+Add Branch</span>
             </button>
 
-            {errors.branches && <p className="text-red-500 text-sm mt-2">{errors.branches}</p>}
+            {errors.branches && <p className="text-red-500  mt-2">{errors.branches}</p>}
           </div>
 
           {/* Vendor Type */}
@@ -440,7 +487,7 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
               ))}
             </select>
 
-            {errors.vendorType && <p className="text-red-500 text-sm mt-2">{errors.vendorType}</p>}
+            {errors.vendorType && <p className="text-red-500  mt-2">{errors.vendorType}</p>}
           </div>
 
           {/* Company Logo */}
@@ -469,13 +516,13 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
                 <label className="cursor-pointer">
                   <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                   <p className="text-gray-600 mb-2">Click to upload logo</p>
-                  <p className="text-sm text-gray-500">Any image format</p>
+                  <p className=" text-gray-500">Any image format</p>
                   <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
                 </label>
               )}
             </div>
 
-            {errors.companyLogo && <p className="text-red-500 text-sm mt-2">{errors.companyLogo}</p>}
+            {errors.companyLogo && <p className="text-red-500  mt-2">{errors.companyLogo}</p>}
           </div>
 
           {/* Email */}
@@ -491,7 +538,7 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
               placeholder="company@example.com"
               className="w-full border-2 border-gray-200 rounded-2xl px-5 py-4 focus:border-gray-500 focus:ring-1 focus:ring-gray-100 transition-all outline-none"
             />
-            {errors.email && <p className="text-red-500 text-sm mt-2">{errors.email}</p>}
+            {errors.email && <p className="text-red-500  mt-2">{errors.email}</p>}
           </div>
 
           {/* About Us */}
@@ -507,7 +554,7 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
               rows={6}
               className="w-full border-2 border-gray-200 rounded-2xl px-5 py-4 focus:border-gray-500 focus:ring-1 focus:ring-gray-100 transition-all outline-none resize-none"
             />
-            {errors.aboutUs && <p className="text-red-500 text-sm mt-2">{errors.aboutUs}</p>}
+            {errors.aboutUs && <p className="text-red-500  mt-2">{errors.aboutUs}</p>}
           </div>
 
           {/* Special Offer */}
