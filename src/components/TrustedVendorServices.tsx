@@ -48,7 +48,7 @@ function mapApiVendorToUi(v: Vendor): Vendor {
     id: v._id,
     name: v.companyName || "Unnamed Vendor",
     image: v.logoUrl
-      ? (v.logoUrl.startsWith('http') ? v.logoUrl : `${BASE_URL}/${v.logoUrl}`)
+      ? (v.logoUrl.startsWith('http') ? v.logoUrl : `${BASE_URL}${v.logoUrl.startsWith('/') ? '' : '/'}${v.logoUrl}`)
       : getVendorPlaceholderImage(v.vendorType),
     rating: stableRatingFromId(v._id),
     category,

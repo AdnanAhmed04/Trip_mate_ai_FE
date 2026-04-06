@@ -54,7 +54,7 @@ function mapApiVendorToUi(v: Vendor): Vendor {
     "Location not set";
 
   const image = v.logoUrl
-    ? (v.logoUrl.startsWith('http') ? v.logoUrl : `${BASE_URL}/${v.logoUrl}`)
+    ? (v.logoUrl.startsWith('http') ? v.logoUrl : `${BASE_URL}${v.logoUrl.startsWith('/') ? '' : '/'}${v.logoUrl}`)
     : getVendorPlaceholderImage(v.vendorType);
 
   const services = [

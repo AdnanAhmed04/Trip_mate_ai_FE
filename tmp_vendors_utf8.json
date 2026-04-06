@@ -1,0 +1,327 @@
+﻿{
+    "total":  9,
+    "vendors":  [
+                    {
+                        "_id":  "69c7f22ed51449dcc9f844a6",
+                        "companyName":  "tripmate",
+                        "services":  [
+                                         "Luxury Beach Resorts",
+                                         "Spa \u0026 Wellness Packages",
+                                         "Travel \u0026 Tours",
+                                         "Transportation",
+                                         "Hotel / Villa"
+                                     ],
+                        "customServices":  [
+
+                                           ],
+                        "branches":  [
+
+                                     ],
+                        "serviceLocations":  [
+                                                 "karachi"
+                                             ],
+                        "vendorType":  "Hotel / Villa",
+                        "email":  "tripmate@gmail.com",
+                        "aboutUs":  "tripmate@gmail.comtripmate@gmail.comtripmate@gmail.comtripmate@gmail.comtripmate@gmail.com",
+                        "specialOffer":  "",
+                        "budgetMin":  0,
+                        "budgetMax":  0,
+                        "city":  "",
+                        "logoUrl":  "/uploads/logos/1774711342089_clock-svgrepo-com.svg",
+                        "logoFileName":  "1774711342089_clock-svgrepo-com.svg",
+                        "paid":  true,
+                        "stripeSessionId":  "",
+                        "paymentIntentId":  "",
+                        "blocked":  false,
+                        "status":  "approved",
+                        "createdAt":  "2026-03-28T15:22:22.099Z",
+                        "updatedAt":  "2026-03-28T15:26:11.611Z",
+                        "__v":  0
+                    },
+                    {
+                        "_id":  "69c4143b935b92cdc0fbe3a3",
+                        "companyName":  "test2",
+                        "services":  [
+                                         "Luxury Beach Resorts",
+                                         "Water Sports Activities",
+                                         "Beachfront Villa Rentals",
+                                         "Hotel / Villa"
+                                     ],
+                        "customServices":  [
+
+                                           ],
+                        "branches":  [
+
+                                     ],
+                        "serviceLocations":  [
+                                                 "Sri Lanka"
+                                             ],
+                        "vendorType":  "Travel \u0026 Tours",
+                        "email":  "test2@gmail.com",
+                        "aboutUs":  "test2@gmail.comtest2@gmail.comtest2@gmail.comtest2@gmail.comtest2@gmail.comtest2@gmail.comtest2@gmail.com",
+                        "specialOffer":  "test2@gmail.com",
+                        "budgetMin":  0,
+                        "budgetMax":  0,
+                        "city":  "",
+                        "logoUrl":  "/uploads/logos/1774457915018_aaaaa4.gif",
+                        "logoFileName":  "1774457915018_aaaaa4.gif",
+                        "paid":  true,
+                        "stripeSessionId":  "cs_test_a1AC0wl0vorzo1vHRneVdfBT5dbKnDmsLl47kr0YfQAkunvVrN2XAKy9ZE",
+                        "paymentIntentId":  "pi_3TEuln3V6FqcDqUK0y9W9ZL9",
+                        "blocked":  false,
+                        "status":  "approved",
+                        "createdAt":  "2026-03-25T16:58:35.051Z",
+                        "updatedAt":  "2026-03-25T17:23:05.705Z",
+                        "__v":  0
+                    },
+                    {
+                        "serviceLocations":  [
+
+                                             ],
+                        "_id":  "69c1c32adbc2fd627ac9426f",
+                        "companyName":  "ab@gmail.com",
+                        "services":  [
+                                         "Luxury Beach Resorts",
+                                         "Spa \u0026 Wellness Packages",
+                                         "Sunset Cruises",
+                                         "Hotel / Villa",
+                                         "Transportation"
+                                     ],
+                        "customServices":  [
+
+                                           ],
+                        "branches":  [
+
+                                     ],
+                        "vendorType":  "Event Management",
+                        "email":  "ab@gmail.com",
+                        "aboutUs":  "ab@gmail.comab@gmail.comab@gmail.comab@gmail.com",
+                        "specialOffer":  "ab@gmail.comab@gmail.com",
+                        "budgetMin":  0,
+                        "budgetMax":  0,
+                        "city":  "",
+                        "logoUrl":  "/uploads/logos/1774306090665_clock-svgrepo-com.svg",
+                        "logoFileName":  "1774306090665_clock-svgrepo-com.svg",
+                        "paid":  true,
+                        "stripeSessionId":  "cs_test_a1OOOrQpY0SaiVQJOg6pbZNswCsom8xNNEHLuceGICGPRuID4LnfNA3D5S",
+                        "paymentIntentId":  "pi_3TEHH43V6FqcDqUK08PhqG9W",
+                        "blocked":  false,
+                        "status":  "approved",
+                        "createdAt":  "2026-03-23T22:48:10.707Z",
+                        "updatedAt":  "2026-03-25T17:14:22.667Z",
+                        "__v":  0
+                    },
+                    {
+                        "serviceLocations":  [
+
+                                             ],
+                        "_id":  "69c1c19adbc2fd627ac9425a",
+                        "companyName":  "a@gmail.com",
+                        "services":  [
+                                         "Spa \u0026 Wellness Packages",
+                                         "Water Sports Activities",
+                                         "Sunset Cruises",
+                                         "Travel \u0026 Tours",
+                                         "Transportation",
+                                         "Luxury Beach Resorts"
+                                     ],
+                        "customServices":  [
+
+                                           ],
+                        "branches":  [
+
+                                     ],
+                        "vendorType":  "Resort",
+                        "email":  "a@gmail.com",
+                        "aboutUs":  "a@gmail.coma@gmail.coma@gmail.coma@gmail.coma@gmail.com",
+                        "specialOffer":  "a@gmail.com",
+                        "budgetMin":  0,
+                        "budgetMax":  0,
+                        "city":  "",
+                        "logoUrl":  "/uploads/logos/1774305690073_clock-svgrepo-com.svg",
+                        "logoFileName":  "1774305690073_clock-svgrepo-com.svg",
+                        "paid":  true,
+                        "stripeSessionId":  "cs_test_a1mZDw4xsUWtZRCQWX7SwzqAEcfytGl9cguhh3VyDCKw8MjpuUkbQI0n9e",
+                        "paymentIntentId":  "pi_3TEHAV3V6FqcDqUK0mVF5uoo",
+                        "blocked":  false,
+                        "status":  "approved",
+                        "createdAt":  "2026-03-23T22:41:30.080Z",
+                        "updatedAt":  "2026-03-25T14:30:50.433Z",
+                        "__v":  0
+                    },
+                    {
+                        "serviceLocations":  [
+
+                                             ],
+                        "_id":  "69944b5f0d6ce92bdbdaf88d",
+                        "companyName":  "qwe",
+                        "services":  [
+                                         "Luxury Beach Resorts",
+                                         "Island Hopping Tours",
+                                         "Hotel / Villa"
+                                     ],
+                        "customServices":  [
+
+                                           ],
+                        "branches":  [
+
+                                     ],
+                        "vendorType":  "Water Sports",
+                        "email":  "qwe@gmail.com",
+                        "aboutUs":  "qweqweqweqweqweqweqwe",
+                        "specialOffer":  "qwe",
+                        "budgetMin":  0,
+                        "budgetMax":  0,
+                        "city":  "",
+                        "logoUrl":  "/uploads/logos/1771326303619_Small_blue_triangle_-_Sheeted_personal_a.png",
+                        "logoFileName":  "1771326303619_Small_blue_triangle_-_Sheeted_personal_a.png",
+                        "paid":  true,
+                        "stripeSessionId":  "cs_test_a1VbbBz8pkzgHLxO1XklNWiHkU1BJUdBhXAFmiQjL8Ak8NxroXXhUpttTY",
+                        "paymentIntentId":  "pi_3T1m5s3V6FqcDqUK1S10DwyS",
+                        "blocked":  false,
+                        "status":  "approved",
+                        "createdAt":  "2026-02-17T11:05:03.625Z",
+                        "updatedAt":  "2026-03-25T14:41:05.040Z",
+                        "__v":  0
+                    },
+                    {
+                        "serviceLocations":  [
+
+                                             ],
+                        "_id":  "69943e720d6ce92bdbdaf87f",
+                        "companyName":  "bababa",
+                        "services":  [
+                                         "Luxury Beach Resorts",
+                                         "Sunset Cruises"
+                                     ],
+                        "customServices":  [
+
+                                           ],
+                        "branches":  [
+
+                                     ],
+                        "vendorType":  "Travel \u0026 Tours",
+                        "email":  "bababa@gmail.com",
+                        "aboutUs":  "bababa",
+                        "specialOffer":  "bababa",
+                        "budgetMin":  0,
+                        "budgetMax":  0,
+                        "city":  "",
+                        "logoUrl":  "/uploads/logos/1771322994792_Long_black_triangle_-_standard_railed_ga.png",
+                        "logoFileName":  "1771322994792_Long_black_triangle_-_standard_railed_ga.png",
+                        "paid":  true,
+                        "stripeSessionId":  "cs_test_a1VgoMamWNePFCwcEw9K9HkXpfpOHcNFQss8p9JephtJPNuLiTX7O2JxfZ",
+                        "paymentIntentId":  "pi_3T1lEU3V6FqcDqUK0kJ110Hz",
+                        "blocked":  false,
+                        "status":  "approved",
+                        "createdAt":  "2026-02-17T10:09:54.817Z",
+                        "updatedAt":  "2026-03-25T14:31:11.643Z",
+                        "__v":  0
+                    },
+                    {
+                        "serviceLocations":  [
+
+                                             ],
+                        "_id":  "699369c3a9e57def4d184a2a",
+                        "companyName":  "mustafa memon",
+                        "services":  [
+                                         "Spa \u0026 Wellness Packages",
+                                         "Beachfront Villa Rentals",
+                                         "Event Management"
+                                     ],
+                        "customServices":  [
+
+                                           ],
+                        "branches":  [
+
+                                     ],
+                        "vendorType":  "Resort",
+                        "email":  "mustafffa@gmail.com",
+                        "aboutUs":  "mustafffa@gmail.commustafffa@gmail.commustafffa@gmail.commustafffa@gmail.commustafffa@gmail.commustafffa@gmail.com",
+                        "specialOffer":  "",
+                        "budgetMin":  0,
+                        "budgetMax":  0,
+                        "city":  "",
+                        "logoUrl":  "/uploads/logos/1771268547814_Long_black_triangle_-_standard_railed_ga.png",
+                        "logoFileName":  "1771268547814_Long_black_triangle_-_standard_railed_ga.png",
+                        "paid":  true,
+                        "stripeSessionId":  "cs_test_a1asQcXKln5CiQrvaDkK5SRmrNNFNnix4rjelRBNc4xdkP9OIIKdBFWmxr",
+                        "paymentIntentId":  "pi_3T1X4h3V6FqcDqUK19o4ZZCR",
+                        "blocked":  false,
+                        "status":  "approved",
+                        "createdAt":  "2026-02-16T19:02:27.839Z",
+                        "updatedAt":  "2026-03-25T14:31:24.234Z",
+                        "__v":  0
+                    },
+                    {
+                        "serviceLocations":  [
+
+                                             ],
+                        "_id":  "69935ada09910bb572b92052",
+                        "companyName":  "water park",
+                        "services":  [
+                                         "Water Sports Activities",
+                                         "Beachfront Villa Rentals",
+                                         "Hotel / Villa"
+                                     ],
+                        "customServices":  [
+
+                                           ],
+                        "branches":  [
+
+                                     ],
+                        "vendorType":  "Travel \u0026 Tours",
+                        "email":  "water@gmail.com",
+                        "aboutUs":  "water park water parkwater parkwater parkwater parkwater parkwater parkwater parkwater park",
+                        "specialOffer":  "",
+                        "budgetMin":  0,
+                        "budgetMax":  0,
+                        "city":  "",
+                        "logoUrl":  "/uploads/logos/1771264730215_Small_blue_triangle_-_Sheeted_personal_a.png",
+                        "logoFileName":  "1771264730215_Small_blue_triangle_-_Sheeted_personal_a.png",
+                        "paid":  true,
+                        "stripeSessionId":  "cs_test_a1mrzr7Dzklfnt8i1K5Z9TAuHqDMg3ImsWE9umJxE8wc0UbVTpduM9XOjH",
+                        "paymentIntentId":  "pi_3T1W5S3V6FqcDqUK11NbUhoa",
+                        "blocked":  false,
+                        "status":  "approved",
+                        "createdAt":  "2026-02-16T17:58:50.267Z",
+                        "updatedAt":  "2026-03-25T14:31:19.703Z",
+                        "__v":  0
+                    },
+                    {
+                        "serviceLocations":  [
+
+                                             ],
+                        "_id":  "6993557b9fd6535ae3ef7289",
+                        "companyName":  "asdfgh",
+                        "services":  [
+                                         "Luxury Beach Resorts",
+                                         "Sunset Cruises",
+                                         "Hotel / Villa"
+                                     ],
+                        "customServices":  [
+
+                                           ],
+                        "branches":  [
+
+                                     ],
+                        "vendorType":  "Travel \u0026 Tours",
+                        "email":  "asdfgh@gmail.com",
+                        "aboutUs":  "asdfghasdfghasdfghasdfghasdfghasdfghasdfghasdfghasdfghasdfgh",
+                        "specialOffer":  "",
+                        "budgetMin":  0,
+                        "budgetMax":  0,
+                        "city":  "",
+                        "logoUrl":  "/uploads/logos/1771263355844_Black_line_with_thick_ends_-_Standard_pa.png",
+                        "logoFileName":  "1771263355844_Black_line_with_thick_ends_-_Standard_pa.png",
+                        "paid":  true,
+                        "stripeSessionId":  "cs_test_a1ObNoUPGvCa6kcntagRpyGjfHTPWK37oGfC8gS0z8KJ4zvn5nieagSCDb",
+                        "paymentIntentId":  "pi_3T1VjZ3V6FqcDqUK0wZUhTKg",
+                        "blocked":  false,
+                        "status":  "approved",
+                        "createdAt":  "2026-02-16T17:35:55.848Z",
+                        "updatedAt":  "2026-03-25T17:14:17.400Z",
+                        "__v":  0
+                    }
+                ]
+}
