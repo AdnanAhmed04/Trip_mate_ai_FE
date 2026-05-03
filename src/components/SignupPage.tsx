@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Lock, User, MapPin, Plane, ArrowLeft, Mail } from 'lucide-react';
-import { Utensils, Bed, Repeat } from "lucide-react";
+import { Lock, User, Plane, ArrowLeft, Mail, Utensils, Bed, Repeat, Sparkles, ShieldCheck } from 'lucide-react';
 
 interface SignupPageProps {
   onSwitchToLogin: () => void;
@@ -60,226 +59,187 @@ export function SignupPage({
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">      <div className="w-full max-w-6xl  max-h-[85vh] grid md:grid-cols-2 gap-0 bg-white rounded-2xl shadow-2xl overflow-hidden">
-      {/* Left side - Signup form */}
-      <div className="p-4 md:p-10 flex flex-col justify-center">
-        {onBack && (
-          <button
-            type="button"
-            onClick={onBack}
-            className="relative z-20 self-start flex items-center gap-2 text-gray-500 hover:text-gray-900 mb-4 transition-colors cursor-pointer"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span>Back</span>
-          </button>
-        )}
+    <div className="min-h-screen bg-gray-950 text-white relative overflow-hidden flex items-center justify-center p-4 sm:p-6 lg:p-8">
+      {/* Background Decorations */}
+      <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] -translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px] translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
-        <div className="mb-4">
-          <h1 className="text-3xl mb-2 font-semibold">Create Account</h1>
-          <p className="text-gray-600">Start planning your dream trips</p>
+      <div className="w-full max-w-6xl relative z-10 grid md:grid-cols-2 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl animate-slide-up">
+        
+        {/* Left Side: Visual Content */}
+        <div className="relative hidden md:flex flex-col justify-between p-12 overflow-hidden border-r border-white/5">
+          <div className="absolute inset-0 z-0">
+            <img
+              src="https://images.unsplash.com/photo-1539635278303-d4002c07dee3?auto=format&fit=crop&q=80&w=1000"
+              alt="Travelers"
+              className="w-full h-full object-cover opacity-40 scale-110 animate-pulse-subtle"
+            />
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-900/80 via-gray-950/90 to-gray-950" />
+          </div>
+
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 mb-8">
+              <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                <Plane className="w-6 h-6 text-white rotate-45" />
+              </div>
+              <span className="text-xl font-black tracking-tighter text-white">TripMate<span className="text-blue-500 italic">AI</span></span>
+            </div>
+
+            <h2 className="text-5xl font-black leading-[1.1] tracking-tighter mb-6">
+              Start Your <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 italic">Elite Journey</span>
+            </h2>
+            <p className="text-gray-400 text-lg leading-relaxed max-w-sm">
+              Join thousands of global travelers and experience the future of personalized AI trip planning.
+            </p>
+          </div>
+
+          <div className="relative z-10 grid grid-cols-2 gap-4">
+            {[
+              { icon: <Utensils className="w-5 h-5" />, label: "Eat" },
+              { icon: <Plane className="w-5 h-5" />, label: "Travel" },
+              { icon: <Bed className="w-5 h-5" />, label: "Sleep" },
+              { icon: <Repeat className="w-5 h-5" />, label: "Repeat" },
+            ].map((item, i) => (
+              <div key={i} className="flex items-center gap-3 p-3 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors">
+                <div className="text-blue-400">{item.icon}</div>
+                <span className="text-xs font-bold uppercase tracking-widest text-gray-300">{item.label}</span>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {errorMsg && (
-          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {errorMsg}
-          </div>
-        )}
-
-        <form onSubmit={handleSignup} className="space-y-3">
-          <div>
-            <label
-              htmlFor="name"
-              className="mb-2 block text-sm font-medium text-slate-700"
-            >
-              Full name
-            </label>
-            <div className="relative">
-              <User className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
-              <input
-                id="name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="John Doe"
-                required
-                className="h-10 w-full rounded-2xl border border-slate-200 bg-white pl-12 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label
-              htmlFor="email"
-              className="mb-2 block text-sm font-medium text-slate-700"
-            >
-              Email address
-            </label>
-            <div className="relative">
-              <Mail className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                required
-                className="h-10 w-full rounded-2xl border border-slate-200 bg-white pl-12 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label
-              htmlFor="password"
-              className="mb-2 block text-sm font-medium text-slate-700"
-            >
-              Password
-            </label>
-            <div className="relative">
-              <Lock className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="At least 6 characters"
-                required
-                minLength={6}
-                className="h-10 w-full rounded-2xl border border-slate-200 bg-white pl-12 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
-              />
-            </div>
-            {passwordTooShort && (
-              <p className="mt-1 text-xs text-amber-600">
-                Password must be at least 6 characters.
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label
-              htmlFor="confirm-password"
-              className="mb-2 block text-sm font-medium text-slate-700"
-            >
-              Confirm password
-            </label>
-            <div className="relative">
-              <Lock className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
-              <input
-                id="confirm-password"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Repeat password"
-                required
-                minLength={6}
-                className={`h-10 w-full rounded-2xl border bg-white pl-12 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:ring-4 ${passwordsMatch
-                  ? 'border-slate-200 focus:border-blue-500 focus:ring-blue-100'
-                  : 'border-red-300 focus:border-red-400 focus:ring-red-100'
-                  }`}
-              />
-            </div>
-            {!passwordsMatch && (
-              <p className="mt-1 text-xs text-red-600">
-                Passwords do not match.
-              </p>
-            )}
-          </div>
-
-          <div className="rounded-2xl bg-slate-50 px-4 py-3">
-            <label className="flex items-start gap-3 text-sm text-slate-600">
-              <input
-                type="checkbox"
-                required
-                className="mt-1 h-4 w-4 cursor-pointer rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-              />
-              <span className="leading-6">
-                I agree to the{' '}
-                <button
-                  type="button"
-                  className="font-medium cursor-pointer text-blue-600 transition hover:text-blue-700 hover:underline"
-                >
-                  Terms of Service
-                </button>{' '}
-                and{' '}
-                <button
-                  type="button"
-                  className="font-medium cursor-pointer text-blue-600 transition hover:text-blue-700 hover:underline"
-                >
-                  Privacy Policy
-                </button>
-                .
-              </span>
-            </label>
-          </div>
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="inline-flex h-10 bg-blue-500 hover:bg-blue-600 w-full items-center justify-center cursor-pointer rounded-2xl bg-slate-900 px-5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {isLoading ? 'Creating account...' : 'Create account'}
-          </button>
-        </form>
-
-        <div className=" text-center">
-          <p className="text-gray-600">
-            Already have an account?{' '}
+        {/* Right Side: Form */}
+        <div className="p-8 sm:p-12 lg:p-16 flex flex-col justify-center relative">
+          {onBack && (
             <button
-              type="button"
-              onClick={onSwitchToLogin}
-              className="text-blue-600 hover:underline"
+              onClick={onBack}
+              className="absolute top-8 left-8 sm:left-12 group flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-xs font-bold uppercase tracking-widest cursor-pointer"
             >
-              Sign In
+              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+              <span>Back</span>
             </button>
-          </p>
-        </div>
-      </div>
+          )}
 
-      {/* Right side - Image and branding */}
-      <div className="relative min-h-[280px] md:min-h-0">
-        <img
-          src="https://images.unsplash.com/photo-1654693289021-3ff2c9df4092?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0cmF2ZWwlMjBkZXN0aW5hdGlvbiUyMGFlcmlhbHxlbnwxfHx8fDE3NjU4MjkzMzh8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-          alt="Travel destination"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/90 to-blue-600/90 flex flex-col justify-center items-center text-white p-8">
-          <div className="flex items-center gap-2 mb-6">
-            <div className="flex items-center gap-3 ">
+          <div className="mb-8 text-center md:text-left">
+            <h1 className="text-3xl md:text-4xl font-black text-white tracking-tighter mb-3">Create Account</h1>
+            <p className="text-gray-500 font-medium">Join our global community of explorers</p>
+          </div>
 
-              <div className="flex items-center gap-4 text-white ">
-                <div className="flex flex-col items-center gap-2">
-                  <Utensils className="w-8 h-8" />
-                  <span>Eat</span>
-                </div>
+          {errorMsg && (
+            <div className="mb-6 p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-center gap-3 animate-shake">
+              <ShieldCheck className="w-5 h-5 flex-shrink-0" />
+              {errorMsg}
+            </div>
+          )}
 
+          <form onSubmit={handleSignup} className="space-y-4">
+            <div className="space-y-1.5">
+              <label className="text-xs font-black uppercase tracking-[0.2em] text-gray-500 ml-1">Full Name</label>
+              <div className="relative group">
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-blue-400 transition-colors" />
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="John Doe"
+                  required
+                  className="w-full h-12 bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 text-white placeholder:text-gray-600 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all text-sm font-medium"
+                />
+              </div>
+            </div>
 
+            <div className="space-y-1.5">
+              <label className="text-xs font-black uppercase tracking-[0.2em] text-gray-500 ml-1">Email Address</label>
+              <div className="relative group">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-blue-400 transition-colors" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@adventure.com"
+                  required
+                  className="w-full h-12 bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 text-white placeholder:text-gray-600 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all text-sm font-medium"
+                />
+              </div>
+            </div>
 
-                <div className="flex flex-col items-center gap-2">
-                  <Plane className="w-8 h-8" />
-                  <span>Travel</span>
-                </div>
-                <div className="flex flex-col items-center gap-2">
-                  <Bed className="w-8 h-8" />
-                  <span>Sleep</span>
-                </div>
-
-                <div className="flex flex-col items-center gap-2">
-                  <Repeat className="w-8 h-8" />
-                  <span>Repeat</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-black uppercase tracking-[0.2em] text-gray-500 ml-1">Password</label>
+                <div className="relative group">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-blue-400 transition-colors" />
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    required
+                    minLength={6}
+                    className={`w-full h-12 bg-white/5 border ${passwordTooShort ? 'border-amber-500/50' : 'border-white/10'} rounded-2xl pl-12 pr-4 text-white placeholder:text-gray-600 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all text-sm font-medium`}
+                  />
                 </div>
               </div>
 
+              <div className="space-y-1.5">
+                <label className="text-xs font-black uppercase tracking-[0.2em] text-gray-500 ml-1">Confirm</label>
+                <div className="relative group">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-blue-400 transition-colors" />
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="••••••••"
+                    required
+                    minLength={6}
+                    className={`w-full h-12 bg-white/5 border ${!passwordsMatch ? 'border-red-500/50' : 'border-white/10'} rounded-2xl pl-12 pr-4 text-white placeholder:text-gray-600 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all text-sm font-medium`}
+                  />
+                </div>
+              </div>
             </div>
+
+            <div className="flex items-start gap-3 px-1 py-2">
+              <label className="flex items-center gap-3 cursor-pointer group mt-1">
+                <div className="relative flex items-center justify-center">
+                  <input type="checkbox" required className="peer sr-only" />
+                  <div className="w-5 h-5 border-2 border-white/10 rounded-lg bg-white/5 peer-checked:bg-blue-600 peer-checked:border-blue-500 transition-all" />
+                  <Sparkles className="absolute w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity" />
+                </div>
+              </label>
+              <p className="text-[10px] leading-tight text-gray-400 font-bold uppercase tracking-widest">
+                I agree to the <button type="button" className="text-blue-400 hover:underline">Terms of Service</button> and <button type="button" className="text-blue-400 hover:underline">Privacy Policy</button>
+              </p>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full h-14 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-black uppercase tracking-[0.2em] text-xs rounded-2xl shadow-[0_10px_20px_rgba(37,99,235,0.2)] hover:shadow-[0_15px_30px_rgba(37,99,235,0.3)] transition-all hover:-translate-y-1 active:scale-95 disabled:opacity-50 disabled:translate-y-0 disabled:shadow-none flex items-center justify-center gap-3 group mt-2"
+            >
+              {isLoading ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <>
+                  <span>Create Elite Account</span>
+                  <ArrowLeft className="w-4 h-4 rotate-180 group-hover:translate-x-1 transition-transform" />
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="mt-8 text-center">
+            <p className="text-gray-500 text-xs font-bold uppercase tracking-widest">
+              Already an Explorer?{" "}
+              <button
+                onClick={onSwitchToLogin}
+                className="text-blue-400 hover:text-blue-300 transition-colors ml-1"
+              >
+                Sign In
+              </button>
+            </p>
           </div>
-          <h2 className="text-4xl mb-4 text-center font-semibold">
-            Join Our Community
-          </h2>
-          <p className="text-center text-lg opacity-90">
-            Discover, plan, and share amazing travel experiences
-          </p>
         </div>
       </div>
-    </div>
     </div>
   );
 }
