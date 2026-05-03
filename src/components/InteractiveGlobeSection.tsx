@@ -167,7 +167,7 @@ const InteractiveGlobeSection = () => {
     const globe = createGlobe(canvasRef.current, {
       devicePixelRatio: 2,
       width: width * 2,
-      height: width * 1.75,
+      height: width * 2,
       phi: 0,
       theta: 0.15, // Realistic 3D tilt
       dark: 0,
@@ -195,26 +195,26 @@ const InteractiveGlobeSection = () => {
   return (
     <section
       style={{ backgroundImage: `url(${spaceBg})` }}
-      className="bg-cover bg-center bg-no-repeat py-12"
+      className="bg-cover bg-center bg-no-repeat py-12 md:py-20 overflow-hidden"
     >
-      <div className="max-w-7xl h-screen mx-auto px-6">
-        <div className="text-center pt-8 mb-4">
-          <h2 className="text-5xl font-bold text-white mb-4">
+      <div className="max-w-7xl min-h-[auto] lg:min-h-screen mx-auto px-6 flex flex-col justify-center">
+        <div className="text-center mb-8 md:mb-16">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
             Global Vendor Network
           </h2>
-          <p className="text-xl text-white max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
             Discover active vendors offering services across different locations worldwide
           </p>
         </div>
 
-        <div className="flex  lg:flex-row items-center justify-between  w-full">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-8 md:gap-12 w-full">
           {/* Globe Container - Left */}
-          <div className="relative w-full lg:w-3/5 flex justify-center h-[620px] lg:h-[700px]">
+          <div className="relative w-full lg:w-1/2 flex justify-center h-[280px] sm:h-[400px] md:h-[500px] lg:h-[550px]">
             <div className="w-full h-full bg-transparent overflow-hidden flex items-center justify-center">
               <canvas
                 ref={canvasRef}
-                className="w-full h-full cursor-grab active:cursor-grabbing"
-                style={{ width: '100%', height: '80%', aspectRatio: '1/1', touchAction: 'none' }}
+                className="w-full h-full cursor-grab active:cursor-grabbing max-w-[300px] sm:max-w-none"
+                style={{ width: '100%', height: '100%', aspectRatio: '1/1', touchAction: 'none' }}
                 onPointerDown={(e) => {
                   pointerInteracting.current = e.clientX - pointerInteractionMovement.current;
                   if (canvasRef.current) canvasRef.current.style.cursor = 'grabbing';
@@ -244,37 +244,34 @@ const InteractiveGlobeSection = () => {
           </div>
 
           {/* Legend / Country List - Right */}
-          <div className="w-full lg:w-2/5 h-[400px] lg:h-[600px] flex flex-col">
-            <div className=" h-full flex flex-col">
-              <h3 className="text-2xl font-bold text-white mb-2">Service Availability</h3>
-              <p className="text-white mb-6">Our trusted vendors currently operate across these major destinations.</p>
+          <div className="w-full lg:w-1/2 flex flex-col items-center lg:items-start text-center lg:text-left">
+            <div className="max-w-md w-full">
+              <h3 className="text-2xl sm:text-3xl font-bold text-white mb-4">Service Availability</h3>
+              <p className="text-gray-300 mb-8 text-sm sm:text-base leading-relaxed">
+                Our trusted vendors currently operate across these major destinations worldwide, ensuring top-tier service wherever you go.
+              </p>
 
-
-              <div>
-                <div className="flex-1 overflow-y-auto ">
-                  <ul className="space-y-3 text-white">
-                    {[
-                      { name: "UAE", code: "ae" },
-                      { name: "Pakistan", code: "pk" },
-                      { name: "Thailand", code: "th" },
-                      { name: "UK", code: "gb" },
-                      { name: "France", code: "fr" },
-                      { name: "USA", code: "us" },
-                      { name: "Canada", code: "ca" },
-                      { name: "Australia", code: "au" },
-                      { name: "Singapore", code: "sg" },
-                      { name: "South Africa", code: "za" }
-                    ].map((loc, i) => (
-                      <li
-                        key={i}
-                        className="flex items-center gap-3 font-medium hover:text-blue-600 transition-colors "
-                      >
-                        <span className={`fi fi-${loc.code} w-5 h-4 rounded-sm shadow-sm`}></span>
-                        <span>{loc.name}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+              <div className="grid grid-cols-2 gap-x-8 gap-y-4 text-white">
+                {[
+                  { name: "UAE", code: "ae" },
+                  { name: "Pakistan", code: "pk" },
+                  { name: "Thailand", code: "th" },
+                  { name: "UK", code: "gb" },
+                  { name: "France", code: "fr" },
+                  { name: "USA", code: "us" },
+                  { name: "Canada", code: "ca" },
+                  { name: "Australia", code: "au" },
+                  { name: "Singapore", code: "sg" },
+                  { name: "South Africa", code: "za" }
+                ].map((loc, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center gap-3 font-medium hover:text-blue-400 transition-all cursor-default group"
+                  >
+                    <span className={`fi fi-${loc.code} w-5 h-4 rounded-sm shadow-md group-hover:scale-110 transition-transform`}></span>
+                    <span className="text-sm sm:text-base">{loc.name}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

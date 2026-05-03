@@ -34,6 +34,50 @@ function App() {
   const [paymentSessionId, setPaymentSessionId] = useState<string>('');
 
   useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      const state = event.state;
+      if (state && state.view) {
+        setCurrentView(state.view);
+        if (state.vendor !== undefined) setSelectedVendor(state.vendor);
+        if (state.trip !== undefined) setSelectedTrip(state.trip);
+      } else {
+        setCurrentView('landing');
+        setSelectedVendor(null);
+        setSelectedTrip(null);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    
+    // Set initial state
+    if (!window.history.state) {
+      window.history.replaceState({ 
+        view: currentView, 
+        vendor: selectedVendor, 
+        trip: selectedTrip 
+      }, '');
+    }
+
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [currentView, selectedVendor, selectedTrip]);
+
+  const navigateTo = (view: ViewType, data?: { vendor?: Vendor | null, trip?: Trip | null }) => {
+    setCurrentView(view);
+    const newVendor = data?.vendor !== undefined ? data.vendor : selectedVendor;
+    const newTrip = data?.trip !== undefined ? data.trip : selectedTrip;
+    
+    if (data?.vendor !== undefined) setSelectedVendor(data.vendor);
+    if (data?.trip !== undefined) setSelectedTrip(data.trip);
+    
+    window.history.pushState({ 
+      view, 
+      vendor: newVendor,
+      trip: newTrip 
+    }, '');
+    window.scrollTo(0, 0);
+  };
+
+  useEffect(() => {
     const path = window.location.pathname;
     const params = new URLSearchParams(window.location.search);
 
@@ -43,17 +87,17 @@ function App() {
         setPaymentSessionId(sessionId);
         setCurrentView('payment-success');
       }
-      window.history.replaceState({}, '', '/');
+      window.history.replaceState({ view: 'payment-success' }, '', '/');
     } else if (path === '/vendor/payment-cancel' || path.endsWith('/vendor/payment-cancel')) {
       setCurrentView('payment-cancel');
-      window.history.replaceState({}, '', '/');
+      window.history.replaceState({ view: 'payment-cancel' }, '', '/');
     } else if (path === '/trip-payment-success' || path.endsWith('/trip-payment-success')) {
       const sessionId = params.get('session_id');
       if (sessionId) {
         setPaymentSessionId(sessionId);
         setCurrentView('trip-payment-success');
       }
-      window.history.replaceState({}, '', '/');
+      window.history.replaceState({ view: 'trip-payment-success' }, '', '/');
     } else {
       const payment = params.get('payment');
       const sessionId = params.get('session_id');
@@ -107,12 +151,12 @@ function App() {
       localStorage.setItem('user', JSON.stringify(response.user));
       setIsSignedIn(true);
       if (response.user.role === 'admin') {
-        setCurrentView('admin-dashboard');
+        navigateTo('admin-dashboard');
       } else if (pendingView) {
-        setCurrentView(pendingView as any);
+        navigateTo(pendingView as any);
         setPendingView(null);
       } else {
-        setCurrentView('landing');
+        navigateTo('landing');
       }
     } else {
       alert("Login failed");
@@ -125,10 +169,10 @@ function App() {
       localStorage.setItem('user', JSON.stringify(response.user));
       setIsSignedIn(true);
       if (pendingView) {
-        setCurrentView(pendingView as any);
+        navigateTo(pendingView as any);
         setPendingView(null);
       } else {
-        setCurrentView('landing');
+        navigateTo('landing');
       }
     }
   };
@@ -141,38 +185,35 @@ function App() {
     }
     localStorage.removeItem('user');
     setIsSignedIn(false);
-    setCurrentView('landing');
+    navigateTo('landing');
   };
 
   const handleVendorClick = (vendor: Vendor) => {
-    setSelectedVendor(vendor);
-    setCurrentView('vendor-details');
-    window.scrollTo(0, 0);
+    navigateTo('vendor-details', { vendor });
   };
 
   const handleBackToVendors = () => {
-    setSelectedVendor(null);
-    setCurrentView('vendor-listing');
+    navigateTo('vendor-listing', { vendor: null });
   };
 
   return (
     <div className="min-h-screen bg-white">
 
 
-      <main className="pt-16">
+      <main>
         {currentView === 'landing' && (
           <LandingPage
             onVendorClick={handleVendorClick}
-            onViewVendors={() => setCurrentView('vendor-listing')}
-            onRegisterVendor={() => setCurrentView('vendor-registration')}
-            onMyTrips={() => setCurrentView('trip-planner')}
+            onViewVendors={() => navigateTo('vendor-listing')}
+            onRegisterVendor={() => navigateTo('vendor-registration')}
+            onMyTrips={() => navigateTo('trip-planner')}
             onLeaveFeedback={() => {
-              if (isSignedIn) setCurrentView('feedback');
-              else { setPendingView('feedback'); setCurrentView('login'); }
+              if (isSignedIn) navigateTo('feedback');
+              else { setPendingView('feedback'); navigateTo('login'); }
             }}
             onGetStarted={() => {
-              if (isSignedIn) setCurrentView('trip-planner-form');
-              else { setPendingView('trip-planner-form'); setCurrentView('login'); }
+              if (isSignedIn) navigateTo('trip-planner-form');
+              else { setPendingView('trip-planner-form'); navigateTo('login'); }
             }}
           />
         )}
@@ -180,16 +221,16 @@ function App() {
         {currentView === 'login' && (
           <LoginPage
             onLogin={handleLogin}
-            onSwitchToSignup={() => setCurrentView('signup')}
-            onBack={() => setCurrentView('landing')}
+            onSwitchToSignup={() => navigateTo('signup')}
+            onBack={() => navigateTo('landing')}
           />
         )}
 
         {currentView === 'signup' && (
           <SignupPage
             onSignup={handleSignup}
-            onSwitchToLogin={() => setCurrentView('login')}
-            onBack={() => setCurrentView('landing')}
+            onSwitchToLogin={() => navigateTo('login')}
+            onBack={() => navigateTo('landing')}
           />
         )}
 
@@ -198,38 +239,38 @@ function App() {
         )}
 
         {currentView === 'vendor-registration' && (
-          <VendorRegistrationForm onBack={() => setCurrentView('landing')} />
+          <VendorRegistrationForm onBack={() => navigateTo('landing')} />
         )}
 
         {currentView === 'vendor-listing' && (
-          <VendorListing onBack={() => setCurrentView('landing')} onVendorClick={handleVendorClick} />
+          <VendorListing onBack={() => navigateTo('landing')} onVendorClick={handleVendorClick} />
         )}
 
         {currentView === 'trip-planner' && (
           <TripPlanner
-            onStartPlanning={() => setCurrentView('trip-planner-form')}
-            onViewTrip={(trip) => { setSelectedTrip(trip); setCurrentView('view-itinerary'); }}
-            onBack={() => setCurrentView('landing')}
+            onStartPlanning={() => navigateTo('trip-planner-form')}
+            onViewTrip={(trip) => navigateTo('view-itinerary', { trip })}
+            onBack={() => navigateTo('landing')}
           />
         )}
 
         {currentView === 'trip-planner-form' && (
           <PreferencesForm
-            onGenerateTrip={(trip) => { setSelectedTrip(trip); setCurrentView('view-itinerary'); }}
-            onBack={() => setCurrentView('landing')}
+            onGenerateTrip={(trip) => navigateTo('view-itinerary', { trip })}
+            onBack={() => navigateTo('landing')}
           />
         )}
 
         {currentView === 'view-itinerary' && selectedTrip && (
-          <TripItineraryView trip={selectedTrip} onBack={() => setCurrentView('trip-planner')} />
+          <TripItineraryView trip={selectedTrip} onBack={() => navigateTo('trip-planner')} />
         )}
 
         {currentView === 'payment-success' && (
-          <PaymentSuccess sessionId={paymentSessionId} onGoHome={() => setCurrentView('landing')} />
+          <PaymentSuccess sessionId={paymentSessionId} onGoHome={() => navigateTo('landing')} />
         )}
 
         {currentView === 'payment-cancel' && (
-          <PaymentCancel onGoHome={() => setCurrentView('landing')} onRetry={() => setCurrentView('vendor-registration')} />
+          <PaymentCancel onGoHome={() => navigateTo('landing')} onRetry={() => navigateTo('vendor-registration')} />
         )}
 
         {currentView === 'trip-payment-success' && (
@@ -240,14 +281,14 @@ function App() {
               </div>
               <h2 className="text-3xl font-black mb-4 text-gray-900">Payment Successful!</h2>
               <p className="text-gray-600 mb-8 text-lg">You now have unlimited access to generate trips.</p>
-              <button onClick={() => setCurrentView('trip-planner-form')} className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
+              <button onClick={() => navigateTo('trip-planner-form')} className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
                 Start Planning Your Next Trip
               </button>
             </div>
           </div>
         )}
 
-        {currentView === 'feedback' && <FeedbackForm onBack={() => setCurrentView('landing')} />}
+        {currentView === 'feedback' && <FeedbackForm onBack={() => navigateTo('landing')} />}
 
         {currentView === 'admin-dashboard' && <AdminDashboard onLogout={handleLogout} />}
       </main>

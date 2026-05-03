@@ -9,36 +9,30 @@ interface BudgetCardProps {
   onClick: () => void;
 }
 
+const gradients = {
+  cheap: 'from-emerald-500 to-teal-500',
+  moderate: 'from-blue-500 to-indigo-500',
+  luxury: 'from-purple-500 to-pink-500',
+};
+
 export function BudgetCard({ type, title, description, icon, selected, onClick }: BudgetCardProps) {
-  const colorClasses = {
-    cheap: selected ? 'w-full border-green-500 bg-green-50 shadow-lg shadow-green-200' : 'border-gray-200 hover:border-green-300',
-    moderate: selected ? 'w-full border-blue-500 bg-blue-50 shadow-lg shadow-blue-200' : 'border-gray-200 hover:border-blue-300',
-    luxury: selected ? 'w-full border-blue-500 bg-blue-50 shadow-lg shadow-blue-200' : 'border-gray-200 hover:border-blue-300',
-  };
-
-  const iconBgClasses = {
-    cheap: 'bg-green-100',
-    moderate: 'bg-blue-100',
-    luxury: 'bg-blue-100',
-  };
-
   return (
     <button
       onClick={onClick}
-      className={`relative cursor-pointer border-2 rounded-2xl p-6 text-left transition-all duration-200 hover:scale-105 ${colorClasses[type]}`}
+      className={`relative rounded-2xl p-5 text-left transition-all duration-200 border ${
+        selected
+          ? `border-transparent bg-gradient-to-br ${gradients[type]} shadow-xl`
+          : 'border-white/10 bg-white/5 hover:bg-white/8 hover:border-white/20'
+      }`}
     >
       {selected && (
-        <div className="absolute top-3 right-3 w-6 h-6 bg-gradient-to-br from-blue-600 to-blue-600 rounded-full flex items-center justify-center">
-          <Check className="w-4 h-4 text-white" />
+        <div className="absolute top-3 right-3 w-5 h-5 bg-white/30 rounded-full flex items-center justify-center">
+          <Check className="w-3 h-3 text-white" />
         </div>
       )}
-
-      <div className={`w-14 h-14 ${iconBgClasses[type]} rounded-xl flex items-center justify-center text-3xl mb-4`}>
-        {icon}
-      </div>
-
-      <div className="mb-1 text-lg">{title}</div>
-      <div className="text-sm text-gray-600">{description}</div>
+      <div className="text-2xl mb-2">{icon}</div>
+      <div className={`font-semibold text-sm mb-0.5 ${selected ? 'text-white' : 'text-white/70'}`}>{title}</div>
+      <div className={`text-xs ${selected ? 'text-white/80' : 'text-white/35'}`}>{description}</div>
     </button>
   );
 }

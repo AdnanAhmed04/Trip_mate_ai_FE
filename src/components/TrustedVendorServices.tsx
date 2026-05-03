@@ -126,64 +126,82 @@ export function TrustedVendorServices({
   const topVendors = useMemo(() => vendors.slice(0, 6), [vendors]);
 
   return (
-    <div className="py-16 bg-gray-200">
+    <div className="py-16 sm:py-24 bg-gray-950 text-white">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl mb-4">Trusted Vendor Services</h2>
-          <p className="text-xl text-gray-600">
-            Connect with verified travel experts and service providers
+        <div className="text-center mb-16">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-white tracking-tight">
+            Trusted Vendor Services
+          </h2>
+          <p className="text-base sm:text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">
+            Connect with verified travel experts and service providers worldwide
           </p>
         </div>
 
         {/* Loading / Error */}
         {loading && (
-          <div className="text-center text-gray-600 py-10">Loading vendors...</div>
+          <div className="text-center text-gray-400 py-20 flex flex-col items-center gap-4">
+            <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+            <span>Discovering top vendors...</span>
+          </div>
         )}
 
         {!loading && error && (
-          <div className="text-center py-10">
-            <p className="text-red-600">{error}</p>
+          <div className="text-center py-20 bg-red-900/10 rounded-3xl border border-red-900/20">
+            <p className="text-red-400 font-medium">{error}</p>
             <p className="text-sm text-gray-500 mt-2">
-              Make sure the backend is running on port 5000.
+              Please ensure your connection is stable or backend is active.
             </p>
           </div>
         )}
 
         {!loading && !error && (
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 ">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {topVendors.map((vendor) => (
               <div
                 key={vendor.id}
                 onClick={() => onVendorClick(vendor)}
-                className="border-2  rounded-xl bg-[rgb(236,236,236)] overflow-hidden hover:shadow-2xl transition-all cursor-pointer group"
+                className="group relative bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl overflow-hidden hover:bg-white/10 transition-all duration-500 cursor-pointer flex flex-col h-full hover:shadow-[0_0_40px_rgba(37,99,235,0.15)]"
               >
-                <div className="relative h-56 w-full overflow-hidden">
+                <div className="relative h-44 sm:h-52 w-full overflow-hidden">
                   <ImageWithFallback
                     src={vendor.image || ""}
                     alt={vendor.name || ""}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     fallbackSrc="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=60"
                   />
-                  <div className="absolute top-3 right-3 bg-white px-3 py-1 rounded-full flex items-center gap-1">
-                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    <span className="text-sm">{vendor.rating}</span>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60" />
+                  
+                  <div className="absolute top-4 right-4 bg-black/40 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-xl">
+                    <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+                    <span className="text-xs font-bold text-white">{vendor.rating}</span>
+                  </div>
+                  
+                  <div className="absolute bottom-4 left-4">
+                    <span className="bg-blue-600/80 backdrop-blur-md text-white text-[10px] uppercase tracking-widest font-black px-2.5 py-1.5 rounded-lg border border-blue-400/30">
+                      {vendor.category}
+                    </span>
                   </div>
                 </div>
 
-                <div className="p-6">
-                  <div className="text-sm text-blue-600 mb-2">{vendor.category}</div>
-                  <h3 className="text-xl mb-2">{vendor.name}</h3>
-                  <p className="text-sm text-gray-600 mb-4">{vendor.description}</p>
+                <div className="p-6 flex flex-col flex-1">
+                  <h3 className="text-xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors duration-300">
+                    {vendor.name}
+                  </h3>
+                  <p className="text-sm text-gray-400 mb-6 line-clamp-3 flex-1 leading-relaxed">
+                    {vendor.description}
+                  </p>
 
-                  <div className="flex items-center gap-2 text-sm text-gray-700">
-                    <MapPin className="w-4 h-4" />
-                    <span className="truncate">{vendor.location}</span>
+                  <div className="flex items-center gap-3 text-xs text-gray-300 mb-6 bg-white/5 p-3 rounded-2xl border border-white/5">
+                    <div className="w-8 h-8 bg-blue-600/20 rounded-lg flex items-center justify-center border border-blue-500/20">
+                      <MapPin className="w-4 h-4 text-blue-400" />
+                    </div>
+                    <span className="truncate font-medium">{vendor.location}</span>
                   </div>
 
-                  <div className="mt-4 pt-4 border-t border-gray-200">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">View Details</span>
-                      <ArrowRight className="w-4 h-4 text-blue-600 group-hover:translate-x-1 transition-transform" />
+                  <div className="pt-4 border-t border-white/10 flex items-center justify-between group/btn">
+                    <span className="text-sm font-bold text-blue-400 group-hover/btn:text-white transition-colors">Explore Services</span>
+                    <div className="w-8 h-8 rounded-full bg-blue-600/10 flex items-center justify-center group-hover:bg-blue-600 transition-all duration-300">
+                      <ArrowRight className="w-4 h-4 text-blue-400 group-hover:text-white transform group-hover:translate-x-0.5 transition-transform" />
                     </div>
                   </div>
                 </div>
@@ -193,47 +211,46 @@ export function TrustedVendorServices({
         )}
 
         {/* Vendor Action Buttons */}
-        <div className="mt-12 px-4">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-4 w-full">
+        <div className="mt-16">
+          <div className="flex flex-row items-center justify-center gap-3 sm:gap-6 w-full max-w-2xl mx-auto px-4">
             <button
               onClick={onViewVendors}
               className="
-                w-fit sm:w-auto
-                bg-gradient-to-r from-blue-600 to-blue-700
-                text-white
-                px-6 sm:px-8
-                py-3 sm:py-4
-                rounded-full
-                hover:shadow-2xl
+                flex-1 sm:flex-none
+                bg-blue-600/20 backdrop-blur-md border border-blue-500/30
+                text-white font-bold
+                px-4 sm:px-10
+                py-4 sm:py-5
+                rounded-2xl
+                hover:bg-blue-600/40
                 transition-all
-                text-base sm:text-lg
+                text-[12px] sm:text-base lg:text-lg
                 hover:scale-105
-                inline-flex items-center justify-center gap-2 cursor-pointer
+                inline-flex items-center justify-center gap-2 cursor-pointer shadow-2xl
               "
             >
-              <Building2 className="w-5 h-5 " />
-              <span>View More Vendors</span>
+              <Building2 className="w-4 h-4 sm:w-6 sm:h-6 text-blue-400" />
+              <span className="whitespace-nowrap">More Vendors</span>
             </button>
 
             <button
               onClick={onRegisterVendor}
               className="
-                w-fit sm:w-auto
-                bg-white
-                border-2 border-blue-600 cursor-pointer
-                text-blue-600
-                px-6 sm:px-8
-                py-3 sm:py-4
-                rounded-full
-                hover:bg-blue-50
+                flex-1 sm:flex-none
+                bg-white/5 backdrop-blur-md border border-white/10 cursor-pointer
+                text-white font-bold
+                px-4 sm:px-10
+                py-4 sm:py-5
+                rounded-2xl
+                hover:bg-white/10
                 transition-all
-                text-base sm:text-lg
+                text-[12px] sm:text-base lg:text-lg
                 hover:scale-105
-                inline-flex items-center justify-center gap-2
+                inline-flex items-center justify-center gap-2 shadow-2xl
               "
             >
-              <ArrowRight className="w-5 h-5" />
-              <span>Register as Vendor</span>
+              <ArrowRight className="w-4 h-4 sm:w-6 sm:h-6 text-blue-400" />
+              <span className="whitespace-nowrap">Register Now</span>
             </button>
           </div>
         </div>

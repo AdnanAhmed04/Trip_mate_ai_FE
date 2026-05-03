@@ -9,27 +9,31 @@ interface TravelCompanionCardProps {
   onClick: () => void;
 }
 
-export function TravelCompanionCard({ title, description, icon, selected, onClick }: TravelCompanionCardProps) {
+const gradients: Record<string, string> = {
+  'just-me': 'from-amber-400 to-orange-500',
+  couple: 'from-pink-400 to-rose-500',
+  family: 'from-green-400 to-emerald-500',
+  friends: 'from-blue-400 to-cyan-500',
+};
+
+export function TravelCompanionCard({ type, title, description, icon, selected, onClick }: TravelCompanionCardProps) {
   return (
     <button
       onClick={onClick}
-      className={`relative border-2 rounded-2xl p-5 text-left transition-all duration-200 hover:scale-105 ${selected
-        ? 'border-blue-500 bg-blue-50 shadow-lg shadow-blue-200'
-        : 'border-gray-200 hover:border-blue-300 hover:shadow-md'
-        }`}
+      className={`relative rounded-2xl p-4 text-left transition-all duration-200 border ${
+        selected
+          ? `border-transparent bg-gradient-to-br ${gradients[type]} shadow-xl`
+          : 'border-white/10 bg-white/5 hover:bg-white/8 hover:border-white/20'
+      }`}
     >
       {selected && (
-        <div className="absolute top-3 right-3 w-6 h-6 bg-gradient-to-br from-blue-600 to-blue-600 rounded-full flex items-center justify-center">
-          <Check className="w-4 h-4 text-white" />
+        <div className="absolute top-3 right-3 w-5 h-5 bg-white/30 rounded-full flex items-center justify-center">
+          <Check className="w-3 h-3 text-white" />
         </div>
       )}
-
-      <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-2xl mb-3">
-        {icon}
-      </div>
-
-      <div className="mb-1">{title}</div>
-      <div className="text-xs text-gray-600">{description}</div>
+      <div className="text-2xl mb-2">{icon}</div>
+      <div className={`font-semibold text-sm mb-0.5 ${selected ? 'text-white' : 'text-white/70'}`}>{title}</div>
+      <div className={`text-xs ${selected ? 'text-white/80' : 'text-white/35'}`}>{description}</div>
     </button>
   );
 }

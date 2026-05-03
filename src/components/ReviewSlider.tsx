@@ -59,9 +59,7 @@ const staticReviews: Review[] = [
 
 const ReviewItem: React.FC<{ review: Review }> = ({ review }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-
-  // Character limit for truncation
-  const MAX_LENGTH = 120;
+  const MAX_LENGTH = 150;
   const shouldTruncate = review.review.length > MAX_LENGTH;
 
   const displayReview = shouldTruncate && !isExpanded
@@ -69,46 +67,52 @@ const ReviewItem: React.FC<{ review: Review }> = ({ review }) => {
     : review.review;
 
   return (
-    <div className="bg-gray-900 text-white p-6 rounded-xl shadow-lg text-center h-full flex flex-col justify-between">
-      <div>
-        <img
-          src={review.image}
-          alt={review.name}
-          className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
-        />
-        <h3 className="text-xl font-semibold mb-2 text-gray-300">{review.name}</h3>
-        <p className="text-sm mb-4 text-gray-300">{review.title}</p>
+    <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-[2rem] shadow-2xl flex flex-col items-center text-center h-full group hover:bg-white/10 transition-all duration-500 relative overflow-hidden">
+      {/* Decorative Quote Icon */}
+      <div className="absolute top-6 right-8 text-blue-500/10 group-hover:text-blue-500/20 transition-colors">
+        <svg width="45" height="35" viewBox="0 0 45 35" fill="currentColor">
+          <path d="M13.5 0C6.045 0 0 6.045 0 13.5C0 20.955 6.045 27 13.5 27H15.75V35L24.75 27V13.5C24.75 6.045 18.705 0 13.5 0ZM38.25 0C30.795 0 24.75 6.045 24.75 13.5C24.75 20.955 30.795 27 38.25 27H40.5V35L49.5 27V13.5C49.5 6.045 43.455 0 38.25 0Z" />
+        </svg>
+      </div>
 
-        <p className="text-gray-300 mb-2">
-          {displayReview}
+      <div className="relative z-10 w-full flex flex-col items-center h-full">
+        <div className="relative mb-6">
+          <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-xl group-hover:blur-2xl transition-all"></div>
+          <img
+            src={review.image}
+            alt={review.name}
+            className="w-24 h-24 rounded-full border-4 border-white/10 object-cover relative z-10 shadow-xl group-hover:scale-105 transition-transform duration-500"
+          />
+        </div>
+
+        <div className="flex gap-1 mb-4">
+          {[...Array(5)].map((_, i) => (
+            <svg
+              key={i}
+              className={`w-4 h-4 ${i < Math.floor(review.rating) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'}`}
+              viewBox="0 0 20 20"
+            >
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+          ))}
+        </div>
+
+        <p className="text-gray-300 italic leading-relaxed mb-6 text-base flex-1">
+          "{displayReview}"
           {shouldTruncate && (
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="cursor-pointer ml-2 font-medium focus:outline-none"
+              className="text-blue-400 hover:text-blue-300 cursor-pointer ml-2 text-sm font-bold transition-colors"
             >
               {isExpanded ? 'Show less' : 'Read more'}
             </button>
           )}
         </p>
-      </div>
 
-      <div className="flex justify-center mt-4">
-        {[...Array(5)].map((_, i) => (
-          <svg
-            key={i}
-            xmlns="http://www.w3.org/2000/svg"
-            className={`w-5 h-5 ${i < review.rating ? 'text-yellow-400' : 'text-gray-500'}`}
-            fill="currentColor"
-            viewBox="0 0 20 20"
-            stroke="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M10 15l-3.09 1.633a1 1 0 01-1.45-1.054l.586-3.51-2.56-2.493a1 1 0 01.554-1.71l3.508-.51 1.56-3.16a1 1 0 011.898 0l1.56 3.16 3.508.51a1 1 0 01.554 1.71l-2.56 2.493.586 3.51a1 1 0 01-1.45 1.054L10 15z"
-              clipRule="evenodd"
-            />
-          </svg>
-        ))}
+        <div className="mt-auto">
+          <h3 className="text-lg font-bold text-white tracking-wide">{review.name}</h3>
+          <p className="text-blue-400 text-xs font-black uppercase tracking-[0.2em]">{review.title}</p>
+        </div>
       </div>
     </div>
   );
@@ -214,47 +218,59 @@ const CustomerReviewSlider: React.FC<CustomerReviewSliderProps> = ({ onLeaveFeed
   };
 
   return (
-    <div className="relative  m-auto overflow-hidden py-12  ">
-      <div className="flex flex-col items-center mb-8 mt-6">
-        <h2 className="text-4xl text-white font-extrabold text-center mb-4">
+    <div className="relative max-w-7xl mx-auto overflow-hidden py-20 px-6">
+      <div className="flex flex-col items-center mb-16">
+        <div className="inline-block bg-blue-600/20 backdrop-blur-md text-blue-400 px-4 py-2 rounded-full mb-6 border border-blue-500/20">
+          <span className="flex items-center gap-2 text-sm font-bold tracking-wider uppercase">
+            ⭐ Customer Testimonials
+          </span>
+        </div>
+        <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white text-center mb-8 tracking-tight">
           What People Love About Us
         </h2>
         {onLeaveFeedback && (
           <button
             onClick={onLeaveFeedback}
-            className="bg-white/10 cursor-pointer hover:bg-white/20 text-white border border-white/30 px-6 py-2 rounded-full transition-all font-medium text-sm flex items-center gap-2"
+            className="bg-blue-600/40 backdrop-blur-md cursor-pointer hover:bg-blue-600/60 text-white border border-white/20 px-8 py-3 rounded-full transition-all font-bold text-sm flex items-center gap-2 shadow-2xl hover:scale-105 active:scale-95"
           >
             Leave Feedback
           </button>
         )}
       </div>
 
-      <div className="overflow-hidden w-full  relative">
-        <div
-          className="flex transition-transform duration-500 ease-in-out items-stretch"
-          style={{ transform: `translateX(-${currentIndex * (100 / itemsPerPage)}%)` }}
-        >
-          {reviews.map((review, index) => (
-            <div
-              key={index}
-              className="px-4 mb-6 flex-shrink-0 flex"
-              style={{ width: `${100 / itemsPerPage}%` }}
-            >
-              <div className="w-full h-full">
-                <ReviewItem review={review} />
+      <div className="relative">
+        <div className="overflow-hidden w-full relative">
+          <div
+            className="flex transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] items-stretch"
+            style={{ transform: `translateX(-${currentIndex * (100 / itemsPerPage)}%)` }}
+          >
+            {reviews.map((review, index) => (
+              <div
+                key={index}
+                className="px-4 mb-12 flex-shrink-0 flex"
+                style={{ width: `${100 / itemsPerPage}%` }}
+              >
+                <div className="w-full h-full">
+                  <ReviewItem review={review} />
+                </div>
               </div>
-            </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Navigation Dots */}
+        <div className="flex justify-center gap-3 mt-8">
+          {Array.from({ length: Math.max(0, reviews.length - itemsPerPage + 1) }).map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentIndex(i)}
+              className={`h-2.5 rounded-full transition-all duration-500 ${
+                currentIndex === i ? 'w-8 bg-blue-500' : 'w-2.5 bg-white/20 hover:bg-white/40'
+              }`}
+            />
           ))}
         </div>
       </div>
-
-      {/* Navigation buttons */}
-      {/* <div className="absolute top-1/2 left-0 transform -translate-y-1/2 text-white text-4xl cursor-pointer z-10" onClick={prevSlide}>
-        &#8249;
-      </div>
-      <div className="absolute top-1/2 right-0 transform -translate-y-1/2 text-white text-4xl cursor-pointer z-10" onClick={nextSlide}>
-        &#8250;
-      </div> */}
     </div>
   );
 };
