@@ -48,13 +48,13 @@ function App() {
     };
 
     window.addEventListener('popstate', handlePopState);
-    
+
     // Set initial state
     if (!window.history.state) {
-      window.history.replaceState({ 
-        view: currentView, 
-        vendor: selectedVendor, 
-        trip: selectedTrip 
+      window.history.replaceState({
+        view: currentView,
+        vendor: selectedVendor,
+        trip: selectedTrip
       }, '');
     }
 
@@ -65,14 +65,14 @@ function App() {
     setCurrentView(view);
     const newVendor = data?.vendor !== undefined ? data.vendor : selectedVendor;
     const newTrip = data?.trip !== undefined ? data.trip : selectedTrip;
-    
+
     if (data?.vendor !== undefined) setSelectedVendor(data.vendor);
     if (data?.trip !== undefined) setSelectedTrip(data.trip);
-    
-    window.history.pushState({ 
-      view, 
+
+    window.history.pushState({
+      view,
       vendor: newVendor,
-      trip: newTrip 
+      trip: newTrip
     }, '');
     window.scrollTo(0, 0);
   };
@@ -149,6 +149,7 @@ function App() {
     const response = await api.auth.login({ email, password });
     if (response.user) {
       localStorage.setItem('user', JSON.stringify(response.user));
+      localStorage.setItem('token', response.token);
       setIsSignedIn(true);
       if (response.user.role === 'admin') {
         navigateTo('admin-dashboard');

@@ -3,10 +3,11 @@ import { Vendor, VendorResponse, AuthResponse, User, Trip } from '../types';
 export const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 const API_BASE_URL = `${BASE_URL}/api`;
 
-const getHeaders = (contentType = 'application/json') => {
-    const headers: HeadersInit = {
-        'Content-Type': contentType,
-    };
+const getHeaders = (contentType: string | null = 'application/json') => {
+    const headers: Record<string, string> = {};
+    if (contentType) {
+        headers['Content-Type'] = contentType;
+    }
     const token = localStorage.getItem('token');
     if (token) {
         headers['Authorization'] = `Bearer ${token}`;
@@ -61,27 +62,22 @@ export const api = {
     vendors: {
         getAll: async (): Promise<VendorResponse> => {
             const response = await fetch(`${API_BASE_URL}/vendors`, {
-                headers: { 'Content-Type': 'application/json' },
+                headers: getHeaders(),
                 credentials: 'include',
             });
             return handleResponse(response);
         },
         getById: async (id: string): Promise<Vendor> => {
             const response = await fetch(`${API_BASE_URL}/vendors/${id}`, {
-                headers: { 'Content-Type': 'application/json' },
+                headers: getHeaders(),
                 credentials: 'include',
             });
             return handleResponse(response);
         },
         register: async (formData: FormData): Promise<Vendor> => {
-            const token = localStorage.getItem('token');
-            const headers: HeadersInit = {};
-            if (token) {
-                headers['Authorization'] = `Bearer ${token}`;
-            }
             const response = await fetch(`${API_BASE_URL}/vendors/register`, {
                 method: 'POST',
-                headers: headers,
+                headers: getHeaders(null),
                 body: formData,
                 credentials: 'include',
             });
@@ -89,7 +85,7 @@ export const api = {
         },
         filter: async (params: string): Promise<VendorResponse> => {
             const response = await fetch(`${API_BASE_URL}/vendors/filter?${params}`, {
-                headers: { 'Content-Type': 'application/json' },
+                headers: getHeaders(),
                 credentials: 'include',
             });
             return handleResponse(response);
@@ -177,14 +173,9 @@ export const api = {
     },
     feedbacks: {
         create: async (formData: FormData): Promise<any> => {
-            const token = localStorage.getItem('token');
-            const headers: HeadersInit = {};
-            if (token) {
-                headers['Authorization'] = `Bearer ${token}`;
-            }
             const response = await fetch(`${API_BASE_URL}/feedbacks`, {
                 method: 'POST',
-                headers: headers,
+                headers: getHeaders(null),
                 body: formData,
                 credentials: 'include',
             });
