@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X, Plus, Upload, Building2, Mail, MapPin, FileText, Tag, ArrowLeft, CheckCircle } from "lucide-react";
+import { X, Plus, Upload, Building2, Mail, MapPin, FileText, Tag, ArrowLeft, CheckCircle, Phone, ShieldCheck, Ticket } from "lucide-react";
 import { api } from "../services/api";
 
 interface Branch {
@@ -16,6 +16,7 @@ interface VendorFormData {
   vendorType: string;
   companyLogo: File | null;
   email: string;
+  phone: string;
   aboutUs: string;
   specialOffer: string;
   ourServices: string[];
@@ -58,6 +59,7 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
     vendorType: "",
     companyLogo: null,
     email: "",
+    phone: "",
     aboutUs: "",
     specialOffer: "",
     ourServices: [],
@@ -169,34 +171,29 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
     if (!formData.email.trim()) newErrors.email = "Email is required";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = "Invalid email format";
 
+    if (!formData.phone.trim()) newErrors.phone = "Contact number is required";
+
     if (!formData.aboutUs.trim()) newErrors.aboutUs = "About Us is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  // ✅ API submit (token handling is done in api.ts)
   const submitVendor = async (data: VendorFormData) => {
-    // const token = localStorage.getItem("token"); // api.ts handles this
-
     const fd = new FormData();
     fd.append("companyName", data.companyName);
     fd.append("vendorType", data.vendorType);
     fd.append("email", data.email);
+    fd.append("phone", data.phone);
     fd.append("aboutUs", data.aboutUs);
     fd.append("specialOffer", data.specialOffer || "");
 
-    // backend expects "services"
     fd.append("services", JSON.stringify(data.vendorServices));
-
-    // branches optional
     fd.append("branches", JSON.stringify(data.branches || []));
     fd.append("serviceLocations", JSON.stringify(data.serviceLocations || []));
 
-    // IMPORTANT: multer field is uploadLogo.single("logo")
     if (data.companyLogo) fd.append("logo", data.companyLogo);
 
-    // Use api service
     return api.vendors.register(fd);
   };
 
@@ -220,77 +217,77 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
       vendorServices: finalVendorServices,
       branches: formData.branches.filter((b) => b.name.trim() && b.location.trim() && b.phone.trim()),
     };
+    
     try {
       setLoading(true);
-      // Step 1: Register vendor (saved as pending)
       await submitVendor(filteredData);
-
       setLoading(false);
       setShowSuccess(true);
-
-      // Wait 4 seconds then redirect to home
       setTimeout(() => {
         onBack();
       }, 4000);
-
     } catch (err: any) {
       alert(err?.message || "Error submitting vendor");
       setLoading(false);
     }
   };
 
+  // Base input classes for dark mode
+  const inputBaseClasses = "w-full bg-gray-900/50 border border-white/10 rounded-xl sm:rounded-2xl px-4 sm:px-5 py-3 sm:py-4 text-white placeholder-gray-500 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-all outline-none";
+  const labelClasses = "flex items-center gap-2 mb-2 sm:mb-3 text-sm sm:text-base font-bold text-white tracking-tight";
+  const iconClasses = "w-4 h-4 sm:w-5 sm:h-5 text-blue-400";
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-24 pb-8 px-4">
-      <div className="max-w-8xl mx-auto ">
+    <div className="min-h-[100dvh] bg-gray-950 text-white relative pt-6 pb-12 px-4 sm:px-6 lg:px-8 animate-slide-up z-20">
+      
+      {/* Background Ambience */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-0 right-0 w-[80vw] h-[80vw] max-w-[600px] max-h-[600px] bg-blue-600/10 rounded-full blur-[100px] sm:blur-[120px] -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-[80vw] h-[80vw] max-w-[500px] max-h-[500px] bg-emerald-600/10 rounded-full blur-[100px] sm:blur-[120px] translate-y-1/2 -translate-x-1/2" />
+      </div>
 
-        <div className="mb-6 mt-8 relative z-50 rounded-2xl overflow-hidden h-[250px] md:h-[260px]">
+      <div className="max-w-6xl mx-auto relative z-10">
 
-          {/* Background Image */}
+        {/* Hero Section */}
+        <div className="mb-8 mt-4 relative z-50 rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden h-[250px] sm:h-[300px] md:h-[350px] shadow-2xl border border-white/10">
           <img
             src="https://images.pexels.com/photos/19825310/pexels-photo-19825310.jpeg"
             alt="travel"
-            className="absolute inset-0 w-full h-full object-cover "
+            className="absolute inset-0 w-full h-full object-cover transform hover:scale-105 transition-transform duration-1000"
           />
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-950/90 via-gray-950/70 to-transparent"></div>
 
-          {/* Gradient Overlay (better than plain black) */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/30"></div>
+          <div className="relative z-10 px-6 sm:px-12 h-full flex flex-col justify-center">
+            <button
+              onClick={onBack}
+              className="absolute top-6 left-6 sm:top-8 sm:left-8 flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-white transition-all cursor-pointer border border-white/20"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span className="text-xs sm:text-sm font-bold uppercase tracking-wider hidden sm:block">Back</span>
+            </button>
 
-
-
-          {/* Content */}
-          <div className="relative  z-10 px-6  text-white h-full  flex flex-col p-8">
-
-            <div className="flex flex-col justify-between">
-              {/* Back Button */}
-              <button
-                onClick={onBack}
-                className="flex items-center mt-10 gap-2 text-gray-200 hover:text-white mb-3 transition"
-              >
-                <ArrowLeft className="w-5 h-5" />
-                <span className="text-sm font-medium">Back</span>
-              </button>
-            </div>
-
-            <div>
-              {/* Heading */}
-              <h1 className="text-5xl md:text-4xl font-semibold mb-1">
+            <div className="max-w-2xl mt-10 sm:mt-12">
+              <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 rounded-full bg-blue-500/20 border border-blue-500/30 text-blue-300 backdrop-blur-md mb-3 sm:mb-4 shadow-sm">
+                <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <span className="text-[9px] sm:text-[10px] md:text-xs font-bold uppercase tracking-widest">Partner Program</span>
+              </div>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tighter mb-2 sm:mb-4 leading-tight drop-shadow-lg">
                 Vendor Registration
               </h1>
-
-              {/* Subtitle */}
-              <p className="text-gray-200 text-md mt-2">
-                Join our platform and reach thousands of travelers
+              <p className="text-gray-300 text-sm sm:text-base md:text-lg lg:text-xl font-medium leading-relaxed max-w-xl drop-shadow-md">
+                Join our elite platform, showcase your premium services, and connect with thousands of exclusive travelers.
               </p>
             </div>
-
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-3xl shadow-xl p-8 space-y-8">
+        {/* Form Container */}
+        <form onSubmit={handleSubmit} className="bg-white/5 backdrop-blur-2xl rounded-3xl sm:rounded-[2.5rem] shadow-[0_20px_60px_rgba(0,0,0,0.5)] border border-white/10 p-5 sm:p-8 md:p-12 space-y-8 sm:space-y-10 relative z-10">
+          
           {/* Company Name */}
           <div>
-            <label className="flex items-center gap-2 mb-3 text-lg text-gray-900">
-              <Building2 className="w-5 h-5 text-gray-600" />
+            <label className={labelClasses}>
+              <Building2 className={iconClasses} />
               <span>Company Name *</span>
             </label>
             <input
@@ -298,46 +295,50 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
               value={formData.companyName}
               onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
               placeholder="Enter your company name"
-              className="w-full border-2 border-gray-200 rounded-2xl px-5 py-4 focus:border-gray-500 focus:ring-1 focus:ring-gray-100 transition-all outline-none"
+              className={inputBaseClasses}
             />
-            {errors.companyName && <p className="text-red-500  mt-2">{errors.companyName}</p>}
+            {errors.companyName && <p className="text-red-400 mt-2 text-sm font-medium">{errors.companyName}</p>}
           </div>
 
           {/* Vendor Services */}
           <div>
-            <label className="flex items-center gap-2 mb-3 text-lg text-gray-900">
-              <Tag className="w-5 h-5 text-gray-600" />
-              <span>Vendor Services * (Select at least 1)</span>
+            <label className={labelClasses}>
+              <Tag className={iconClasses} />
+              <span>Vendor Services * <span className="text-gray-400 text-sm font-normal">(Select at least 1)</span></span>
             </label>
 
-            <div className="grid grid-cols-4 md:grid-cols-4 gap-3 mb-4">
-              {serviceOptions.map((service) => (
-                <label
-                  key={service}
-                  className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${formData.vendorServices.includes(service)
-                    ? "border-gray-500 bg-gray-50"
-                    : "border-gray-200 hover:border-gray-300"
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mb-4">
+              {serviceOptions.map((service) => {
+                const isSelected = formData.vendorServices.includes(service);
+                return (
+                  <label
+                    key={service}
+                    className={`flex items-center gap-3 p-3 sm:p-4 rounded-xl sm:rounded-2xl border cursor-pointer transition-all ${
+                      isSelected
+                        ? "border-blue-500/50 bg-blue-500/10"
+                        : "border-white/10 bg-gray-900/50 hover:border-white/20 hover:bg-gray-900/80"
                     }`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={formData.vendorServices.includes(service)}
-                    onChange={() => handleServiceToggle(service)}
-                    className="w-5 h-5 text-gray-600 rounded focus:ring-gray-500"
-                  />
-                  <span className="text-gray-900">{service}</span>
-                </label>
-              ))}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => handleServiceToggle(service)}
+                      className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500 bg-gray-900 border-gray-600 rounded focus:ring-blue-500/50 focus:ring-offset-gray-900"
+                    />
+                    <span className={`text-sm sm:text-base font-medium ${isSelected ? 'text-blue-300' : 'text-gray-300'}`}>{service}</span>
+                  </label>
+                );
+              })}
             </div>
 
-            {/* Custom Service */}
-            <div className="flex gap-2">
+            {/* Custom Service Input */}
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
               <input
                 type="text"
                 value={customService}
                 onChange={(e) => setCustomService(e.target.value)}
                 placeholder="Add custom service..."
-                className="flex-1 border-2 border-gray-200 rounded-2xl px-5 py-3 focus:border-gray-500 focus:ring-1 focus:ring-gray-100 transition-all outline-none"
+                className={inputBaseClasses}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
@@ -345,47 +346,50 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
                   }
                 }}
               />
-              <button type="button" onClick={handleAddCustomService} className="bg-gray-600 cursor-pointer px-6 py-3 rounded-2xl border-2 border-gray-200 hover:bg-gray-700 transition-colors">
-                +Add
+              <button 
+                type="button" 
+                onClick={handleAddCustomService} 
+                className="bg-blue-600/20 text-blue-400 border border-blue-500/30 px-6 py-3 sm:py-4 rounded-xl sm:rounded-2xl hover:bg-blue-600/30 font-bold transition-colors cursor-pointer shrink-0"
+              >
+                + Add Custom
               </button>
             </div>
 
-            {/* Custom chips */}
+            {/* Custom Service Chips */}
             {formData.vendorServices.filter((s) => !serviceOptions.includes(s)).length > 0 && (
               <div className="flex flex-wrap gap-2 mt-4">
                 {formData.vendorServices
                   .filter((s) => !serviceOptions.includes(s))
                   .map((service) => (
-                    <span key={service} className="bg-gray-100 text-gray-700 px-4 py-2 rounded-full flex items-center gap-2">
+                    <span key={service} className="bg-white/10 text-white border border-white/10 px-4 py-2 rounded-full flex items-center gap-2 text-sm">
                       {service}
-                      <button type="button" onClick={() => handleServiceToggle(service)} className="hover:text-gray-900">
+                      <button type="button" onClick={() => handleServiceToggle(service)} className="text-gray-400 hover:text-white transition-colors">
                         <X className="w-4 h-4" />
                       </button>
                     </span>
                   ))}
               </div>
             )}
-
-            {errors.vendorServices && <p className="text-red-500  mt-2">{errors.vendorServices}</p>}
+            {errors.vendorServices && <p className="text-red-400 mt-2 text-sm font-medium">{errors.vendorServices}</p>}
           </div>
 
           {/* Service Locations */}
           <div>
-            <label className="flex items-center gap-2 mb-3 text-lg text-gray-900">
-              <MapPin className="w-5 h-5 text-gray-600" />
-              <span>Service Locations (Countries/Cities)</span>
+            <label className={labelClasses}>
+              <MapPin className={iconClasses} />
+              <span>Service Locations</span>
             </label>
-            <p className="text-gray-500 mb-4">
-              Where do you operate? This helps us plot your business on our Interactive Globe!
+            <p className="text-gray-400 text-sm mb-4">
+              Where do you operate? This plots your business on our Interactive Globe.
             </p>
 
-            <div className="flex gap-2 mb-4">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-4">
               <input
                 type="text"
                 value={customLocation}
                 onChange={(e) => setCustomLocation(e.target.value)}
-                placeholder="e.g., Canada, Paris, Tokyo..."
-                className="flex-1 border-2 border-gray-200 rounded-2xl px-5 py-3 focus:border-gray-500 focus:ring-1 focus:ring-gray-100 transition-all outline-none"
+                placeholder="e.g., Paris, Tokyo, Worldwide..."
+                className={inputBaseClasses}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
@@ -393,17 +397,21 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
                   }
                 }}
               />
-              <button type="button" onClick={handleAddCustomLocation} className="bg-gray-600  px-6 py-3 rounded-2xl cursor-pointer border-2 border-gray-200 hover:bg-gray-700 transition-colors">
-                + Add
+              <button 
+                type="button" 
+                onClick={handleAddCustomLocation} 
+                className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-6 py-3 sm:py-4 rounded-xl sm:rounded-2xl hover:bg-emerald-500/30 font-bold transition-colors cursor-pointer shrink-0"
+              >
+                + Add Location
               </button>
             </div>
 
             {formData.serviceLocations.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {formData.serviceLocations.map((location) => (
-                  <span key={location} className="bg-gray-100 text-gray-700 px-4 py-2 rounded-full flex items-center gap-2">
+                  <span key={location} className="bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 px-4 py-2 rounded-full flex items-center gap-2 text-sm font-medium">
                     {location}
-                    <button type="button" onClick={() => handleRemoveLocation(location)} className="hover:text-gray-900">
+                    <button type="button" onClick={() => handleRemoveLocation(location)} className="text-emerald-400/70 hover:text-emerald-400 transition-colors">
                       <X className="w-4 h-4" />
                     </button>
                   </span>
@@ -414,20 +422,24 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
 
           {/* Branches */}
           <div>
-            <label className="flex items-center gap-2 mb-3 text-lg text-gray-900">
-              <MapPin className="w-5 h-5 text-gray-600" />
-              <span>Branches (Optional)</span>
+            <label className={labelClasses}>
+              <Building2 className={iconClasses} />
+              <span>Branches <span className="text-gray-400 text-sm font-normal">(Optional)</span></span>
             </label>
-            <p className="text-gray-500 mb-4">
-              Add your business locations. Each branch requires a name, location, and phone number.
+            <p className="text-gray-400 text-sm mb-4">
+              Add specific physical locations.
             </p>
 
             <div className="space-y-4">
               {formData.branches.map((branch, index) => (
-                <div key={branch.id} className="border-2 border-gray-200 rounded-2xl p-6">
+                <div key={branch.id} className="bg-gray-900/50 border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 relative group">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg text-gray-900">Branch {index + 1}</h3>
-                    <button type="button" onClick={() => handleRemoveBranch(branch.id)} className="text-red-500 hover:text-red-700 transition-colors">
+                    <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">Branch {index + 1}</h3>
+                    <button 
+                      type="button" 
+                      onClick={() => handleRemoveBranch(branch.id)} 
+                      className="text-red-400/70 hover:text-red-400 p-2 rounded-lg hover:bg-red-400/10 transition-colors"
+                    >
                       <X className="w-5 h-5" />
                     </button>
                   </div>
@@ -438,164 +450,198 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
                       value={branch.name}
                       onChange={(e) => handleBranchChange(branch.id, "name", e.target.value)}
                       placeholder="Branch Name *"
-                      className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-gray-500 focus:ring-1 focus:ring-gray-100 transition-all outline-none"
+                      className={inputBaseClasses}
                     />
                     <input
                       type="text"
                       value={branch.location}
                       onChange={(e) => handleBranchChange(branch.id, "location", e.target.value)}
                       placeholder="Branch Location *"
-                      className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-gray-500 focus:ring-1 focus:ring-gray-100 transition-all outline-none"
+                      className={inputBaseClasses}
                     />
                     <input
                       type="tel"
                       value={branch.phone}
                       onChange={(e) => handleBranchChange(branch.id, "phone", e.target.value)}
                       placeholder="Branch Phone *"
-                      className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-gray-500 focus:ring-1 focus:ring-gray-100 transition-all outline-none"
+                      className={inputBaseClasses}
                     />
                   </div>
                 </div>
               ))}
             </div>
 
-            <button type="button" onClick={handleAddBranch} className="mt-4 flex items-center cursor-pointer border-2 border-gray-200 px-4 py-2 rounded-2xl gap-2 text-gray-600 hover:text-gray-700 transition-colors">
+            <button 
+              type="button" 
+              onClick={handleAddBranch} 
+              className="mt-4 flex items-center justify-center sm:justify-start gap-2 bg-white/5 border border-white/10 px-5 py-3 rounded-xl sm:rounded-2xl text-gray-300 hover:bg-white/10 hover:text-white transition-colors cursor-pointer w-full sm:w-auto font-bold"
+            >
               <Plus className="w-5 h-5" />
-              <span>+Add Branch</span>
+              <span>Add Branch</span>
             </button>
 
-            {errors.branches && <p className="text-red-500  mt-2">{errors.branches}</p>}
+            {errors.branches && <p className="text-red-400 mt-2 text-sm font-medium">{errors.branches}</p>}
           </div>
 
           {/* Vendor Type */}
           <div>
-            <label className="flex items-center gap-2 mb-3 text-lg text-gray-900">
-              <Building2 className="w-5 h-5 text-gray-600" />
+            <label className={labelClasses}>
+              <Tag className={iconClasses} />
               <span>Vendor Type *</span>
             </label>
-
             <select
               value={formData.vendorType}
               onChange={(e) => setFormData({ ...formData, vendorType: e.target.value })}
-              className="w-full border-2 border-gray-200 rounded-2xl px-5 py-4 focus:border-gray-500 focus:ring-1 focus:ring-gray-100 transition-all outline-none"
+              className={`${inputBaseClasses} appearance-none cursor-pointer`}
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                backgroundPosition: "right 1rem center",
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "1.5em 1.5em",
+                paddingRight: "2.5rem"
+              }}
             >
-              <option value="">Select vendor type</option>
+              <option value="" className="bg-gray-900 text-gray-500">Select vendor type</option>
               {vendorTypeOptions.map((type) => (
-                <option key={type} value={type}>
+                <option key={type} value={type} className="bg-gray-900 text-white">
                   {type}
                 </option>
               ))}
             </select>
-
-            {errors.vendorType && <p className="text-red-500  mt-2">{errors.vendorType}</p>}
+            {errors.vendorType && <p className="text-red-400 mt-2 text-sm font-medium">{errors.vendorType}</p>}
           </div>
 
           {/* Company Logo */}
           <div>
-            <label className="flex items-center gap-2 mb-3 text-lg text-gray-900">
-              <Upload className="w-5 h-5 text-gray-600" />
-              <span>Company Logo * (Any image format)</span>
+            <label className={labelClasses}>
+              <Upload className={iconClasses} />
+              <span>Company Logo *</span>
             </label>
 
-            <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center">
+            <div className="border-2 border-dashed border-white/20 bg-gray-900/30 rounded-2xl p-4 sm:p-5 text-center hover:bg-gray-900/50 transition-colors cursor-pointer group max-w-sm">
               {logoPreview ? (
                 <div className="space-y-4">
-                  <img src={logoPreview} alt="Logo preview" className="w-32 h-32 object-contain mx-auto rounded-xl" />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setLogoPreview(null);
-                      setFormData({ ...formData, companyLogo: null });
-                    }}
-                    className="text-red-500 hover:text-red-700 transition-colors"
-                  >
-                    Remove
-                  </button>
+                  <div className="relative inline-block">
+                    <img src={logoPreview} alt="Logo preview" className="w-20 h-20 sm:w-24 sm:h-24 object-contain mx-auto rounded-xl bg-gray-950 p-2 shadow-xl border border-white/10" />
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setLogoPreview(null);
+                        setFormData({ ...formData, companyLogo: null });
+                      }}
+                      className="absolute -top-3 -right-3 bg-red-500 text-white p-1.5 rounded-full shadow-lg hover:bg-red-600 transition-colors"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               ) : (
-                <label className="cursor-pointer">
-                  <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-600 mb-2">Click to upload logo</p>
-                  <p className=" text-gray-500">Any image format</p>
+                <label className="cursor-pointer block w-full h-full">
+                  <div className="p-4 bg-white/5 rounded-full inline-block mb-4 group-hover:bg-white/10 transition-colors">
+                    <Upload className="w-8 h-8 sm:w-10 sm:h-10 text-gray-400 group-hover:text-white transition-colors" />
+                  </div>
+                  <p className="text-white font-bold mb-1">Click to upload logo</p>
+                  <p className="text-gray-500 text-sm">PNG, JPG up to 5MB</p>
                   <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
                 </label>
               )}
             </div>
-
-            {errors.companyLogo && <p className="text-red-500  mt-2">{errors.companyLogo}</p>}
+            {errors.companyLogo && <p className="text-red-400 mt-2 text-sm font-medium">{errors.companyLogo}</p>}
           </div>
 
-          {/* Email */}
-          <div>
-            <label className="flex items-center gap-2 mb-3 text-lg text-gray-900">
-              <Mail className="w-5 h-5 text-gray-600" />
-              <span>Email *</span>
-            </label>
-            <input
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              placeholder="company@example.com"
-              className="w-full border-2 border-gray-200 rounded-2xl px-5 py-4 focus:border-gray-500 focus:ring-1 focus:ring-gray-100 transition-all outline-none"
-            />
-            {errors.email && <p className="text-red-500  mt-2">{errors.email}</p>}
+          {/* Contact Details Grid */}
+          <div className="grid md:grid-cols-2 gap-6 md:gap-8">
+            <div>
+              <label className={labelClasses}>
+                <Mail className={iconClasses} />
+                <span>Email *</span>
+              </label>
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                placeholder="company@example.com"
+                className={inputBaseClasses}
+              />
+              {errors.email && <p className="text-red-400 mt-2 text-sm font-medium">{errors.email}</p>}
+            </div>
+
+            <div>
+              <label className={labelClasses}>
+                <Phone className={iconClasses} />
+                <span>Contact Number *</span>
+              </label>
+              <input
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                placeholder="+1 (234) 567-8900"
+                className={inputBaseClasses}
+              />
+              {errors.phone && <p className="text-red-400 mt-2 text-sm font-medium">{errors.phone}</p>}
+            </div>
           </div>
 
           {/* About Us */}
           <div>
-            <label className="flex items-center gap-2 mb-3 text-lg text-gray-900">
-              <FileText className="w-5 h-5 text-gray-600" />
+            <label className={labelClasses}>
+              <FileText className={iconClasses} />
               <span>About Us *</span>
             </label>
             <textarea
               value={formData.aboutUs}
               onChange={(e) => setFormData({ ...formData, aboutUs: e.target.value })}
               placeholder="Tell us about your company and services..."
-              rows={6}
-              className="w-full border-2 border-gray-200 rounded-2xl px-5 py-4 focus:border-gray-500 focus:ring-1 focus:ring-gray-100 transition-all outline-none resize-none"
+              rows={5}
+              className={`${inputBaseClasses} resize-none`}
             />
-            {errors.aboutUs && <p className="text-red-500  mt-2">{errors.aboutUs}</p>}
+            {errors.aboutUs && <p className="text-red-400 mt-2 text-sm font-medium">{errors.aboutUs}</p>}
           </div>
 
-          {/* Special Offer */}
-          <div className="flex justify-between gap-4">
-            <div className="w-1/2">
-              <label className="flex items-center gap-2 mb-3 text-lg text-gray-900">
-                <img className="w-12 h-10" src="https://cdn-icons-png.freepik.com/512/9023/9023509.png?uid=R109325010&ga=GA1.1.1904773978.1767900027" alt="" />
-                <span>Special Offer (Optional)</span>
+          {/* Special Offer Grid */}
+          <div className="grid md:grid-cols-2 gap-6 md:gap-8 bg-blue-900/10 border border-blue-500/20 p-5 sm:p-6 rounded-2xl sm:rounded-3xl">
+            <div>
+              <label className={labelClasses}>
+                <Ticket className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" />
+                <span>Special Offer <span className="text-gray-400 text-sm font-normal">(Optional)</span></span>
               </label>
               <input
                 type="text"
                 value={formData.specialOffer}
                 onChange={(e) => setFormData({ ...formData, specialOffer: e.target.value })}
                 placeholder="e.g., 10% discount on bookings"
-                className="w-full border-2 border-gray-200 rounded-2xl px-5 py-4 focus:border-gray-500 focus:ring-1 focus:ring-gray-100 transition-all outline-none"
+                className={inputBaseClasses}
               />
             </div>
-            <div className="w-1/2">
-              <label className="flex items-center gap-2 mb-3 text-lg text-gray-900">
-                <img className="w-12 h-10" src="https://cdn-icons-png.freepik.com/512/16227/16227030.png?uid=R109325010&ga=GA1.1.1904773978.1767900027" alt="" />
-                <span>Add Promo Code (Optional)</span>
+            <div>
+              <label className={labelClasses}>
+                <Tag className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" />
+                <span>Promo Code <span className="text-gray-400 text-sm font-normal">(Optional)</span></span>
               </label>
               <input
                 type="text"
                 value={formData.specialOffer}
                 onChange={(e) => setFormData({ ...formData, specialOffer: e.target.value })}
-                placeholder="Enter promo code"
-                className="w-full border-2 border-gray-200 rounded-2xl px-5 py-4 focus:border-gray-500 focus:ring-4 focus:gray-100 transition-all outline-none"
+                placeholder="e.g., ELITE2025"
+                className={inputBaseClasses}
               />
             </div>
           </div>
 
           {/* Submit */}
-          <div className="pt-4">
+          <div className="pt-6 sm:pt-8">
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-gray-600 to-gray-700 text-white py-5 rounded-2xl hover:shadow-2xl transition-all text-lg hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60"
+              className="w-full bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-500 hover:to-sky-400 text-white py-4 sm:py-5 rounded-xl sm:rounded-2xl shadow-[0_0_30px_rgba(37,99,235,0.3)] transition-all text-base sm:text-lg font-black uppercase tracking-widest hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? "Processing..." : "Submit & Proceed to Payment"}
+              {loading ? "Processing..." : "Submit Application"}
             </button>
+            <p className="text-center text-gray-500 text-xs sm:text-sm mt-4 font-medium">
+              By submitting, you agree to our Terms of Service and Elite Partner Guidelines.
+            </p>
           </div>
         </form>
       </div>
@@ -603,24 +649,23 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
       {/* Success Modal */}
       {showSuccess && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-          <div className="bg-white rounded-[32px] p-8 md:p-12 shadow-2xl max-w-lg w-full relative z-[101] transform transition-all scale-100 animate-in fade-in zoom-in duration-300">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-8">
-              <CheckCircle size={40} className="text-green-500" />
+          <div className="absolute inset-0 bg-gray-950/80 backdrop-blur-md" />
+          <div className="bg-gray-900 border border-white/10 rounded-[2rem] p-8 md:p-12 shadow-[0_0_60px_rgba(0,0,0,0.8)] max-w-md w-full relative z-[101] transform transition-all scale-100 animate-in fade-in zoom-in duration-300">
+            <div className="w-20 h-20 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle className="w-10 h-10 text-emerald-400" />
             </div>
-            <h2 className="text-3xl font-black text-center mb-4 text-gray-900 leading-tight">
+            <h2 className="text-2xl sm:text-3xl font-black text-center mb-3 text-white leading-tight tracking-tight">
               Application Received!
             </h2>
-            <p className="text-gray-600 text-center text-lg leading-relaxed mb-8">
-              Admin is considering your services. <br />
-              Soon you will be updated.
+            <p className="text-gray-400 text-center text-sm sm:text-base leading-relaxed mb-8 font-medium">
+              Our admin team will review your elite services. We will notify you via email shortly.
             </p>
             <div className="flex flex-col items-center gap-4">
-              <div className="w-12 h-1 bg-gray-100 rounded-full overflow-hidden">
-                <div className="h-full bg-gray-600 animate-[loading_4s_linear_forwards]" />
+              <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-blue-500 to-sky-400 animate-[loading_4s_linear_forwards]" />
               </div>
-              <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">
-                Redirecting to home...
+              <p className="text-[10px] sm:text-xs text-blue-400 font-bold uppercase tracking-widest">
+                Redirecting...
               </p>
             </div>
           </div>
