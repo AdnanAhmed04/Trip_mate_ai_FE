@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Mail, Lock, Plane, ArrowLeft, Utensils, Bed, Repeat, Sparkles, ShieldCheck } from "lucide-react";
+import navlogo from "../navlogo.png";
 
 interface LoginPageProps {
   onSwitchToSignup: () => void;
@@ -34,7 +35,7 @@ export function LoginPage({ onSwitchToSignup, onLogin, onBack }: LoginPageProps)
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
 
       <div className="w-full max-w-6xl relative z-10 grid md:grid-cols-2 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl animate-slide-up">
-        
+
         {/* Left Side: Visual Content */}
         <div className="relative hidden md:flex flex-col justify-between p-12 overflow-hidden border-r border-white/5">
           <div className="absolute inset-0 z-0">
@@ -47,18 +48,21 @@ export function LoginPage({ onSwitchToSignup, onLogin, onBack }: LoginPageProps)
           </div>
 
           <div className="relative z-10">
-            <div className="flex items-center gap-2 mb-8">
-              <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
-                <Plane className="w-6 h-6 text-white rotate-45" />
+            <div className="flex items-center gap-2 mb-4">
+              <div className="flex items-center cursor-pointer transition-transform hover:scale-105">
+                <img
+                  src={navlogo}
+                  className="h-26 w-auto object-contain"
+                  alt="TripMate Logo"
+                />
               </div>
-              <span className="text-xl font-black tracking-tighter text-white">TripMate<span className="text-blue-500 italic">AI</span></span>
             </div>
 
-            <h2 className="text-5xl font-black leading-[1.1] tracking-tighter mb-6">
+            <h2 className="text-7xl font-black leading-[1.1] tracking-tighter mb-6">
               Welcome <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 italic">Back Home</span>
             </h2>
-            <p className="text-gray-400 text-lg leading-relaxed max-w-sm">
+            <p className="text-gray-400 text-lg leading-relaxed max-w-md">
               Your next elite adventure is just a few clicks away. Sign in to access your curated itineraries.
             </p>
           </div>
@@ -150,7 +154,7 @@ export function LoginPage({ onSwitchToSignup, onLogin, onBack }: LoginPageProps)
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full h-14 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-black uppercase tracking-[0.2em] text-xs rounded-2xl shadow-[0_10px_20px_rgba(37,99,235,0.2)] hover:shadow-[0_15px_30px_rgba(37,99,235,0.3)] transition-all hover:-translate-y-1 active:scale-95 disabled:opacity-50 disabled:translate-y-0 disabled:shadow-none flex items-center justify-center gap-3 group"
+              className="w-full h-14 cursor-pointer bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-black uppercase tracking-[0.2em] text-xs rounded-2xl shadow-[0_10px_20px_rgba(37,99,235,0.2)] hover:shadow-[0_15px_30px_rgba(37,99,235,0.3)] transition-all hover:-translate-y-1 active:scale-95 disabled:opacity-50 disabled:translate-y-0 disabled:shadow-none flex items-center justify-center gap-3 group"
             >
               {isLoading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -168,7 +172,7 @@ export function LoginPage({ onSwitchToSignup, onLogin, onBack }: LoginPageProps)
               New to the Elite?{" "}
               <button
                 onClick={onSwitchToSignup}
-                className="text-blue-400 hover:text-blue-300 transition-colors ml-1"
+                className="text-blue-400 cursor-pointer hover:text-blue-300 transition-colors ml-1"
               >
                 Join Now
               </button>

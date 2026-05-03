@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Lock, User, Plane, ArrowLeft, Mail, Utensils, Bed, Repeat, Sparkles, ShieldCheck } from 'lucide-react';
+import navlogo from "../navlogo.png";
 
 interface SignupPageProps {
   onSwitchToLogin: () => void;
@@ -65,7 +66,7 @@ export function SignupPage({
       <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px] translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
       <div className="w-full max-w-6xl relative z-10 grid md:grid-cols-2 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl animate-slide-up">
-        
+
         {/* Left Side: Visual Content */}
         <div className="relative hidden md:flex flex-col justify-between p-12 overflow-hidden border-r border-white/5">
           <div className="absolute inset-0 z-0">
@@ -79,17 +80,20 @@ export function SignupPage({
 
           <div className="relative z-10">
             <div className="flex items-center gap-2 mb-8">
-              <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
-                <Plane className="w-6 h-6 text-white rotate-45" />
+              <div className="flex items-center cursor-pointer transition-transform hover:scale-105">
+                <img
+                  src={navlogo}
+                  className="h-26 w-auto object-contain"
+                  alt="TripMate Logo"
+                />
               </div>
-              <span className="text-xl font-black tracking-tighter text-white">TripMate<span className="text-blue-500 italic">AI</span></span>
             </div>
 
-            <h2 className="text-5xl font-black leading-[1.1] tracking-tighter mb-6">
+            <h2 className="text-7xl font-black leading-[1.1] tracking-tighter mb-6">
               Start Your <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 italic">Elite Journey</span>
             </h2>
-            <p className="text-gray-400 text-lg leading-relaxed max-w-sm">
+            <p className="text-gray-400 text-xl leading-relaxed max-w-md">
               Join thousands of global travelers and experience the future of personalized AI trip planning.
             </p>
           </div>
@@ -198,15 +202,15 @@ export function SignupPage({
               </div>
             </div>
 
-            <div className="flex items-start gap-3 px-1 py-2">
-              <label className="flex items-center gap-3 cursor-pointer group mt-1">
+            <div className="flex  items-start gap-3 px-1 py-2">
+              <label className="flex items-center gap-3 cursor-pointer group ">
                 <div className="relative flex items-center justify-center">
                   <input type="checkbox" required className="peer sr-only" />
                   <div className="w-5 h-5 border-2 border-white/10 rounded-lg bg-white/5 peer-checked:bg-blue-600 peer-checked:border-blue-500 transition-all" />
                   <Sparkles className="absolute w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity" />
                 </div>
               </label>
-              <p className="text-[10px] leading-tight text-gray-400 font-bold uppercase tracking-widest">
+              <p className="text-[12px] leading-tight text-gray-400 font-bold uppercase tracking-widest">
                 I agree to the <button type="button" className="text-blue-400 hover:underline">Terms of Service</button> and <button type="button" className="text-blue-400 hover:underline">Privacy Policy</button>
               </p>
             </div>
@@ -214,7 +218,7 @@ export function SignupPage({
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full h-14 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-black uppercase tracking-[0.2em] text-xs rounded-2xl shadow-[0_10px_20px_rgba(37,99,235,0.2)] hover:shadow-[0_15px_30px_rgba(37,99,235,0.3)] transition-all hover:-translate-y-1 active:scale-95 disabled:opacity-50 disabled:translate-y-0 disabled:shadow-none flex items-center justify-center gap-3 group mt-2"
+              className="w-full cursor-pointer h-14 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-black uppercase tracking-[0.2em] text-xs rounded-2xl shadow-[0_10px_20px_rgba(37,99,235,0.2)] hover:shadow-[0_15px_30px_rgba(37,99,235,0.3)] transition-all hover:-translate-y-1 active:scale-95 disabled:opacity-50 disabled:translate-y-0 disabled:shadow-none flex items-center justify-center gap-3 group mt-2"
             >
               {isLoading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -228,11 +232,11 @@ export function SignupPage({
           </form>
 
           <div className="mt-8 text-center">
-            <p className="text-gray-500 text-xs font-bold uppercase tracking-widest">
+            <p className="text-gray-500 text-sm font-bold uppercase tracking-widest">
               Already an Explorer?{" "}
               <button
                 onClick={onSwitchToLogin}
-                className="text-blue-400 hover:text-blue-300 transition-colors ml-1"
+                className="cursor-pointer text-blue-400 hover:text-blue-300 transition-colors ml-1"
               >
                 Sign In
               </button>
