@@ -168,6 +168,7 @@ function App() {
     const response = await api.auth.register({ name, email, password });
     if (response.user) {
       localStorage.setItem('user', JSON.stringify(response.user));
+      localStorage.setItem('token', response.token);
       setIsSignedIn(true);
       if (pendingView) {
         navigateTo(pendingView as any);

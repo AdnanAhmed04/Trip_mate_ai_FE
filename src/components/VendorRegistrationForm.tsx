@@ -220,7 +220,23 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
     
     try {
       setLoading(true);
-      await submitVendor(filteredData);
+      const res: any = await submitVendor(filteredData);
+      
+      if (res && res.vendor && res.vendor.id) {
+        try {
+          const stripeRes = await api.payments.createCheckoutSession(res.vendor.id);
+          if (stripeRes && stripeRes.url) {
+            window.location.href = stripeRes.url;
+            return; // Don't hide loading or show success, let the page redirect
+          }
+        } catch (stripeErr: any) {
+          console.error("Stripe Checkout Error:", stripeErr);
+          alert(stripeErr?.message || "Failed to initiate payment. Please contact support.");
+          setLoading(false);
+          return;
+        }
+      }
+
       setLoading(false);
       setShowSuccess(true);
       setTimeout(() => {

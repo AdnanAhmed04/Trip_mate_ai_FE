@@ -739,9 +739,9 @@ export function LandingPage({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-20">
             {/* Brand Column */}
-            <div className="space-y-6">
+            <div className="space-y-6 lg:col-span-2">
               <div className="flex items-center gap-3">
                 <img src={navlogo} alt="TripMate" className="h-26 w-26 object-contain" />
               </div>
@@ -758,11 +758,11 @@ export function LandingPage({
               </div>
             </div>
 
-            {/* Links Columns */}
+            {/* Quick Links */}
             <div>
               <h4 className="text-lg font-bold mb-8 text-white">Quick Links</h4>
               <ul className="space-y-4 text-gray-400">
-                {['Home', 'About Us', 'My Trips', 'Explore Vendors'].map((item) => (
+                {['My Trips', 'Explore Vendors'].map((item) => (
                   <li key={item}>
                     <button className="hover:text-blue-400 transition-colors cursor-pointer">{item}</button>
                   </li>
@@ -770,6 +770,7 @@ export function LandingPage({
               </ul>
             </div>
 
+            {/* Services */}
             <div>
               <h4 className="text-lg font-bold mb-8 text-white">Services</h4>
               <ul className="space-y-4 text-gray-400">
@@ -781,6 +782,7 @@ export function LandingPage({
               </ul>
             </div>
 
+            {/* Contact */}
             <div>
               <h4 className="text-lg font-bold mb-8 text-white">Contact</h4>
               <ul className="space-y-4">
@@ -790,11 +792,11 @@ export function LandingPage({
                 </li>
                 <li className="flex items-center gap-3 text-gray-400">
                   <Phone className="w-5 h-5 text-blue-500" />
-                  <span>+1 (555) 000-0000</span>
+                  <span>+92-318-8397653</span>
                 </li>
                 <li className="flex items-center gap-3 text-gray-400">
                   <MapPin className="w-5 h-5 text-blue-500" />
-                  <span>San Francisco, CA</span>
+                  <span>Pakistan , Pk </span>
                 </li>
               </ul>
             </div>
