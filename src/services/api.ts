@@ -1,4 +1,4 @@
-import { Vendor, VendorResponse, AuthResponse, User, Trip } from '../types';
+import { Vendor, VendorResponse, AuthResponse, User, Trip, HotelResponse, RegisteredHotel } from '../types';
 
 export const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 const API_BASE_URL = `${BASE_URL}/api`;
@@ -171,6 +171,89 @@ export const api = {
             return handleResponse(response);
         }
     },
+    hotels: {
+        getAll: async (): Promise<HotelResponse> => {
+            const response = await fetch(`${API_BASE_URL}/hotels`, {
+                headers: getHeaders(),
+                credentials: 'include',
+            });
+            return handleResponse(response);
+        },
+        getById: async (id: string): Promise<{ hotel: RegisteredHotel }> => {
+            const response = await fetch(`${API_BASE_URL}/hotels/${id}`, {
+                headers: getHeaders(),
+                credentials: 'include',
+            });
+            return handleResponse(response);
+        },
+        register: async (formData: FormData): Promise<any> => {
+            const response = await fetch(`${API_BASE_URL}/hotels/register`, {
+                method: 'POST',
+                headers: getHeaders(null),
+                body: formData,
+                credentials: 'include',
+            });
+            return handleResponse(response);
+        },
+        createCheckoutSession: async (hotelId: string): Promise<{ url: string; sessionId: string }> => {
+            const response = await fetch(`${API_BASE_URL}/payments/create-hotel-checkout-session`, {
+                method: 'POST',
+                headers: getHeaders(),
+                body: JSON.stringify({ hotelId }),
+                credentials: 'include',
+            });
+            return handleResponse(response);
+        },
+        filter: async (params: string): Promise<HotelResponse> => {
+            const response = await fetch(`${API_BASE_URL}/hotels/filter?${params}`, {
+                headers: getHeaders(),
+                credentials: 'include',
+            });
+            return handleResponse(response);
+        },
+    },
+    bookings: {
+        create: async (data: any): Promise<any> => {
+            const response = await fetch(`${API_BASE_URL}/bookings`, {
+                method: 'POST',
+                headers: getHeaders(),
+                body: JSON.stringify(data),
+                credentials: 'include',
+            });
+            return handleResponse(response);
+        },
+        getMy: async (): Promise<any> => {
+            const response = await fetch(`${API_BASE_URL}/bookings/my`, {
+                headers: getHeaders(),
+                credentials: 'include',
+            });
+            return handleResponse(response);
+        },
+        getAll: async (): Promise<any> => {
+            const response = await fetch(`${API_BASE_URL}/admin/bookings`, {
+                headers: getHeaders(),
+                credentials: 'include',
+            });
+            return handleResponse(response);
+        },
+        confirm: async (id: string): Promise<any> => {
+            const response = await fetch(`${API_BASE_URL}/admin/bookings/${id}/confirm`, {
+                method: 'POST',
+                headers: getHeaders(),
+                credentials: 'include',
+            });
+            return handleResponse(response);
+        },
+        reject: async (id: string, reason: string): Promise<any> => {
+            const response = await fetch(`${API_BASE_URL}/admin/bookings/${id}/reject`, {
+                method: 'POST',
+                headers: getHeaders(),
+                body: JSON.stringify({ reason }),
+                credentials: 'include',
+            });
+            return handleResponse(response);
+        },
+    },
     feedbacks: {
         create: async (formData: FormData): Promise<any> => {
             const response = await fetch(`${API_BASE_URL}/feedbacks`, {
@@ -254,6 +337,37 @@ export const api = {
         },
         getSecurityLogs: async (): Promise<any> => {
             const response = await fetch(`${API_BASE_URL}/admin/security-logs`, {
+                headers: getHeaders(),
+                credentials: 'include',
+            });
+            return handleResponse(response);
+        },
+        getHotels: async (): Promise<any> => {
+            const response = await fetch(`${API_BASE_URL}/admin/hotels`, {
+                headers: getHeaders(),
+                credentials: 'include',
+            });
+            return handleResponse(response);
+        },
+        approveHotel: async (id: string): Promise<any> => {
+            const response = await fetch(`${API_BASE_URL}/admin/hotels/${id}/approve`, {
+                method: 'POST',
+                headers: getHeaders(),
+                credentials: 'include',
+            });
+            return handleResponse(response);
+        },
+        rejectHotel: async (id: string): Promise<any> => {
+            const response = await fetch(`${API_BASE_URL}/admin/hotels/${id}/reject`, {
+                method: 'POST',
+                headers: getHeaders(),
+                credentials: 'include',
+            });
+            return handleResponse(response);
+        },
+        deleteHotel: async (id: string): Promise<any> => {
+            const response = await fetch(`${API_BASE_URL}/admin/hotels/${id}`, {
+                method: 'DELETE',
                 headers: getHeaders(),
                 credentials: 'include',
             });

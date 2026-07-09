@@ -5,11 +5,16 @@
   display: none !important;
 }
 
+html {
+  overflow-x: hidden;
+}
+
 html, body {
   top: 0 !important;
   position: static !important;
   margin: 0 !important;
   padding: 0 !important;
+  overflow-x: hidden;
 }
 
 .goog-te-banner-frame {

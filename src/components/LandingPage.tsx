@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { TrustedVendorServices } from "./TrustedVendorServices";
+import { TrustedHotelsServices } from "./TrustedHotelsServices";
 import {
   Hotel,
   Trees,
@@ -29,7 +30,7 @@ import InteractiveGlobeSection from "./InteractiveGlobeSection";
 import CustomerReviewSlider from "./ReviewSlider";
 import navlogo from "../navlogo.png";
 import { clsx } from 'clsx';
-import { Vendor } from "../types";
+import { Vendor, RegisteredHotel } from "../types";
 
 interface GlobeMarker {
   id: string;
@@ -46,6 +47,8 @@ interface LandingPageProps {
   onMyTrips?: () => void;
   onLeaveFeedback?: () => void;
   onLogout?: () => void;
+  onHotelClick?: (hotel: RegisteredHotel) => void;
+  onRegisterHotel?: () => void;
 }
 
 
@@ -128,6 +131,8 @@ export function LandingPage({
   onMyTrips,
   onLeaveFeedback,
   onLogout,
+  onHotelClick,
+  onRegisterHotel,
 }: LandingPageProps) {
   const [currentLang, setCurrentLang] = useState('en');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -592,6 +597,12 @@ export function LandingPage({
         onRegisterVendor={onRegisterVendor || (() => { })}
       />
 
+      {/* Trusted Hotels Section */}
+      <TrustedHotelsServices
+        onHotelClick={onHotelClick || (() => { })}
+        onRegisterHotel={onRegisterHotel || (() => { })}
+      />
+
 
       {/* Why Trust Us Section */}
       <div className="relative py-20 sm:py-32 overflow-hidden">
@@ -623,82 +634,73 @@ export function LandingPage({
           </div>
 
           {/* Cards Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
-            {/* Card 1 */}
-            <div className="group bg-white/5 backdrop-blur-md rounded-3xl p-8 border border-white/10 hover:border-blue-500/50 hover:bg-white/10 transition-all duration-500 hover:-translate-y-2">
-              <div className="w-14 h-14 bg-blue-600/20 rounded-2xl flex items-center justify-center mb-6 border border-blue-500/20 group-hover:scale-110 transition-transform">
-                <MessageSquare className="w-7 h-7 text-blue-400" />
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+            {/* Card 1 — Trusted Hotels */}
+            <div
+              onClick={onRegisterHotel}
+              className="group bg-white/5 backdrop-blur-md rounded-2xl p-5 border border-white/10 hover:border-emerald-500/50 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+            >
+              <div className="w-10 h-10 bg-emerald-600/20 rounded-xl flex items-center justify-center mb-4 border border-emerald-500/20 group-hover:scale-110 transition-transform">
+                <Hotel className="w-5 h-5 text-emerald-400" />
               </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
-                Real User Reviews
-              </h3>
-              <p className="text-gray-400 leading-relaxed text-sm sm:text-base">
-                Rated 4.8/5 by 200,000+ happy travellers. Authentic feedback from our global community ensures you make informed decisions.
+              <h3 className="text-base font-bold text-white mb-2">Trusted Hotels</h3>
+              <p className="text-gray-400 leading-relaxed text-xs sm:text-sm">
+                Admin-verified hotels handpicked for your budget. Book directly from your AI trip — premium members only.
               </p>
             </div>
 
             {/* Card 2 */}
-            <div className="group bg-white/5 backdrop-blur-md rounded-3xl p-8 border border-white/10 hover:border-blue-500/50 hover:bg-white/10 transition-all duration-500 hover:-translate-y-2">
-              <div className="w-14 h-14 bg-green-600/20 rounded-2xl flex items-center justify-center mb-6 border border-green-500/20 group-hover:scale-110 transition-transform">
-                <DollarSign className="w-7 h-7 text-green-400" />
+            <div className="group bg-white/5 backdrop-blur-md rounded-2xl p-5 border border-white/10 hover:border-blue-500/50 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1">
+              <div className="w-10 h-10 bg-green-600/20 rounded-xl flex items-center justify-center mb-4 border border-green-500/20 group-hover:scale-110 transition-transform">
+                <DollarSign className="w-5 h-5 text-green-400" />
               </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
-                Transparent Pricing
-              </h3>
-              <p className="text-gray-400 leading-relaxed text-sm sm:text-base">
-                No hidden fees, just clear service. We believe in honest pricing with zero surprise booking charges for all our users.
+              <h3 className="text-base font-bold text-white mb-2">Transparent Pricing</h3>
+              <p className="text-gray-400 leading-relaxed text-xs sm:text-sm">
+                No hidden fees, just clear service. Honest pricing with zero surprise booking charges.
               </p>
             </div>
 
             {/* Card 3 */}
-            <div className="group bg-white/5 backdrop-blur-md rounded-3xl p-8 border border-white/10 hover:border-blue-500/50 hover:bg-white/10 transition-all duration-500 hover:-translate-y-2">
-              <div className="w-14 h-14 bg-indigo-600/20 rounded-2xl flex items-center justify-center mb-6 border border-indigo-500/20 group-hover:scale-110 transition-transform">
-                <Shield className="w-7 h-7 text-indigo-400" />
+            <div className="group bg-white/5 backdrop-blur-md rounded-2xl p-5 border border-white/10 hover:border-blue-500/50 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1">
+              <div className="w-10 h-10 bg-indigo-600/20 rounded-xl flex items-center justify-center mb-4 border border-indigo-500/20 group-hover:scale-110 transition-transform">
+                <Shield className="w-5 h-5 text-indigo-400" />
               </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
-                Secure Booking
-              </h3>
-              <p className="text-gray-400 leading-relaxed text-sm sm:text-base">
-                Your data and payments are protected with industry-leading 256-bit SSL encryption and secure payment gateways.
+              <h3 className="text-base font-bold text-white mb-2">Secure Booking</h3>
+              <p className="text-gray-400 leading-relaxed text-xs sm:text-sm">
+                256-bit SSL encryption and secure payment gateways protect your data and payments.
               </p>
             </div>
 
             {/* Card 4 */}
-            <div className="group bg-white/5 backdrop-blur-md rounded-3xl p-8 border border-white/10 hover:border-blue-500/50 hover:bg-white/10 transition-all duration-500 hover:-translate-y-2">
-              <div className="w-14 h-14 bg-orange-600/20 rounded-2xl flex items-center justify-center mb-6 border border-orange-500/20 group-hover:scale-110 transition-transform">
-                <Clock className="w-7 h-7 text-orange-400" />
+            <div className="group bg-white/5 backdrop-blur-md rounded-2xl p-5 border border-white/10 hover:border-blue-500/50 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1">
+              <div className="w-10 h-10 bg-orange-600/20 rounded-xl flex items-center justify-center mb-4 border border-orange-500/20 group-hover:scale-110 transition-transform">
+                <Clock className="w-5 h-5 text-orange-400" />
               </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
-                Exclusive Deals
-              </h3>
-              <p className="text-gray-400 leading-relaxed text-sm sm:text-base">
-                Enjoy special member-only offers and flash discounts from our network of verified global travel partners.
+              <h3 className="text-base font-bold text-white mb-2">Exclusive Deals</h3>
+              <p className="text-gray-400 leading-relaxed text-xs sm:text-sm">
+                Member-only offers and flash discounts from our verified global travel partner network.
               </p>
             </div>
 
             {/* Card 5 */}
-            <div className="group bg-white/5 backdrop-blur-md rounded-3xl p-8 border border-white/10 hover:border-blue-500/50 hover:bg-white/10 transition-all duration-500 hover:-translate-y-2">
-              <div className="w-14 h-14 bg-purple-600/20 rounded-2xl flex items-center justify-center mb-6 border border-purple-500/20 group-hover:scale-110 transition-transform">
-                <Sparkles className="w-7 h-7 text-purple-400" />
+            <div className="group bg-white/5 backdrop-blur-md rounded-2xl p-5 border border-white/10 hover:border-blue-500/50 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1">
+              <div className="w-10 h-10 bg-purple-600/20 rounded-xl flex items-center justify-center mb-4 border border-purple-500/20 group-hover:scale-110 transition-transform">
+                <Sparkles className="w-5 h-5 text-purple-400" />
               </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
-                AI Recommendations
-              </h3>
-              <p className="text-gray-400 leading-relaxed text-sm sm:text-base">
-                Our proprietary AI algorithms analyze millions of data points to provide hyper-personalized travel suggestions.
+              <h3 className="text-base font-bold text-white mb-2">AI Recommendations</h3>
+              <p className="text-gray-400 leading-relaxed text-xs sm:text-sm">
+                AI algorithms analyze millions of data points for hyper-personalized travel suggestions.
               </p>
             </div>
 
             {/* Card 6 */}
-            <div className="group bg-white/5 backdrop-blur-md rounded-3xl p-8 border border-white/10 hover:border-blue-500/50 hover:bg-white/10 transition-all duration-500 hover:-translate-y-2">
-              <div className="w-14 h-14 bg-cyan-600/20 rounded-2xl flex items-center justify-center mb-6 border border-cyan-500/20 group-hover:scale-110 transition-transform">
-                <Users className="w-7 h-7 text-cyan-400" />
+            <div className="group bg-white/5 backdrop-blur-md rounded-2xl p-5 border border-white/10 hover:border-blue-500/50 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1">
+              <div className="w-10 h-10 bg-cyan-600/20 rounded-xl flex items-center justify-center mb-4 border border-cyan-500/20 group-hover:scale-110 transition-transform">
+                <Users className="w-5 h-5 text-cyan-400" />
               </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
-                Verified Listings
-              </h3>
-              <p className="text-gray-400 leading-relaxed text-sm sm:text-base">
-                Every vendor undergoes a rigorous 5-step verification process to ensure quality, reliability, and safety.
+              <h3 className="text-base font-bold text-white mb-2">Verified Listings</h3>
+              <p className="text-gray-400 leading-relaxed text-xs sm:text-sm">
+                Every vendor undergoes a rigorous 5-step verification for quality, reliability and safety.
               </p>
             </div>
           </div>
@@ -762,11 +764,12 @@ export function LandingPage({
             <div>
               <h4 className="text-lg font-bold mb-8 text-white">Quick Links</h4>
               <ul className="space-y-4 text-gray-400">
-                {['My Trips', 'Explore Vendors'].map((item) => (
-                  <li key={item}>
-                    <button className="hover:text-blue-400 transition-colors cursor-pointer">{item}</button>
-                  </li>
-                ))}
+                <li>
+                  <button onClick={onMyTrips} className="hover:text-blue-400 transition-colors cursor-pointer">My Trips</button>
+                </li>
+                <li>
+                  <button onClick={onViewVendors} className="hover:text-blue-400 transition-colors cursor-pointer">Explore Vendors</button>
+                </li>
               </ul>
             </div>
 
@@ -774,11 +777,18 @@ export function LandingPage({
             <div>
               <h4 className="text-lg font-bold mb-8 text-white">Services</h4>
               <ul className="space-y-4 text-gray-400">
-                {['AI Trip Planner', 'Vendor Network', 'Travel Buddy', 'Group Tours'].map((item) => (
-                  <li key={item}>
-                    <button className="hover:text-blue-400 transition-colors cursor-pointer">{item}</button>
-                  </li>
-                ))}
+                <li>
+                  <button onClick={onGetStarted} className="hover:text-blue-400 transition-colors cursor-pointer">AI Trip Planner</button>
+                </li>
+                <li>
+                  <button onClick={onViewVendors} className="hover:text-blue-400 transition-colors cursor-pointer">Vendor Network</button>
+                </li>
+                <li>
+                  <button onClick={onGetStarted} className="hover:text-blue-400 transition-colors cursor-pointer">Travel Buddy</button>
+                </li>
+                <li>
+                  <button onClick={onGetStarted} className="hover:text-blue-400 transition-colors cursor-pointer">Group Tours</button>
+                </li>
               </ul>
             </div>
 

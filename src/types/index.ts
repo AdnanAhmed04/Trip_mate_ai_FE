@@ -16,6 +16,7 @@ export interface Vendor {
     companyName: string;
     vendorType: string;
     email: string;
+    phone?: string;
     aboutUs: string;
     logoUrl?: string; // or image
     services?: string[];
@@ -81,6 +82,46 @@ export interface Hotel {
     nearbyEmergingBusinesses?: EmergingBusiness[];
 }
 
+// A real, admin-approved hotel that can be registered and booked
+export interface RegisteredHotel {
+    _id?: string;
+    hotelId?: string;
+    hotelName: string;
+    email?: string;
+    phone?: string;
+    city: string;
+    address: string;
+    description: string;
+    pricePerNight: number;
+    budgetCategory?: 'cheap' | 'mid' | 'luxury';
+    amenities?: string[];
+    rating?: number;
+    logoUrl?: string;
+    images?: string[];
+    status?: string;
+    blocked?: boolean;
+}
+
+export interface HotelResponse {
+    total: number;
+    hotels: RegisteredHotel[];
+}
+
+export interface Booking {
+    _id: string;
+    hotel: string;
+    hotelName: string;
+    city: string;
+    pricePerNight: number;
+    checkIn?: string;
+    checkOut?: string;
+    guests: number;
+    nights: number;
+    estimatedTotal: number;
+    status: 'pending' | 'confirmed' | 'cancelled';
+    createdAt: string;
+}
+
 export interface ItineraryItem {
     placeName: string;
     details: string;
@@ -123,6 +164,7 @@ export interface Trip {
     travelers: number;
     interests: string[];
     hotels: Hotel[];
+    registeredHotels?: RegisteredHotel[];
     itinerary: ItineraryDay[];
     generatedBy: 'ai' | 'manual';
     createdAt: string;

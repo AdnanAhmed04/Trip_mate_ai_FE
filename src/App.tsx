@@ -12,10 +12,12 @@ import { PaymentCancel } from './components/PaymentCancel';
 import { TripItineraryView } from './components/TripItineraryView';
 import { FeedbackForm } from './components/FeedbackForm';
 import { AdminDashboard } from './components/AdminDashboard';
+import { HotelDetails } from './components/HotelDetails';
+import { HotelRegistrationForm } from './components/HotelRegistrationForm';
 import { api } from './services/api';
-import type { Vendor, Trip } from './types';
+import type { Vendor, Trip, RegisteredHotel } from './types';
 
-type ViewType = 'landing' | 'login' | 'signup' | 'vendor-details' | 'vendor-registration' | 'vendor-listing' | 'trip-planner' | 'trip-planner-form' | 'payment-success' | 'payment-cancel' | 'trip-payment-success' | 'view-itinerary' | 'feedback' | 'admin-dashboard';
+type ViewType = 'landing' | 'login' | 'signup' | 'vendor-details' | 'vendor-registration' | 'vendor-listing' | 'trip-planner' | 'trip-planner-form' | 'payment-success' | 'payment-cancel' | 'trip-payment-success' | 'view-itinerary' | 'feedback' | 'admin-dashboard' | 'hotel-details' | 'hotel-registration';
 
 const LANGUAGES = [
   { code: 'en', name: 'English', flag: 'gb' },
@@ -30,6 +32,8 @@ function App() {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
+  const [selectedHotel, setSelectedHotel] = useState<RegisteredHotel | null>(null);
+  const [hotelFromTrip, setHotelFromTrip] = useState(false);
   const [pendingView, setPendingView] = useState<string | null>(null);
   const [paymentSessionId, setPaymentSessionId] = useState<string>('');
 
@@ -198,8 +202,28 @@ function App() {
     navigateTo('vendor-listing', { vendor: null });
   };
 
+  const handleHotelClick = (hotel: RegisteredHotel, fromTrip = false) => {
+    setSelectedHotel(hotel);
+    setHotelFromTrip(fromTrip);
+    navigateTo('hotel-details');
+  };
+
+  const handleUpgrade = async () => {
+    if (!isSignedIn) {
+      setPendingView('landing');
+      navigateTo('login');
+      return;
+    }
+    try {
+      const { url } = await api.payments.createTripCheckoutSession();
+      if (url) window.location.href = url;
+    } catch (e: any) {
+      alert(e.message || 'Could not start upgrade. Please try again.');
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white overflow-x-hidden">
 
 
       <main>
@@ -217,6 +241,8 @@ function App() {
               if (isSignedIn) navigateTo('trip-planner-form');
               else { setPendingView('trip-planner-form'); navigateTo('login'); }
             }}
+            onHotelClick={handleHotelClick}
+            onRegisterHotel={() => navigateTo('hotel-registration')}
           />
         )}
 
@@ -264,7 +290,11 @@ function App() {
         )}
 
         {currentView === 'view-itinerary' && selectedTrip && (
-          <TripItineraryView trip={selectedTrip} onBack={() => navigateTo('trip-planner')} />
+          <TripItineraryView
+            trip={selectedTrip}
+            onBack={() => navigateTo('trip-planner')}
+            onHotelClick={(hotel) => handleHotelClick(hotel, true)}
+          />
         )}
 
         {currentView === 'payment-success' && (
@@ -291,6 +321,19 @@ function App() {
         )}
 
         {currentView === 'feedback' && <FeedbackForm onBack={() => navigateTo('landing')} />}
+
+        {currentView === 'hotel-details' && selectedHotel && (
+          <HotelDetails
+            hotel={selectedHotel}
+            onBack={() => navigateTo('landing')}
+            onUpgrade={handleUpgrade}
+            showBooking={hotelFromTrip}
+          />
+        )}
+
+        {currentView === 'hotel-registration' && (
+          <HotelRegistrationForm onBack={() => navigateTo('landing')} />
+        )}
 
         {currentView === 'admin-dashboard' && <AdminDashboard onLogout={handleLogout} />}
       </main>

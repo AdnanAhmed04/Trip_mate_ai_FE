@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { X, Plus, Upload, Building2, Mail, MapPin, FileText, Tag, ArrowLeft, CheckCircle, Phone, ShieldCheck, Ticket } from "lucide-react";
+import { X, Plus, Upload, Building2, Mail, MapPin, FileText, Tag, ArrowLeft, CheckCircle, Phone, ShieldCheck, Ticket, DollarSign } from "lucide-react";
 import { api } from "../services/api";
+import * as SliderPrimitive from "@radix-ui/react-slider";
 
 interface Branch {
   id: string;
@@ -21,6 +22,8 @@ interface VendorFormData {
   specialOffer: string;
   ourServices: string[];
   serviceLocations: string[];
+  budgetMin: string;
+  budgetMax: string;
 }
 
 interface VendorRegistrationFormProps {
@@ -64,6 +67,8 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
     specialOffer: "",
     ourServices: [],
     serviceLocations: [],
+    budgetMin: "",
+    budgetMax: "",
   });
 
   const [customService, setCustomService] = useState("");
@@ -191,6 +196,8 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
     fd.append("services", JSON.stringify(data.vendorServices));
     fd.append("branches", JSON.stringify(data.branches || []));
     fd.append("serviceLocations", JSON.stringify(data.serviceLocations || []));
+    if (data.budgetMin) fd.append("budgetMin", data.budgetMin);
+    if (data.budgetMax) fd.append("budgetMax", data.budgetMax);
 
     if (data.companyLogo) fd.append("logo", data.companyLogo);
 
@@ -593,7 +600,7 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                placeholder="+1 (234) 567-8900"
+                placeholder="+123456789"
                 className={inputBaseClasses}
               />
               {errors.phone && <p className="text-red-400 mt-2 text-sm font-medium">{errors.phone}</p>}
@@ -614,6 +621,63 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
               className={`${inputBaseClasses} resize-none`}
             />
             {errors.aboutUs && <p className="text-red-400 mt-2 text-sm font-medium">{errors.aboutUs}</p>}
+          </div>
+
+          {/* Budget Range */}
+          <div>
+            <label className={labelClasses}>
+              <DollarSign className={iconClasses} />
+              <span>Budget Range <span className="text-gray-400 text-sm font-normal">(Optional)</span></span>
+            </label>
+            <p className="text-gray-400 text-sm mb-6">
+              Drag the handles to set your typical package price range.
+            </p>
+
+            {/* Live price display */}
+            <div className="flex items-center justify-between mb-6">
+              <div className="bg-gray-900/60 border border-white/10 rounded-xl px-4 py-2.5 text-center min-w-[110px]">
+                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-0.5">Min Price</p>
+                <p className="text-lg font-black text-blue-400">
+                  ${Number(formData.budgetMin || 0).toLocaleString()}
+                </p>
+              </div>
+              <div className="flex-1 mx-4 h-px bg-white/10" />
+              <div className="bg-gray-900/60 border border-white/10 rounded-xl px-4 py-2.5 text-center min-w-[110px]">
+                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-0.5">Max Price</p>
+                <p className="text-lg font-black text-emerald-400">
+                  ${Number(formData.budgetMax || 10000).toLocaleString()}
+                </p>
+              </div>
+            </div>
+
+            {/* Radix dual-thumb slider */}
+            <div className="px-2">
+              <SliderPrimitive.Root
+                min={0}
+                max={50000}
+                step={100}
+                value={[Number(formData.budgetMin || 0), Number(formData.budgetMax || 10000)]}
+                onValueChange={([newMin, newMax]: number[]) => {
+                  setFormData({ ...formData, budgetMin: String(newMin), budgetMax: String(newMax) });
+                }}
+                className="relative flex w-full touch-none items-center select-none"
+              >
+                <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-white/10">
+                  <SliderPrimitive.Range className="absolute h-full bg-gradient-to-r from-blue-500 to-emerald-500" />
+                </SliderPrimitive.Track>
+                <SliderPrimitive.Thumb className="block h-5 w-5 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 border-2 border-white/20 shadow-lg shadow-blue-500/30 ring-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 hover:scale-110 transition-transform cursor-grab active:cursor-grabbing" />
+                <SliderPrimitive.Thumb className="block h-5 w-5 rounded-full bg-gradient-to-br from-emerald-400 to-teal-400 border-2 border-white/20 shadow-lg shadow-emerald-500/30 ring-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/50 hover:scale-110 transition-transform cursor-grab active:cursor-grabbing" />
+              </SliderPrimitive.Root>
+
+              {/* Scale labels */}
+              <div className="flex justify-between mt-3 text-[10px] text-gray-600 font-medium">
+                <span>$0</span>
+                <span>$12,500</span>
+                <span>$25,000</span>
+                <span>$37,500</span>
+                <span>$50,000</span>
+              </div>
+            </div>
           </div>
 
           {/* Special Offer Grid */}
@@ -640,7 +704,7 @@ export function VendorRegistrationForm({ onBack }: VendorRegistrationFormProps) 
                 type="text"
                 value={formData.specialOffer}
                 onChange={(e) => setFormData({ ...formData, specialOffer: e.target.value })}
-                placeholder="e.g., ELITE2025"
+                placeholder="e.g., TRIP50"
                 className={inputBaseClasses}
               />
             </div>

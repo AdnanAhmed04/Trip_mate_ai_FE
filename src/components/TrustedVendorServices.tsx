@@ -171,11 +171,6 @@ export function TrustedVendorServices({
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60" />
                   
-                  <div className="absolute top-4 right-4 bg-black/40 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-xl">
-                    <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
-                    <span className="text-xs font-bold text-white">{vendor.rating}</span>
-                  </div>
-                  
                   <div className="absolute bottom-4 left-4">
                     <span className="bg-blue-600/80 backdrop-blur-md text-white text-[10px] uppercase tracking-widest font-black px-2.5 py-1.5 rounded-lg border border-blue-400/30">
                       {vendor.category}
