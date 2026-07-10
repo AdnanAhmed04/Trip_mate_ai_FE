@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { api } from '../services/api';
 import { toast } from 'sonner';
 import {
     Users, Store, Calculator, CheckCircle, Clock, XCircle, DollarSign, Search,
     LogOut, LayoutDashboard, ChevronDown, UserPlus, FileText,
     ShieldAlert, Bell, User, Menu, Hotel as HotelIcon, CalendarCheck,
-    MoreHorizontal, Trash2, RotateCw, X, Inbox, ArrowRight,
+    MoreHorizontal, Trash2, RotateCw, X, Inbox, ArrowRight, Upload,
 } from 'lucide-react';
 import {
     Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
@@ -100,6 +100,10 @@ export function AdminDashboard({ onLogout }: { onLogout: () => void }) {
     const [rejectReason, setRejectReason] = useState('');
     const [actionBusy, setActionBusy] = useState(false);
 
+    // Vendor logo upload
+    const logoInputRef = useRef<HTMLInputElement>(null);
+    const [logoUploadVendorId, setLogoUploadVendorId] = useState<string | null>(null);
+
     useEffect(() => {
         fetchData();
     }, []);
@@ -185,6 +189,30 @@ export function AdminDashboard({ onLogout }: { onLogout: () => void }) {
             setActionBusy(false);
             setRejectState(null);
             setRejectReason('');
+        }
+    };
+
+    // ── Vendor logo upload handler ──────────────────────────────
+    const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file || !logoUploadVendorId) return;
+
+        // Reset the input so same file can be re-selected
+        e.target.value = '';
+
+        const toastId = toast.loading('Uploading vendor logo...');
+        try {
+            const result = await api.admin.uploadVendorLogo(logoUploadVendorId, file);
+            toast.success(result.message || 'Logo uploaded successfully', { id: toastId });
+            // Update the selected item in modal if it's the same vendor
+            if (selectedItem && selectedItem._id === logoUploadVendorId && result.logoUrl) {
+                setSelectedItem({ ...selectedItem, logoUrl: result.logoUrl });
+            }
+            await fetchData(true);
+        } catch (err: any) {
+            toast.error(err?.message || 'Failed to upload logo', { id: toastId });
+        } finally {
+            setLogoUploadVendorId(null);
         }
     };
 
@@ -1036,6 +1064,15 @@ export function AdminDashboard({ onLogout }: { onLogout: () => void }) {
         <div className="flex h-screen w-full bg-[#f4f6f9] font-sans overflow-hidden">
             <Toaster position="top-right" richColors closeButton />
 
+            {/* Hidden file input for vendor logo upload */}
+            <input
+                type="file"
+                ref={logoInputRef}
+                accept="image/*"
+                className="hidden"
+                onChange={handleLogoUpload}
+            />
+
             {/* Mobile overlay */}
             {sidebarOpen && (
                 <div className="fixed inset-0 bg-black/40 z-30 lg:hidden" onClick={() => setSidebarOpen(false)} />
@@ -1164,7 +1201,7 @@ export function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                 </main>
             </div>
 
-            {isModalOpen && <DetailsModal item={selectedItem} onClose={() => setIsModalOpen(false)} />}
+            {isModalOpen && <DetailsModal item={selectedItem} onClose={() => setIsModalOpen(false)} onUploadLogo={(vendorId: string) => { setLogoUploadVendorId(vendorId); setTimeout(() => logoInputRef.current?.click(), 0); }} />}
 
             {/* Confirm Dialog (approvals, renewals, deletes) */}
             <AlertDialog open={!!confirmState} onOpenChange={(open: boolean) => !open && setConfirmState(null)}>
@@ -1440,7 +1477,7 @@ function LoadingState() {
     );
 }
 
-function DetailsModal({ item, onClose }: { item: any; onClose: () => void }) {
+function DetailsModal({ item, onClose, onUploadLogo }: { item: any; onClose: () => void; onUploadLogo?: (vendorId: string) => void }) {
     if (!item) return null;
 
     const isVendor = item.type === 'vendor';
@@ -1464,8 +1501,21 @@ function DetailsModal({ item, onClose }: { item: any; onClose: () => void }) {
                 <div className="flex-1 overflow-y-auto p-6 sm:p-8 custom-scrollbar space-y-8">
                     {/* Header Info */}
                     <div className="flex items-start gap-5">
-                        <div className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 bg-slate-50 border border-slate-100">
-                            {isLog ? <ShieldAlert size={28} className="text-red-500" /> : (isVendor ? <Store size={26} className="text-blue-500" /> : <User size={26} className="text-blue-500" />)}
+                        <div className="relative group w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 bg-slate-50 border border-slate-100 overflow-hidden">
+                            {isVendor && item.logoUrl ? (
+                                <img src={item.logoUrl} alt={item.companyName} className="w-full h-full object-cover" />
+                            ) : (
+                                isLog ? <ShieldAlert size={28} className="text-red-500" /> : (isVendor ? <Store size={26} className="text-blue-500" /> : <User size={26} className="text-blue-500" />)
+                            )}
+                            {isVendor && onUploadLogo && (
+                                <button
+                                    onClick={() => onUploadLogo(item._id)}
+                                    className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-2xl"
+                                    title="Upload Logo"
+                                >
+                                    <Upload size={18} className="text-white" />
+                                </button>
+                            )}
                         </div>
                         <div className="space-y-1 min-w-0">
                             <h2 className="text-xl font-black text-slate-900 tracking-tight truncate">
@@ -1486,17 +1536,43 @@ function DetailsModal({ item, onClose }: { item: any; onClose: () => void }) {
                     </div>
 
                     {!isLog ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                            <div className="space-y-4">
-                                <h4 className="text-xs font-bold text-blue-600 uppercase tracking-widest border-b border-blue-50 pb-2">Record Overview</h4>
-                                <div className="space-y-3">
-                                    <DetailItem label={isVendor ? 'Business Type' : 'Account Type'} value={item.vendorType || (item.subscriptionStatus === 'paid' ? 'Premium' : 'Standard')} />
-                                    <DetailItem label="Joined Platform" value={item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '—'} />
-                                    {isVendor && <DetailItem label="Operating City" value={item.city || 'Not specified'} />}
-                                    {isVendor && <DetailItem label="Budget Range" value={`$${item.budgetMin} - $${item.budgetMax}`} />}
+                        <>
+                            {/* Upload Logo Section for Vendors */}
+                            {isVendor && onUploadLogo && (
+                                <div className="flex items-center gap-4 p-4 bg-blue-50 rounded-xl border border-blue-100">
+                                    <div className="w-14 h-14 rounded-xl bg-white border border-slate-200 overflow-hidden flex items-center justify-center shrink-0">
+                                        {item.logoUrl ? (
+                                            <img src={item.logoUrl} alt={item.companyName} className="w-full h-full object-contain p-1" />
+                                        ) : (
+                                            <Store size={24} className="text-slate-300" />
+                                        )}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-sm font-bold text-slate-800">{item.logoUrl ? 'Current Logo' : 'No logo uploaded'}</p>
+                                        <p className="text-[11px] text-slate-500">PNG, JPG or SVG · Max 5MB</p>
+                                    </div>
+                                    <button
+                                        onClick={() => onUploadLogo(item._id)}
+                                        className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition-colors shadow-sm shrink-0"
+                                    >
+                                        <Upload size={14} />
+                                        {item.logoUrl ? 'Change Logo' : 'Upload Logo'}
+                                    </button>
+                                </div>
+                            )}
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                                <div className="space-y-4">
+                                    <h4 className="text-xs font-bold text-blue-600 uppercase tracking-widest border-b border-blue-50 pb-2">Record Overview</h4>
+                                    <div className="space-y-3">
+                                        <DetailItem label={isVendor ? 'Business Type' : 'Account Type'} value={item.vendorType || (item.subscriptionStatus === 'paid' ? 'Premium' : 'Standard')} />
+                                        <DetailItem label="Joined Platform" value={item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '—'} />
+                                        {isVendor && <DetailItem label="Operating City" value={item.city || 'Not specified'} />}
+                                        {isVendor && <DetailItem label="Budget Range" value={`$${item.budgetMin} - $${item.budgetMax}`} />}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </>
                     ) : (
                         <div className="space-y-4">
                             <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Event Metadata</h4>

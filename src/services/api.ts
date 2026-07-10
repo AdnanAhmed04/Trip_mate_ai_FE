@@ -372,6 +372,18 @@ export const api = {
                 credentials: 'include',
             });
             return handleResponse(response);
+        },
+        uploadVendorLogo: async (id: string, file: File): Promise<any> => {
+            const formData = new FormData();
+            formData.append('logo', file);
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${API_BASE_URL}/admin/vendors/${id}/logo`, {
+                method: 'POST',
+                headers: token ? { Authorization: `Bearer ${token}` } : {},
+                body: formData,
+                credentials: 'include',
+            });
+            return handleResponse(response);
         }
     }
 };
